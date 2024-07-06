@@ -1,4 +1,12 @@
-<html lang="en">
+---
+interface Props {
+	lang?: 'en' | 'fr';
+}
+
+const {lang = 'en'} = Astro.props;
+---
+
+<html {lang}>
 	<head>
 		<meta charset="utf-8" />
 		<link

@@ -1,0 +1,32 @@
+---
+import {getCollection} from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const archives = await getCollection('archives');
+---
+
+<Layout lang="fr">
+	<h1>Archives</h1>
+
+	<p>
+		Tous les articles de blog publiés sur l'ancienne version de
+		mon site.<br />
+		J'ai conservé ces articles pour en garder une trace et ne pas
+		casser de liens éventuels, mais ils sont pour la plupart obsolètes.
+	</p>
+
+	<ul>
+		{
+			archives
+				.toSorted(
+					(a, b) =>
+						b.data.date.getTime() - a.data.date.getTime()
+				)
+				.map(({slug, data}) => (
+					<li>
+						<a href={`/archives/${slug}`}>{data.title}</a>
+					</li>
+				))
+		}
+	</ul>
+</Layout>

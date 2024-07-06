@@ -1,0 +1,36 @@
+---
+import {getCollection} from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+	const archives = await getCollection('archives');
+	return archives.map((archive) => ({
+		params: {slug: archive.slug},
+		props: {archive}
+	}));
+}
+
+const {archive} = Astro.props;
+const {title, date} = archive.data;
+const {Content} = await archive.render();
+---
+
+<Layout lang="fr">
+	<h1>{title}</h1>
+
+	<p class="warning">
+		Cet article a été publié le {
+			new Intl.DateTimeFormat('fr-FR').format(date)
+		} et est désormais archivé.<br />
+		Les informations présentées ne sont peut-être plus à jour.
+	</p>
+
+	<Content />
+</Layout>
+
+<style>
+	.warning {
+		color: var(--color-negative);
+		font-style: italic;
+	}
+</style>

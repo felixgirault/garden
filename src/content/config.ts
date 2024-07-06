@@ -13,5 +13,12 @@ export const collections = {
 				deezerId: z.number().optional(),
 				spotifyId: z.string().optional()
 			})
+	}),
+	archives: defineCollection({
+		type: 'content',
+		schema: z.object({
+			title: z.string(),
+			date: z.date()
+		})
 	})
 };
