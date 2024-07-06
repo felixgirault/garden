@@ -5,7 +5,7 @@ import Layout from '../../layouts/Layout.astro';
 const archives = await getCollection('archives');
 ---
 
-<Layout lang="fr">
+<Layout title="Archives" lang="fr" breadcrumbs={[]}>
 	<h1>Archives</h1>
 
 	<p>

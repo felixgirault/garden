@@ -15,7 +15,11 @@ const {title, date} = archive.data;
 const {Content} = await archive.render();
 ---
 
-<Layout lang="fr">
+<Layout
+	{title}
+	lang="fr"
+	breadcrumbs={[{title: 'archives', url: '/archives'}]}
+>
 	<h1>{title}</h1>
 
 	<p class="warning">

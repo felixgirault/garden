@@ -1,12 +1,19 @@
 ---
+type Breadcrumb = {
+	title: string;
+	url: string;
+};
+
 interface Props {
 	lang?: 'en' | 'fr';
+	title: string;
+	breadcrumbs?: Breadcrumb[];
 }
 
-const {lang = 'en'} = Astro.props;
+const {lang = 'en', title, breadcrumbs} = Astro.props;
 ---
 
-<html {lang}>
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<link
@@ -16,11 +23,33 @@ const {lang = 'en'} = Astro.props;
 		/>
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>fglt</title>
+		<title>{title} | fglt</title>
 	</head>
 
 	<body>
-		<main role="main">
+		<header>
+			<p role="banner">fglt.</p>
+
+			{
+				breadcrumbs ? (
+					<nav>
+						<ul>
+							<li>
+								<a href="/">home</a>
+							</li>
+
+							{breadcrumbs.map(({title, url}) => (
+								<li>
+									<a href={url}>{title}</a>
+								</li>
+							))}
+						</ul>
+					</nav>
+				) : null
+			}
+		</header>
+
+		<main role="main" {lang}>
 			<slot />
 		</main>
 
