@@ -1,0 +1,133 @@
+---
+import Card from './Card.astro';
+---
+
+<section>
+	<h2>Software</h2>
+
+	<p>
+		I strive to build lightweight and accessible tools and apps
+		with web technologies.<br />
+		Here are some highlights—<a
+			href="https://github.com/felixgirault"
+			set:text="follow me on GitHub"
+		/> for more!
+	</p>
+
+	<div>
+		<article>
+			<h3>Things I've made</h3>
+
+			<ul>
+				<li>
+					<Card>
+						<h4 slot="header">Schemist</h4>
+
+						<p slot="body">
+							An app to build cohesive and accessible
+							color schemes.
+						</p>
+
+						<ul slot="footer">
+							<li>
+								<a
+									href="https://schemist.fglt.fr"
+									set:text="App"
+								/>
+							</li>
+							<li>
+								<a
+									href="https://github.com/felixgirault/schemist"
+									set:text="Source code"
+								/>
+							</li>
+						</ul>
+					</Card>
+				</li>
+
+				<li>
+					<Card>
+						<h4 slot="header">Grapes</h4>
+
+						<p slot="body">
+							A calm and clutter-free theme for VSCode.
+						</p>
+
+						<ul slot="footer">
+							<li>
+								<a
+									href="https://marketplace.visualstudio.com/items?itemName=fg.grapes-theme"
+									set:text="Extension"
+								/>
+							</li>
+							<li>
+								<a
+									href="https://github.com/felixgirault/grapes-theme"
+									set:text="Source code"
+								/>
+							</li>
+						</ul>
+					</Card>
+				</li>
+			</ul>
+		</article>
+
+		<article>
+			<h3>Things I contributed to</h3>
+
+			<ul>
+				<li>
+					<Card>
+						<h4 slot="header" lang="fr">Assistant RGAA</h4>
+
+						<p slot="body">
+							A browser extension helping devs and
+							accessibility experts in auditing web pages,
+							based on the RGAA.
+						</p>
+
+						<ul slot="footer">
+							<li>
+								<a
+									href="https://assistant-rgaa.empreintedigitale.fr"
+									set:text="Homepage"
+								/>
+							</li>
+							<li>
+								<a
+									href="https://github.com/empreinte-digitale/assistant-rgaa"
+									set:text="Source code"
+								/>
+							</li>
+						</ul>
+					</Card>
+				</li>
+				<li>
+					<Card>
+						<h4 slot="header">Orejime</h4>
+
+						<p slot="body">
+							An easy to use consent manager that focuses
+							on accessibility.
+						</p>
+
+						<ul slot="footer">
+							<li>
+								<a
+									href="https://orejime.empreintedigitale.fr"
+									set:text="Homepage"
+								/>
+							</li>
+							<li>
+								<a
+									href="https://github.com/empreinte-digitale/orejime"
+									set:text="Source code"
+								/>
+							</li>
+						</ul>
+					</Card>
+				</li>
+			</ul>
+		</article>
+	</div>
+</section>
