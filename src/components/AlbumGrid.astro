@@ -1,0 +1,55 @@
+---
+import {Image} from 'astro:assets';
+import type {CollectionEntry} from 'astro:content';
+import {albumCollection, albumColors} from '../services/albums';
+
+interface Props {
+	excludedId?: CollectionEntry<'albums'>['id'];
+}
+
+const {excludedId} = Astro.props;
+---
+
+<ul class="List--raw Grid Grid--10">
+	{
+		albumCollection.map(({id, data}, i) => {
+			if (id === excludedId) {
+				return null;
+			}
+
+			const {title, artist, cover, preview} = data;
+			const linkTitle = `${title} by ${artist}`;
+
+			return (
+				<li>
+					<a
+						class="Reflection"
+						href={`/albums/${id}`}
+						title={linkTitle}
+						data-preview={preview}
+					>
+						<Image
+							class="Backdrop"
+							style={`background: ${albumColors[i]};`}
+							src={cover}
+							alt={linkTitle}
+							widths={[60]}
+							sizes="60px"
+							loading="eager"
+						/>
+					</a>
+				</li>
+			);
+		})
+	}
+</ul>
+
+<style>
+	a {
+		display: block;
+	}
+
+	a:is(:hover, :focus) {
+		transform: scale(1.05);
+	}
+</style>

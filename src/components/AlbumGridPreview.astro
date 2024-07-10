@@ -1,0 +1,21 @@
+---
+import {albumColors} from '../services/albums';
+---
+
+<div class="Grid Grid--40">
+	{
+		albumColors.map((color) => (
+			<div class="Album" style={`--album-color: ${color}`} />
+		))
+	}
+</div>
+
+<style>
+	.Album {
+		--album-color: transparent;
+		display: block;
+		border-radius: 0.25ch;
+		background: var(--album-color);
+		aspect-ratio: 1 / 1;
+	}
+</style>

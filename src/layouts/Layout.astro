@@ -1,4 +1,6 @@
 ---
+import type {ImageMetadata} from 'astro';
+import {Image} from 'astro:assets';
 import '../styles/reset.css';
 import '../styles/content.css';
 import '../styles/grids.css';
@@ -16,6 +18,7 @@ interface Props {
 	theme?: 'light' | 'dark';
 	title: string;
 	breadcrumbs?: Breadcrumb[];
+	cover?: ImageMetadata;
 	noIndex?: boolean;
 }
 
@@ -24,6 +27,7 @@ const {
 	theme = 'light',
 	title,
 	breadcrumbs,
+	cover,
 	noIndex = false
 } = Astro.props;
 ---
@@ -45,6 +49,21 @@ const {
 	</head>
 
 	<body class="Page" {lang}>
+		{
+			cover ? (
+				<div class="Page-cover">
+					<Image
+						class="Page-coverImage"
+						src={cover}
+						alt=""
+						widths={[100]}
+						sizes="100px"
+						loading="eager"
+					/>
+				</div>
+			) : null
+		}
+
 		<div class="Page-container">
 			<header class="Page-header">
 				<p class="Page-title" role="banner">fglt.</p>
@@ -85,6 +104,48 @@ const {
 </html>
 
 <style>
+	.Page-cover {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		max-height: 80vh;
+		overflow: hidden;
+	}
+
+	.Page-cover::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			to top,
+			var(--color-surface) 0,
+			color-mix(
+					in srgb,
+					var(--color-surface),
+					transparent 20%
+				)
+				30vh,
+			color-mix(
+					in srgb,
+					var(--color-surface),
+					transparent 25%
+				)
+				70vh,
+			color-mix(
+					in srgb,
+					var(--color-surface),
+					transparent 20%
+				)
+				100%
+		);
+	}
+
+	.Page-coverImage {
+		width: 100%;
+		filter: blur(100px);
+		transform: scale(1.2);
+	}
+
 	.Page-container {
 		position: relative;
 		z-index: 1;

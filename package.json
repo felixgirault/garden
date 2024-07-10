@@ -18,7 +18,10 @@
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@types/node": "^20.14.9",
+    "@types/quantize": "^1.0.2",
     "prettier": "^3.3.2",
-    "prettier-plugin-astro": "^0.14.0"
+    "prettier-plugin-astro": "^0.14.0",
+    "quantize": "^1.0.2"
   }
 }

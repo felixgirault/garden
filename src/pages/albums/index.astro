@@ -1,0 +1,25 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AlbumGrid from '../../components/AlbumGrid.astro';
+---
+
+<Layout
+	theme="dark"
+	title="My all-time favorite albums"
+	breadcrumbs={[]}
+>
+	<h1>My all-time favorite albums</h1>
+
+	<p>
+		Here are some of the albums that left a lasting mark on me,
+		either by expanding my musical horizons, by being
+		particularly well produced, or just being plain good.
+		<br />
+		You can check out <a
+			href="https://www.deezer.com/profile/1725967/albums"
+			set:text="all the albums I liked on Deezer"
+		/> for more.
+	</p>
+
+	<AlbumGrid />
+</Layout>

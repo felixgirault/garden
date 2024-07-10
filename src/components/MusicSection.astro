@@ -1,5 +1,6 @@
 ---
 import Section from './Section.astro';
+import AlbumGridPreview from '../components/AlbumGridPreview.astro';
 ---
 
 <Section>
@@ -54,7 +55,10 @@ import Section from './Section.astro';
 
 		<ul>
 			<li>
-				<a href="/albums">My all-time favorite albums</a>
+				<a href="/albums">
+					My all-time favorite albums
+					<AlbumGridPreview />
+				</a>
 			</li>
 			<li>
 				<a

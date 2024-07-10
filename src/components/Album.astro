@@ -1,0 +1,100 @@
+---
+import type {CollectionEntry} from 'astro:content';
+import {Image} from 'astro:assets';
+
+interface Props {
+	album: CollectionEntry<'albums'>;
+}
+
+const {album} = Astro.props;
+const {title, artist, cover, preview, deezerId, spotifyId} =
+	album.data;
+---
+
+<article>
+	<header>
+		<h1>{title}</h1>
+		<p>By {artist}</p>
+	</header>
+
+	<aside class="Reflection">
+		<Image
+			class="Backdrop"
+			src={cover}
+			alt=""
+			loading="eager"
+		/>
+	</aside>
+
+	<ul class="List--raw">
+		{
+			deezerId ? (
+				<li>
+					<a
+						href={`https://www.deezer.com/album/${deezerId}`}
+						set:text="Listen on Deezer"
+					/>
+				</li>
+			) : null
+		}
+		{
+			spotifyId ? (
+				<li>
+					<a
+						href={`https://open.spotify.com/album/${spotifyId}`}
+						set:text="Listen on Spotify"
+					/>
+				</li>
+			) : null
+		}
+		<li>
+			<figure>
+				<figcaption>Track preview</figcaption>
+				<audio src={preview} preload="none" controls></audio>
+			</figure>
+		</li>
+	</ul>
+</article>
+
+<style>
+	article {
+		display: grid;
+		grid-template:
+			'header'
+			'aside'
+			'body';
+		align-items: start;
+		justify-items: start;
+		gap: 1lh 4ch;
+		margin-block-end: 2lh;
+	}
+
+	@media screen and (min-width: 80ch) {
+		article {
+			grid-template:
+				'header aside' min-content
+				'body aside' 1fr
+				/ 2fr 1fr;
+		}
+	}
+
+	header {
+		grid-area: header;
+	}
+
+	ul {
+		grid-area: body;
+	}
+
+	aside {
+		grid-area: aside;
+	}
+
+	h1 {
+		margin-block-end: 0.25rlh;
+	}
+
+	p {
+		margin-block-end: 0;
+	}
+</style>
