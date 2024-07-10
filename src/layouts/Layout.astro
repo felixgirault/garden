@@ -1,4 +1,11 @@
 ---
+import '../styles/reset.css';
+import '../styles/content.css';
+import '../styles/grids.css';
+import '../styles/lists.css';
+import '../styles/forms.css';
+import '../styles/effects.css';
+
 type Breadcrumb = {
 	title: string;
 	url: string;
@@ -6,16 +13,26 @@ type Breadcrumb = {
 
 interface Props {
 	lang?: 'en' | 'fr';
+	theme?: 'light' | 'dark';
 	title: string;
 	breadcrumbs?: Breadcrumb[];
+	noIndex?: boolean;
 }
 
-const {lang = 'en', title, breadcrumbs} = Astro.props;
+const {
+	lang = 'en',
+	theme = 'light',
+	title,
+	breadcrumbs,
+	noIndex = false
+} = Astro.props;
 ---
 
-<html lang="en">
+<html lang="en" class={`Theme--${theme}`}>
 	<head>
 		<meta charset="utf-8" />
+		{noIndex ? <meta name="robots" content="noindex" /> : null}
+
 		<link
 			rel="icon"
 			type="image/svg+xml"
@@ -23,43 +40,78 @@ const {lang = 'en', title, breadcrumbs} = Astro.props;
 		/>
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
+
 		<title>{title} | fglt</title>
 	</head>
 
-	<body>
-		<header>
-			<p role="banner">fglt.</p>
+	<body class="Page" {lang}>
+		<div class="Page-container">
+			<header class="Page-header">
+				<p class="Page-title" role="banner">fglt.</p>
 
-			{
-				breadcrumbs ? (
-					<nav>
-						<ul>
-							<li>
-								<a href="/">home</a>
-							</li>
-
-							{breadcrumbs.map(({title, url}) => (
+				{
+					breadcrumbs ? (
+						<nav class="Page-nav">
+							<ul class="List--raw List--inline">
 								<li>
-									<a href={url}>{title}</a>
+									<a href="/">home</a>
 								</li>
-							))}
-						</ul>
-					</nav>
-				) : null
-			}
-		</header>
 
-		<main role="main" {lang}>
-			<slot />
-		</main>
+								{breadcrumbs.map(({title, url}) => (
+									<li>
+										<a href={url}>{title}</a>
+									</li>
+								))}
+							</ul>
+						</nav>
+					) : null
+				}
+			</header>
 
-		<footer role="contentinfo">
-			<p>
-				Homegrown by Félix Girault<br />
-				<a href="https://github.com/felixgirault/garden">
-					Source code available on GitHub
-				</a>
-			</p>
-		</footer>
+			<main role="main">
+				<slot />
+			</main>
+
+			<footer class="Page-footer" role="contentinfo">
+				<p>
+					Homegrown by Félix Girault<br />
+					<a href="https://github.com/felixgirault/garden">
+						Source code available on GitHub
+					</a>
+				</p>
+			</footer>
+		</div>
 	</body>
 </html>
+
+<style>
+	.Page-container {
+		position: relative;
+		z-index: 1;
+		margin: 0 auto;
+		padding-inline: var(--line-padding);
+		max-inline-size: var(--line-length);
+	}
+
+	.Page-header {
+		display: flex;
+		gap: 4ch;
+		margin-block: 1lh 3lh;
+	}
+
+	.Page-title {
+		font-weight: bold;
+	}
+
+	.Page-footer {
+		margin-block: 8lh 4lh;
+		text-align: center;
+		line-height: var(--line-height-s);
+		font-size: var(--font-size-s);
+
+		&::before {
+			content: '* * *';
+			color: var(--color-neutral);
+		}
+	}
+</style>

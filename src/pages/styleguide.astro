@@ -1,0 +1,158 @@
+---
+import Layout from '../layouts/Layout.astro';
+import {Code} from 'astro:components';
+---
+
+<Layout title="Styleguide" noIndex breadcrumbs={[]}>
+	<h1>Styleguide</h1>
+
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+		sed do eiusmod tempor incididunt ut labore et dolore magna
+		aliqua.
+	</p>
+
+	<h2>
+		This is quite a long title to see how its style holds on
+		multiple lines
+	</h2>
+
+	<p>
+		Enim nulla aliquet porttitor lacus. Tellus mauris a diam
+		maecenas sed enim ut sem. Euismod quis viverra nibh cras.
+	</p>
+
+	<h3>
+		Again, this title feels awfully long given it doesn't
+		inform on anything remotely interesting
+	</h3>
+
+	<p>
+		Bibendum enim facilisis gravida neque convallis a cras.
+		Porta nibh venenatis cras sed felis eget velit aliquet.
+		Libero enim sed faucibus turpis. Diam sit amet nisl
+		suscipit adipiscing bibendum. Nulla facilisi cras fermentum
+		odio eu. Leo a diam sollicitudin tempor id eu.
+	</p>
+
+	<h2>Quotes</h2>
+
+	<blockquote cite="https://www.huxley.net/bnw/four.html">
+		<p>
+			Words can be like X-rays, if you use them
+			properly—they’ll go through anything. You read and
+			you’re pierced.
+		</p>
+
+		<footer>
+			—Aldous Huxley, <cite>Brave New World</cite>
+		</footer>
+	</blockquote>
+
+	<h2>Lists</h2>
+
+	<ul>
+		<li>Porttitor leo a diam sollicitudin tempor id eu.</li>
+		<li>
+			Libero id faucibus nisl tincidunt eget. Tortor
+			condimentum lacinia quis vel eros donec ac odio.
+			<ul>
+				<li>
+					Vulputate ut pharetra sit amet aliquam id diam. Id
+					eu nisl nunc mi ipsum faucibus.
+				</li>
+				<li>
+					Neque laoreet suspendisse interdum consectetur
+					libero id faucibus nisl. Auctor elit sed vulputate
+					mi sit. Pellentesque habitant morbi tristique
+					senectus et netus et. Dictum fusce ut placerat
+					orci nulla pellentesque dignissim enim sit.
+				</li>
+			</ul>
+		</li>
+		<li>Amet porttitor eget dolor morbi non arcu.</li>
+	</ul>
+
+	<ul class="List--raw">
+		<li>Raw list item</li>
+		<li>Second raw list item</li>
+	</ul>
+
+	<ul class="List--raw List--inline">
+		<li>Inline list item</li>
+		<li>Second inline list item</li>
+	</ul>
+
+	<h2>Embeds</h2>
+
+	<iframe
+		width="560"
+		height="315"
+		src="https://www.youtube-nocookie.com/embed/M79KsXmsvec?si=ozOE_kaVcUNdLiaj"
+		title="YouTube video player"
+		frameborder="0"
+		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+		referrerpolicy="strict-origin-when-cross-origin"
+		allowfullscreen
+	>
+	</iframe>
+
+	<h2>Code</h2>
+
+	<Code code={`const foo = 'bar';`} lang="js" />
+
+	<h2>Buttons</h2>
+
+	<p>
+		<button>Button</button>
+	</p>
+
+	<h2>Forms</h2>
+
+	<form>
+		<div class="Field">
+			<input id="checkbox" type="checkbox" />
+			<label for="checkbox">Label</label>
+		</div>
+	</form>
+
+	<h2>Grids</h2>
+
+	<div class="Grid Grid--2">
+		<div class="Cell"></div>
+		<div class="Cell"></div>
+	</div>
+
+	<div class="Grid Grid--10">
+		{
+			Array(20)
+				.fill(null)
+				.map(() => <div class="Cell" />)
+		}
+	</div>
+
+	<div class="Grid Grid--40">
+		{
+			Array(80)
+				.fill(null)
+				.map(() => <div class="Cell" />)
+		}
+	</div>
+
+	<h2>Effects</h2>
+
+	<div class="Grid Grid--2">
+		<div class="Cell Backdrop"></div>
+		<div class="Cell Backdrop"></div>
+		<div class="Cell Reflection"></div>
+		<div class="Cell Reflection"></div>
+	</div>
+</Layout>
+
+<style>
+	.Cell {
+		border-radius: var(--radius);
+		background: var(--color-neutral);
+		aspect-ratio: 16 / 9;
+	}
+</style>

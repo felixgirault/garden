@@ -1,0 +1,9 @@
+.Field {
+	margin-block-end: 1lh;
+}
+
+.Field:has(input:is([type='checkbox'], [type='radio'])) {
+	display: flex;
+	align-items: baseline;
+	gap: 1ch;
+}

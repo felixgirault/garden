@@ -1,8 +1,9 @@
 ---
+import Section from './Section.astro';
 import Card from './Card.astro';
 ---
 
-<section>
+<Section>
 	<h2>Software</h2>
 
 	<p>
@@ -14,11 +15,11 @@ import Card from './Card.astro';
 		/> for more!
 	</p>
 
-	<div>
+	<div class="Grid Grid--2">
 		<article>
 			<h3>Things I've made</h3>
 
-			<ul>
+			<ul class="List--raw">
 				<li>
 					<Card>
 						<h4 slot="header">Schemist</h4>
@@ -75,7 +76,7 @@ import Card from './Card.astro';
 		<article>
 			<h3>Things I contributed to</h3>
 
-			<ul>
+			<ul class="List--raw">
 				<li>
 					<Card>
 						<h4 slot="header" lang="fr">Assistant RGAA</h4>
@@ -130,4 +131,4 @@ import Card from './Card.astro';
 			</ul>
 		</article>
 	</div>
-</section>
+</Section>

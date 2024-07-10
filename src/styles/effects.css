@@ -1,0 +1,21 @@
+.Backdrop {
+	box-shadow: 0 0.25lh 0.5lh
+		rgba(0 0 0 / var(--shadow-strength));
+}
+
+.Reflection {
+	position: relative;
+}
+
+.Reflection::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		40deg,
+		transparent 0%,
+		rgba(0, 0, 0, 0.05) 65%,
+		rgba(255, 255, 255, 0.05) 75%,
+		transparent 100%
+	);
+}

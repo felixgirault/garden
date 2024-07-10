@@ -1,0 +1,12 @@
+.List--raw {
+	padding: 0;
+	list-style: none;
+}
+
+.List--inline li {
+	display: inline-block;
+}
+
+.List--inline li:not(:last-child)::after {
+	content: ' ⋅ ';
+}

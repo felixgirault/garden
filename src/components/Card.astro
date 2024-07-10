@@ -1,4 +1,4 @@
-<article>
+<article class="Backdrop">
 	<header>
 		<slot name="header" />
 	</header>
@@ -23,3 +23,26 @@
 		) : null
 	}
 </article>
+
+<style>
+	article {
+		margin-bottom: 1em;
+		border-radius: var(--radius);
+		padding: 0.5lh 2ch;
+		background: var(--color-surface-variant);
+	}
+
+	header {
+		:is(h2, h3) {
+			line-height: var(--line-height-m);
+			font-size: var(--font-size-m);
+			margin-block-end: 0;
+		}
+	}
+
+	.body {
+		p {
+			margin-block-end: 0;
+		}
+	}
+</style>

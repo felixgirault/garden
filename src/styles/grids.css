@@ -1,0 +1,32 @@
+.Grid {
+	--grid-gap: 9;
+	--grid-column-count: 1;
+	--grid-column-min-inline-size: calc(
+		(
+				var(--line-length) - (var(--grid-column-count) - 1) *
+					var(--grid-gap)
+			) / var(--grid-column-count)
+	);
+	display: grid;
+	grid-template-columns: repeat(
+		auto-fit,
+		minmax(var(--grid-column-min-inline-size), 1fr)
+	);
+	gap: var(--grid-gap);
+	margin-bottom: 1lh;
+}
+
+.Grid--2 {
+	--grid-gap: 3ch;
+	--grid-column-count: 2;
+}
+
+.Grid--10 {
+	--grid-gap: 1ch;
+	--grid-column-count: 10;
+}
+
+.Grid--40 {
+	--grid-gap: 0.25ch;
+	--grid-column-count: 40;
+}
