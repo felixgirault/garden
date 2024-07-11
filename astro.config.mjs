@@ -4,7 +4,7 @@ import {defineConfig} from 'astro/config';
 export default defineConfig({
 	markdown: {
 		shikiConfig: {
-			theme: 'rose-pine'
+			theme: 'material-theme-ocean'
 		}
 	},
 	redirects: {
