@@ -1,2 +1,4 @@
+https://fglt-garden.netlify.app/*
+  X-Robots-Tag: noindex
 /_astro/*.webp
   cache-control: max-age=3600
