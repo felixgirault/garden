@@ -20,16 +20,24 @@ const {Content} = await archive.render();
 	lang="fr"
 	breadcrumbs={[{title: 'archives', url: '/archives'}]}
 >
-	<h1>{title}</h1>
+	<article itemscope itemtype="http://schema.org/BlogPosting">
+		<h1 itemprop="name">{title}</h1>
 
-	<p class="warning">
-		Cet article a été publié le {
-			new Intl.DateTimeFormat('fr-FR').format(date)
-		} et est désormais archivé.<br />
-		Les informations présentées ne sont peut-être plus à jour.
-	</p>
+		<p class="warning">
+			Cet article a été publié le <time
+				datetime={date.toISOString()}
+				itemprop="datePublished"
+				pubdate
+			>
+				{new Intl.DateTimeFormat('fr-FR').format(date)}
+			</time> et est désormais archivé.<br />
+			Les informations présentées ne sont peut-être plus à jour.
+		</p>
 
-	<Content />
+		<div itemprop="articleBody">
+			<Content />
+		</div>
+	</article>
 </Layout>
 
 <style>
