@@ -11,10 +11,16 @@ const {title, artist, cover, preview, deezerId, spotifyId} =
 	album.data;
 ---
 
-<article>
+<article itemscope itemtype="https://schema.org/MusicAlbum">
 	<header>
-		<h1>{title}</h1>
-		<p>By {artist}</p>
+		<h1 itemprop="name">{title}</h1>
+		<p
+			itemprop="byArtist"
+			itemscope
+			itemtype="https://schema.org/MusicGroup"
+		>
+			By <span itemprop="name">{artist}</span>
+		</p>
 	</header>
 
 	<aside class="Reflection">
@@ -23,6 +29,7 @@ const {title, artist, cover, preview, deezerId, spotifyId} =
 			src={cover}
 			alt=""
 			loading="eager"
+			itemprop="image"
 		/>
 	</aside>
 
