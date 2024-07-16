@@ -27,7 +27,6 @@ const {Content} = await archive.render();
 			Cet article a été publié le <time
 				datetime={date.toISOString()}
 				itemprop="datePublished"
-				pubdate
 			>
 				{new Intl.DateTimeFormat('fr-FR').format(date)}
 			</time> et est désormais archivé.<br />
