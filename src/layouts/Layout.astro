@@ -16,6 +16,7 @@ type Breadcrumb = {
 interface Props {
 	lang?: 'en' | 'fr';
 	theme?: 'light' | 'dark';
+	themeColor?: string;
 	title: string;
 	breadcrumbs?: Breadcrumb[];
 	cover?: ImageMetadata;
@@ -25,6 +26,7 @@ interface Props {
 const {
 	lang = 'en',
 	theme = 'light',
+	themeColor,
 	title,
 	breadcrumbs,
 	cover,
@@ -32,7 +34,11 @@ const {
 } = Astro.props;
 ---
 
-<html lang="en" class={`Theme--${theme}`}>
+<html
+	lang="en"
+	class={`Theme--${theme}`}
+	style={themeColor ? `--color-theme: ${themeColor}` : null}
+>
 	<head>
 		<meta charset="utf-8" />
 		{noIndex ? <meta name="robots" content="noindex" /> : null}

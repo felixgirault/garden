@@ -3,11 +3,12 @@ import {
 	getCollection
 } from 'astro:content';
 import {resolve} from 'node:path';
-import {getImageDominantColor} from './images';
+import {getImagePalette} from './images';
 
 export type Album = CollectionEntry<'albums'>['data'] & {
 	id: CollectionEntry<'albums'>['id'];
 	dominantColor: string;
+	accentColor?: string;
 };
 
 type ActualImageData =
@@ -20,13 +21,18 @@ const coverFilePath = (album: CollectionEntry<'albums'>) =>
 
 const fromAlbumEntry = async (
 	album: CollectionEntry<'albums'>
-): Promise<Album> => ({
-	...album.data,
-	id: album.id,
-	dominantColor: await getImageDominantColor(
+): Promise<Album> => {
+	const {dominant, accent} = await getImagePalette(
 		coverFilePath(album)
-	)
-});
+	);
+
+	return {
+		...album.data,
+		id: album.id,
+		dominantColor: dominant,
+		accentColor: accent
+	};
+};
 
 export const albumCollection = await getCollection(
 	'albums'

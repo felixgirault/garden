@@ -1,38 +1,88 @@
-import quantize from 'quantize';
+import {
+	Hct,
+	QuantizerCelebi,
+	Score,
+	argbFromRgb,
+	hexFromArgb
+} from '@material/material-color-utilities';
 import sharp from 'sharp';
 
-// This code is inspired from `pure-color-thief-node`, wich
-// worked as expected but was a pain to use with typscript.
-// Also, using sharp, which is provided by Astro, makes the
-// code shorter, more performant and allows for more input
-// formats.
-// @see https://github.com/CafuChino/pure-color-thief-node
-export const getImagePalette = async (
-	path: string,
-	count: number
-): Promise<string[]> => {
-	const buffer = await sharp(path)
-		.removeAlpha()
-		.raw()
-		.toBuffer();
-	const pixels = Array(buffer.length / 3);
-
-	for (let i = 0; i < buffer.length; i += 3) {
-		pixels[i] = [buffer[i], buffer[i + 1], buffer[i + 2]];
-	}
-
-	const q = quantize(pixels, Math.max(2, count));
-
-	if (!q) {
-		return [];
-	}
-
-	return q
-		.palette()
-		.map(([r, g, b]) => `rgb(${r}, ${g}, ${b})`);
+type ImagePalette = {
+	dominant: string;
+	accent?: string;
 };
 
-export const getImageDominantColor = async (path: string) => {
-	const palette = await getImagePalette(path, 1);
-	return palette[0];
+const InvalidArgbColor = 1000000000;
+const TargetChroma = 100;
+const TargetTone = 65;
+const MinimalAccentTone = 65;
+
+const getImagePixels = async (image: sharp.Sharp) => {
+	const buffer = await image.removeAlpha().raw().toBuffer();
+	const pixels: number[] = [];
+
+	for (let i = 0; i < buffer.length; i += 3) {
+		const r = buffer[i];
+		const g = buffer[i + 1];
+		const b = buffer[i + 2];
+
+		pixels.push(argbFromRgb(r, g, b));
+	}
+
+	return pixels;
+};
+
+// This code uses the same mechanics as `sourceColorFromImage()`,
+// but using sharp instead of an HTML canvas to load the
+// image.
+// @see https://github.com/material-foundation/material-color-utilities/blob/main/typescript/utils/image_utils.ts#L29
+const findAccentColor = async (image: sharp.Sharp) => {
+	const pixels = await getImagePixels(image);
+	const quantized = QuantizerCelebi.quantize(pixels, 5);
+	const scored = Score.score(quantized, {
+		desired: 10,
+		fallbackColorARGB: InvalidArgbColor,
+		filter: false
+	});
+
+	const sorted = scored
+		.filter((color) => color !== InvalidArgbColor)
+		.map((color) => {
+			const hct = Hct.fromInt(color);
+			const toneDistance = Math.abs(TargetTone - hct.tone);
+			const chromaDistance = Math.abs(
+				TargetChroma - hct.chroma
+			);
+
+			return {
+				color: hct.toInt(),
+				score: (toneDistance + chromaDistance) / 2
+			};
+		})
+		.toSorted((a, b) => a.score - b.score);
+
+	return sorted?.[0]?.color;
+};
+
+const findDominantColor = async (image: sharp.Sharp) => {
+	const pixels = await getImagePixels(
+		image.removeAlpha().resize(1, 1)
+	);
+
+	return pixels[0];
+};
+
+export const getImagePalette = async (
+	path: string
+): Promise<ImagePalette> => {
+	const image = sharp(path);
+	const accent = await findAccentColor(image);
+	const dominant = await findDominantColor(image);
+	const accentHct = Hct.fromInt(accent || dominant);
+	accentHct.tone = Math.max(accentHct.tone, MinimalAccentTone);
+
+	return {
+		dominant: hexFromArgb(dominant),
+		accent: accent ? hexFromArgb(accentHct.toInt()) : undefined
+	};
 };
