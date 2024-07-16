@@ -1,35 +1,43 @@
 ---
 import {Image} from 'astro:assets';
-import {albumCollection, albumColors} from '../services/albums';
+import {albumCollection} from '../services/albums';
 ---
 
 <ul class="List--raw Grid Grid--10">
 	{
-		albumCollection.map(({id, data}, i) => {
-			const {title, artist, cover, preview} = data;
-			const linkTitle = `${title} by ${artist}`;
+		albumCollection.map(
+			({
+				id,
+				title,
+				artist,
+				cover,
+				preview,
+				dominantColor
+			}) => {
+				const linkTitle = `${title} by ${artist}`;
 
-			return (
-				<li>
-					<a
-						class="Reflection"
-						href={`/albums/${id}`}
-						title={linkTitle}
-						data-preview={preview}
-					>
-						<Image
-							class="Backdrop"
-							style={`background: ${albumColors[i]};`}
-							src={cover}
-							alt={linkTitle}
-							widths={[60]}
-							sizes="60px"
-							loading="eager"
-						/>
-					</a>
-				</li>
-			);
-		})
+				return (
+					<li>
+						<a
+							class="Reflection"
+							href={`/albums/${id}`}
+							title={linkTitle}
+							data-preview={preview}
+						>
+							<Image
+								class="Backdrop"
+								style={`background: ${dominantColor};`}
+								src={cover}
+								alt={linkTitle}
+								widths={[60]}
+								sizes="60px"
+								loading="eager"
+							/>
+						</a>
+					</li>
+				);
+			}
+		)
 	}
 </ul>
 

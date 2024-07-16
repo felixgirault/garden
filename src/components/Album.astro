@@ -1,14 +1,14 @@
 ---
-import type {CollectionEntry} from 'astro:content';
 import {Image} from 'astro:assets';
+import type {Album} from '../services/albums';
 
 interface Props {
-	album: CollectionEntry<'albums'>;
+	album: Album;
 }
 
 const {album} = Astro.props;
 const {title, artist, cover, preview, deezerId, spotifyId} =
-	album.data;
+	album;
 ---
 
 <article itemscope itemtype="https://schema.org/MusicAlbum">

@@ -1,19 +1,18 @@
 ---
-import {getCollection} from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
 import Album from '../../components/Album.astro';
 import AlbumGrid from '../../components/AlbumGrid.astro';
+import Layout from '../../layouts/Layout.astro';
+import {albumCollection} from '../../services/albums';
 
 export async function getStaticPaths() {
-	const albums = await getCollection('albums');
-	return albums.map((album) => ({
+	return albumCollection.map((album) => ({
 		params: {id: album.id},
 		props: {album}
 	}));
 }
 
 const {album} = Astro.props;
-const {title, cover} = album.data;
+const {title, cover} = album;
 ---
 
 <Layout
