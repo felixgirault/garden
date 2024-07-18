@@ -1,6 +1,7 @@
 <article class="Backdrop">
 	<header>
 		<slot name="header" />
+		<slot name="icon" />
 	</header>
 
 	{
@@ -33,6 +34,9 @@
 	}
 
 	header {
+		display: flex;
+		gap: 0 1ch;
+
 		:is(h2, h3) {
 			line-height: var(--line-height-m);
 			font-size: var(--font-size-m);

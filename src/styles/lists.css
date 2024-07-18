@@ -7,6 +7,6 @@
 	display: inline-block;
 }
 
-.List--inline li:not(:last-child)::after {
+.List--dotted li:not(:last-child)::after {
 	content: ' ⋅ ';
 }
