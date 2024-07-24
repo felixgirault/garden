@@ -7,7 +7,7 @@ export const collections = {
 			z.object({
 				title: z.string(),
 				artist: z.string(),
-				tags: z.array(z.string()).default([]),
+				description: z.string().optional(),
 				cover: image(),
 				preview: z.string().url(),
 				deezerId: z.number().optional(),

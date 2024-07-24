@@ -7,13 +7,21 @@ interface Props {
 }
 
 const {album} = Astro.props;
-const {title, artist, cover, preview, deezerId, spotifyId} =
-	album;
+const {
+	title,
+	artist,
+	description,
+	cover,
+	preview,
+	deezerId,
+	spotifyId
+} = album;
 ---
 
 <article itemscope itemtype="https://schema.org/MusicAlbum">
 	<header>
 		<h1 itemprop="name">{title}</h1>
+
 		<p
 			itemprop="byArtist"
 			itemscope
@@ -21,6 +29,12 @@ const {title, artist, cover, preview, deezerId, spotifyId} =
 		>
 			By <span itemprop="name">{artist}</span>
 		</p>
+
+		{
+			description ? (
+				<p itemprop="description">{description}</p>
+			) : null
+		}
 	</header>
 
 	<aside class="Reflection">
@@ -72,7 +86,7 @@ const {title, artist, cover, preview, deezerId, spotifyId} =
 			'body';
 		align-items: start;
 		justify-items: start;
-		gap: 1lh 4ch;
+		gap: 0 4ch;
 		margin-block-end: var(--block-spacing);
 	}
 
@@ -101,10 +115,12 @@ const {title, artist, cover, preview, deezerId, spotifyId} =
 		margin-block-end: 0.25rlh;
 	}
 
-	p {
-		margin-block-end: 0;
+	[itemprop='byArtist'] {
 		padding-inline-start: 0.5ch;
 		font-family: var(--font-serif);
 		font-style: italic;
+	}
+
+	[itemprop='description'] {
 	}
 </style>
