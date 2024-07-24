@@ -70,6 +70,7 @@
 }
 
 .Theme--dark {
+	--color-theme: #83a892;
 	--color-surface: color-mix(
 		in srgb,
 		var(--color-theme-variant),
