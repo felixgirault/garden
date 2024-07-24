@@ -1,9 +1,36 @@
-<section>
+---
+interface Props {
+	isWide?: boolean;
+}
+
+const {isWide = false} = Astro.props;
+---
+
+<section class:list={{isWide}}>
 	<slot />
 </section>
 
 <style>
 	section {
 		margin-block-start: var(--block-spacing);
+	}
+
+	.isWide {
+		--padding: var(--block-spacing);
+		--offset: calc(
+			(
+					100vw - var(--line-length) - 2 *
+						var(--line-padding) - 2 * var(--padding)
+				) / 2
+		);
+		--max-offset: calc(
+			(var(--line-length--wide) - var(--line-length)) / 2
+		);
+		--clamped-offset: clamp(
+			0px,
+			var(--offset),
+			var(--max-offset)
+		);
+		margin-inline: calc(-1 * var(--clamped-offset));
 	}
 </style>

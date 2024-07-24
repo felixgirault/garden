@@ -1,45 +1,48 @@
 ---
 import {Image} from 'astro:assets';
 import {albumCollection} from '../services/albums';
+import Section from './Section.astro';
 ---
 
-<ul class="List--raw Grid Grid--10">
-	{
-		albumCollection.map(
-			({
-				id,
-				title,
-				artist,
-				cover,
-				preview,
-				dominantColor
-			}) => {
-				const linkTitle = `${title} by ${artist}`;
+<Section isWide>
+	<ul class="List--raw Grid Grid--10">
+		{
+			albumCollection.map(
+				({
+					id,
+					title,
+					artist,
+					cover,
+					preview,
+					dominantColor
+				}) => {
+					const linkTitle = `${title} by ${artist}`;
 
-				return (
-					<li>
-						<a
-							class="Reflection"
-							href={`/albums/${id}`}
-							title={linkTitle}
-							data-preview={preview}
-						>
-							<Image
-								class="Backdrop"
-								style={`background: ${dominantColor};`}
-								src={cover}
-								alt={linkTitle}
-								widths={[60]}
-								sizes="60px"
-								loading="eager"
-							/>
-						</a>
-					</li>
-				);
-			}
-		)
-	}
-</ul>
+					return (
+						<li>
+							<a
+								class="Reflection"
+								href={`/albums/${id}`}
+								title={linkTitle}
+								data-preview={preview}
+							>
+								<Image
+									class="Backdrop"
+									style={`background: ${dominantColor};`}
+									src={cover}
+									alt={linkTitle}
+									widths={[60]}
+									sizes="60px"
+									loading="eager"
+								/>
+							</a>
+						</li>
+					);
+				}
+			)
+		}
+	</ul>
+</Section>
 
 <style>
 	a {
