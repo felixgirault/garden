@@ -1,7 +1,11 @@
 :root {
-	--font-sans: -apple-system, BlinkMacSystemFont, avenir next,
-		avenir, segoe ui, helvetica neue, helvetica, Cantarell,
-		Ubuntu, roboto, noto, arial, sans-serif;
+	--font-sans: Noto Sans, -apple-system, BlinkMacSystemFont,
+		avenir next, avenir, segoe ui, helvetica neue, helvetica,
+		Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+	--font-serif: Noto Serif, Iowan Old Style, Apple Garamond,
+		Baskerville, Times New Roman, Droid Serif, Times,
+		Source Serif Pro, serif, Apple Color Emoji, Segoe UI Emoji,
+		Segoe UI Symbol;
 	--font-mono: Menlo, Consolas, Monaco, Liberation Mono,
 		Lucida Console, monospace;
 
@@ -9,54 +13,76 @@
 	--font-size-s: 0.9em;
 	--font-size-m: 1em;
 	--line-height-m: 1.6;
-	--font-size-l: 1.2em;
-	--line-height-l: 1.3;
-	--font-size-xl: 2em;
+	--font-size-l: 1.25em;
+	--line-height-l: 1.1;
+	--font-size-xl: 1.8em;
 	--line-height-xl: 1.1;
 	--font-size-xxl: 3.2em;
 	--line-height-xxl: 0.9;
 
+	--font-weight-bold: 650;
+
+	--block-spacing: 2rlh;
 	--line-length: 70ch;
 	--line-padding: 3ch;
 
-	--color-theme: #ff7452;
-	--color-negative: #ff7076;
+	--color-theme: #407955;
+	--color-theme-variant: #ff7452;
+	--color-negative: #c93f4a;
 	--color-surface: color-mix(
 		in srgb,
-		var(--color-theme),
+		var(--color-theme-variant),
 		white 95%
 	);
 	--color-on-surface: --color-surface:
-		color-mix(in srgb, var(--color-theme), black 95%);
+		color-mix(in srgb, var(--color-theme-variant), black 95%);
 	--color-surface-variant: color-mix(
 		in srgb,
-		var(--color-theme),
+		var(--color-theme-variant),
 		white 98%
 	);
 	--color-on-surface-variant: var(--color-on-surface);
-	--color-neutral: #888;
+	--color-neutral: #8d938f;
 	--color-interactive: var(--color-theme);
-	--color-on-interactive: white;
+	--color-on-interactive: var(--color-surface);
 
 	--shadow-strength: 0.2;
 
 	--radius: 0.5rem;
 }
 
+@media screen and (min-height: 35rlh) {
+	:root {
+		--block-spacing: 3rlh;
+	}
+}
+
+@media screen and (min-width: 100ch) and (min-height: 40rlh) {
+	:root {
+		--block-spacing: 4rlh;
+	}
+}
+
+@media screen and (min-width: 150ch) and (min-height: 50rlh) {
+	:root {
+		--block-spacing: 5rlh;
+	}
+}
+
 .Theme--dark {
 	--color-surface: color-mix(
 		in srgb,
-		var(--color-theme),
+		var(--color-theme-variant),
 		black 95%
 	);
 	--color-on-surface: color-mix(
 		in srgb,
-		var(--color-theme),
+		var(--color-theme-variant),
 		white 85%
 	);
 	--color-surface-variant: color-mix(
 		in srgb,
-		var(--color-theme),
+		var(--color-theme-variant),
 		black 90%
 	);
 	--shadow-strength: 0.3;
@@ -80,20 +106,43 @@ h1 {
 	text-wrap: balance;
 	line-height: var(--line-height-xxl);
 	font-size: var(--font-size-xxl);
+	font-weight: 150;
 	letter-spacing: -0.03ch;
 }
 
+.Theme--dark h1 {
+	font-weight: 200;
+}
+
 h2 {
-	margin-block-end: 1rlh;
+	margin-block: 2rlh 1.5rlh;
 	line-height: var(--line-height-xl);
 	font-size: var(--font-size-xl);
 	letter-spacing: -0.02ch;
+	font-weight: 700;
 }
 
 h3 {
-	margin-block-end: 0.5rlh;
+	position: relative;
+	margin-block: 1rlh;
+	padding-inline-start: 2ch;
 	line-height: var(--line-height-l);
 	font-size: var(--font-size-l);
+	font-family: var(--font-serif);
+	font-variant: all-small-caps;
+	font-weight: 500;
+}
+
+h3::before {
+	content: '■ ';
+	position: absolute;
+	left: 0;
+	margin-inline-end: 1ch;
+	color: var(--color-neutral);
+}
+
+h4 {
+	font-weight: var(--font-weight-bold);
 }
 
 p,
@@ -122,6 +171,11 @@ img {
 
 a {
 	color: var(--color-interactive);
+	text-underline-offset: 0.1lh;
+}
+
+a:is(:hover, :focus) {
+	text-decoration-thickness: 2px;
 }
 
 button,
@@ -134,13 +188,27 @@ button,
 	color: var(--color-on-interactive);
 	text-decoration: none;
 	font: inherit;
-	font-weight: bold;
+	font-weight: var(--font-weight-bold);
 	cursor: pointer;
 }
 
 blockquote {
+	margin-inline: auto;
 	padding-inline: 2ch;
+	max-inline-size: calc(var(--line-length) / 3 * 2);
 	font-style: italic;
+}
+
+blockquote p {
+	font-size: var(--font-size-l);
+	font-family: var(--font-serif);
+	opacity: 0.9;
+}
+
+blockquote footer {
+	color: var(--color-neutral);
+	line-height: var(--line-height-s);
+	font-size: var(--font-size-s);
 }
 
 input {

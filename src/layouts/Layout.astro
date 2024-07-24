@@ -51,6 +51,44 @@ const {
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 
+		<style>
+			@font-face {
+				font-family: 'Noto Sans';
+				src:
+					local('Noto Sans'),
+					local('NotoSans'),
+					url('/fonts/noto-sans.woff2') format('woff2');
+				font-style: normal;
+				font-weight: 100 700;
+				font-stretch: 100%;
+				font-display: block;
+			}
+
+			@font-face {
+				font-family: 'Noto Serif';
+				src:
+					local('Noto Serif Regular'),
+					local('NotoSerif-Regular'),
+					url('/fonts/noto-serif-regular.woff2')
+						format('woff2');
+				font-style: normal;
+				font-weight: 400;
+				font-display: swap;
+			}
+
+			@font-face {
+				font-family: 'Noto Serif';
+				src:
+					local('Noto Serif Italic'),
+					local('NotoSerif-Italic'),
+					url('/fonts/noto-serif-italic.woff2')
+						format('woff2');
+				font-style: italic;
+				font-weight: 400;
+				font-display: swap;
+			}
+		</style>
+
 		<title>{title} | fglt</title>
 	</head>
 
@@ -174,11 +212,11 @@ const {
 	.Page-header {
 		display: flex;
 		gap: 4ch;
-		margin-block: 1lh 3lh;
+		margin-block: 1lh var(--block-spacing);
 	}
 
 	.Page-title {
-		font-weight: bold;
+		font-weight: var(--font-weight-bold);
 	}
 
 	.Page-footer {

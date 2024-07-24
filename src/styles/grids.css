@@ -13,7 +13,7 @@
 		minmax(var(--grid-column-min-inline-size), 1fr)
 	);
 	gap: var(--grid-gap);
-	margin-bottom: 1lh;
+	margin-bottom: 1em;
 }
 
 .Grid--2 {
