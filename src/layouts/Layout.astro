@@ -136,12 +136,20 @@ const {
 			</main>
 
 			<footer class="Page-footer" role="contentinfo">
-				<p>
-					Homegrown by Félix Girault<br />
-					<a href="https://github.com/felixgirault/garden">
-						Source code available on GitHub
-					</a>
-				</p>
+				<p>Homegrown by Félix Girault.</p>
+
+				<ul class="List--raw List--inline List--dotted">
+					<li>
+						<a href="/colophon" set:text="Colophon" />
+					</li>
+					<li>
+						<a
+							href="https://github.com/felixgirault/garden"
+							set:text="Source code"
+							title="Source code of this website on GitHub"
+						/>
+					</li>
+				</ul>
 			</footer>
 		</div>
 
@@ -224,10 +232,14 @@ const {
 		text-align: center;
 		line-height: var(--line-height-s);
 		font-size: var(--font-size-s);
+	}
 
-		&::before {
-			content: '* * *';
-			color: var(--color-neutral);
-		}
+	.Page-footer::before {
+		content: '* * *';
+		color: var(--color-neutral);
+	}
+
+	.Page-footer p {
+		margin-block: 0;
 	}
 </style>

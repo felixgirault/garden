@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Colophon" breadcrumbs={[]}>
+	<h1>Colophon</h1>
+
+	<p>This website is build using the following technologies:</p>
+	<ul>
+		<li>
+			<a href="">Astro</a> as a minimal foundation for routing,
+			content authoring, <abbr
+				title="Static Site Generation"
+				set:text="SSG"
+			/>, …
+		</li>
+		<li>
+			<a
+				href="https://slice-gui.netlify.app"
+				set:text="Slice"
+			/> to adjust the axes of variables fonts
+		</li>
+		<li>
+			<a
+				href="https://fonttools.readthedocs.io"
+				set:text="fontTools"
+			/>
+			to subset fonts
+		</li>
+		<li>
+			<a
+				href="https://developers.deezer.com/api"
+				set:text="Deezer API"
+			/>
+			to retrieve information about <a
+				href="/albums"
+				set:text="music albums"
+			/>
+		</li>
+		<li>
+			<a
+				href="https://github.com/material-foundation/material-color-utilities"
+				set:text="Material color utilities"
+			/>
+			to extract dominant and accent colors of <a
+				href="/albums"
+				set:text="albums covers"
+			/>
+		</li>
+	</ul>
+</Layout>
