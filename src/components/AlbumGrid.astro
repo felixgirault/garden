@@ -28,12 +28,14 @@ import Section from './Section.astro';
 							>
 								<Image
 									class="Backdrop"
-									style={`background: ${dominantColor};`}
 									src={cover}
 									alt={linkTitle}
 									widths={[60]}
 									sizes="60px"
 									loading="eager"
+									style={{
+										background: dominantColor
+									}}
 								/>
 							</a>
 						</li>

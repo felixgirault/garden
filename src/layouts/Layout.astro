@@ -37,7 +37,9 @@ const {
 <html
 	lang="en"
 	class={`Theme--${theme}`}
-	style={themeColor ? `--color-theme: ${themeColor}` : null}
+	style={{
+		'--color-theme': themeColor
+	}}
 >
 	<head>
 		<meta charset="utf-8" />
