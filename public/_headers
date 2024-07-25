@@ -1,4 +1,8 @@
 https://fglt-garden.netlify.app/*
   X-Robots-Tag: noindex
-/_astro/*.webp
-  cache-control: max-age=3600
+
+# @see https://github.com/withastro/astro/issues/9106#issuecomment-1918920420
+/_astro/*
+  Cache-Control: public
+  Cache-Control: immutable
+  Cache-Control: max-age=31536000
