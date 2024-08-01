@@ -2,8 +2,6 @@ import {
 	type CollectionEntry,
 	getCollection
 } from 'astro:content';
-import {resolve} from 'node:path';
-import {getImagePalette} from './images';
 
 export type Album = CollectionEntry<'albums'>['data'] & {
 	id: CollectionEntry<'albums'>['id'];
@@ -11,28 +9,12 @@ export type Album = CollectionEntry<'albums'>['data'] & {
 	accentColor?: string;
 };
 
-type ActualImageData =
-	CollectionEntry<'albums'>['data']['cover'] & {
-		fsPath: string;
-	};
-
-const coverFilePath = (album: CollectionEntry<'albums'>) =>
-	resolve((album.data.cover as ActualImageData).fsPath);
-
 const fromAlbumEntry = async (
 	album: CollectionEntry<'albums'>
-): Promise<Album> => {
-	const {dominant, accent} = await getImagePalette(
-		coverFilePath(album)
-	);
-
-	return {
-		...album.data,
-		id: album.id,
-		dominantColor: dominant,
-		accentColor: accent
-	};
-};
+): Promise<Album> => ({
+	...album.data,
+	id: album.id
+});
 
 export const albumCollection = await getCollection(
 	'albums'

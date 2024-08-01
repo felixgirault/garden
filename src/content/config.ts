@@ -11,7 +11,9 @@ export const collections = {
 				cover: image(),
 				preview: z.string().url(),
 				deezerId: z.number().optional(),
-				spotifyId: z.string().optional()
+				spotifyId: z.string().optional(),
+				dominantColor: z.string(),
+				accentColor: z.string()
 			})
 	}),
 	archives: defineCollection({

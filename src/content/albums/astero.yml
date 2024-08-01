@@ -3,3 +3,5 @@ artist: 37500 Yens
 cover: ./astero.jpg
 preview: https://cdns-preview-e.dzcdn.net/stream/c-e7490ed4930fcf0b5ab1a2e6b971f8db-2.mp3
 deezerId: 981152
+dominantColor: "#e3e3e1"
+accentColor: "#9e9e95"
