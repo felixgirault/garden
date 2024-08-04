@@ -35,8 +35,11 @@
 		var(--color-theme-variant),
 		white 95%
 	);
-	--color-on-surface: --color-surface:
-		color-mix(in srgb, var(--color-theme-variant), black 95%);
+	--color-on-surface: color-mix(
+		in srgb,
+		var(--color-theme-variant),
+		black 95%
+	);
 	--color-surface-variant: color-mix(
 		in srgb,
 		var(--color-theme-variant),
