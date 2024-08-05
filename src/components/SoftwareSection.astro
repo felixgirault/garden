@@ -77,6 +77,25 @@ import Card from './Card.astro';
 					</ul>
 				</Card>
 			</li>
+
+			<li>
+				<Card>
+					<h4 slot="header">Web dev resources</h4>
+					<span slot="icon" aria-hidden="true">📑</span>
+
+					<p slot="body">
+						An awesome list of articles, books, courses,
+						tools, design resources & newletters for web
+						developers.
+					</p>
+
+					<a
+						slot="footer"
+						href="/resources"
+						set:text="List"
+					/>
+				</Card>
+			</li>
 		</ul>
 	</article>
 

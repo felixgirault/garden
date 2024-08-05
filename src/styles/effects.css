@@ -19,3 +19,11 @@
 		transparent 100%
 	);
 }
+
+.Highlight {
+	background: color-mix(
+		in srgb,
+		transparent,
+		var(--color-interactive) 15%
+	);
+}
