@@ -27,27 +27,21 @@
 
 <style>
 	article {
-		margin-bottom: 1em;
-		border-bottom: 2px solid var(--color-neutral);
-		border-radius: var(--radius);
-		padding: 0.5lh 2ch;
-		background: var(--color-surface-variant);
+		margin-block-end: 1em;
 	}
 
 	header {
 		display: flex;
 		gap: 0 1ch;
-
-		:is(h2, h3) {
-			line-height: var(--line-height-m);
-			font-size: var(--font-size-m);
-			margin-block-end: 0;
-		}
 	}
 
-	.body {
-		p {
-			margin-block-end: 0;
-		}
+	header :global(:is(h2, h3, h4)) {
+		line-height: var(--line-height-m);
+		font-size: var(--font-size-m);
+		margin-block: 0;
+	}
+
+	.body :global(p) {
+		margin-block-end: 0;
 	}
 </style>

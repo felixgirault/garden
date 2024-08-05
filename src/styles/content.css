@@ -1,9 +1,8 @@
 .astro-code {
 	margin-block-end: 1lh;
 	border-radius: var(--radius);
-	padding: 1em 2ch;
+	padding: 1em var(--line-indent);
 	line-height: var(--line-height-s);
 	font-size: var(--font-size-s);
-	font-family: var(--font-mono);
 	tab-size: 3ch;
 }

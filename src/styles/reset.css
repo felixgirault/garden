@@ -13,19 +13,20 @@
 	--font-size-s: 0.9em;
 	--font-size-m: 1em;
 	--line-height-m: 1.6;
-	--font-size-l: 1.25em;
+	--font-size-l: 1.2em;
 	--line-height-l: 1.1;
-	--font-size-xl: 1.8em;
-	--line-height-xl: 1.1;
+	--font-size-xl: 1.7em;
+	--line-height-xl: 1.2;
 	--font-size-xxl: 3.2em;
 	--line-height-xxl: 0.9;
 
-	--font-weight-bold: 650;
+	--font-weight-bold: 600;
 
 	--block-spacing: 2rlh;
 	--line-length: 70ch;
 	--line-length--wide: 150ch;
 	--line-padding: 3ch;
+	--line-indent: 2ch;
 
 	--color-theme: #407955;
 	--color-theme-variant: #ff7452;
@@ -130,23 +131,18 @@ h2 {
 h3 {
 	position: relative;
 	margin-block: 1rlh;
-	padding-inline-start: 2ch;
 	line-height: var(--line-height-l);
 	font-size: var(--font-size-l);
 	font-family: var(--font-serif);
 	font-variant: all-small-caps;
 	font-weight: 500;
-}
-
-h3::before {
-	content: '■ ';
-	position: absolute;
-	left: 0;
-	margin-inline-end: 1ch;
-	color: var(--color-neutral);
+	opacity: 0.8;
 }
 
 h4 {
+	margin-block: 0.5rlh;
+	line-height: var(--line-height-m);
+	font-size: var(--font-size-m);
 	font-weight: var(--font-weight-bold);
 }
 
@@ -158,13 +154,18 @@ iframe {
 	margin-block-end: 1em;
 }
 
+ul,
+ol {
+	padding-inline: var(--line-indent);
+	list-style-type: '-  ';
+}
+
 :is(ul, ol) :is(ul, ol) {
 	margin-block-end: 0;
 }
 
-ul,
-ol {
-	padding-inline-start: 2ch;
+li::marker {
+	color: var(--color-neutral);
 }
 
 img {
@@ -183,23 +184,52 @@ a:is(:hover, :focus) {
 	text-decoration-thickness: 2px;
 }
 
+a:active {
+	text-underline-offset: 0.15lh;
+}
+
 button,
 .Button {
+	--color-background-strength: 4%;
 	display: inline-block;
 	border: none;
 	border-radius: var(--radius);
 	padding: 0.25em 1ch;
-	background: var(--color-interactive);
-	color: var(--color-on-interactive);
+	outline: 1px solid var(--color-interactive);
+	outline-offset: -1px;
+	background: color-mix(
+		in srgb,
+		transparent,
+		var(--color-interactive) var(--color-background-strength)
+	);
+	color: var(--color-interactive);
 	text-decoration: none;
 	font: inherit;
 	font-weight: var(--font-weight-bold);
 	cursor: pointer;
 }
 
+:is(button, .Button):is(:hover, :focus),
+.Button-trigger:checked + :is(button, .Button) {
+	--color-background-strength: 15%;
+}
+
+:is(button, .Button):active,
+.Button-trigger:checked + :is(button, .Button) {
+	outline-width: 2px;
+}
+
+.Button--small {
+	padding-block: 0;
+}
+
+code {
+	font-family: var(--font-mono);
+}
+
 blockquote {
 	margin-inline: auto;
-	padding-inline: 2ch;
+	padding-inline: var(--line-indent);
 	max-inline-size: calc(var(--line-length) / 3 * 2);
 	font-style: italic;
 }
