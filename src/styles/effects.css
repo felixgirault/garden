@@ -27,3 +27,19 @@
 		var(--color-interactive) 15%
 	);
 }
+
+@supports (background-image: paint(id)) {
+	.Roots {
+		--roots-color: color-mix(
+			in srgb,
+			var(--color-theme),
+			var(--color-surface) 97.5%
+		);
+		--roots-color-variant: color-mix(
+			in srgb,
+			var(--color-theme),
+			var(--color-surface) 92%
+		);
+		background-image: paint(roots);
+	}
+}

@@ -36,7 +36,7 @@ const {
 
 <html
 	lang="en"
-	class={`Theme--${theme}`}
+	class={`Roots Theme--${theme}`}
 	style={{
 		'--color-theme': themeColor
 	}}
@@ -155,7 +155,7 @@ const {
 			</footer>
 		</div>
 
-		<script type="speculationrules">
+		<script type="speculationrules" is:inline>
 			{
 				"prerender": [
 					{
@@ -167,6 +167,12 @@ const {
 		</script>
 	</body>
 </html>
+
+<script is:inline>
+	if ('paintWorklet' in CSS) {
+		CSS.paintWorklet.addModule('/js/rootsPainter.js');
+	}
+</script>
 
 <style>
 	.Page-cover {
