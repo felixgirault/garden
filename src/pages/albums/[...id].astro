@@ -2,7 +2,7 @@
 import Album from '../../components/Album.astro';
 import AlbumGrid from '../../components/AlbumGrid.astro';
 import Layout from '../../layouts/Layout.astro';
-import {albumCollection} from '../../services/albums';
+import {albumCollection} from '../../services/collections';
 
 export async function getStaticPaths() {
 	return albumCollection.map((album) => ({
