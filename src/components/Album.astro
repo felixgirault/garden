@@ -1,13 +1,13 @@
 ---
 import {Image} from 'astro:assets';
-import type {Album} from '../services/albums';
+import type {FlatEntry} from '../services/collections';
 import headphonesIcon from './icons/headphones.svg?raw';
 import headphonesOffIcon from './icons/headphones-off.svg?raw';
 import deezerIcon from './icons/deezer.svg?raw';
 import spotifyIcon from './icons/spotify.svg?raw';
 
 interface Props {
-	album: Album;
+	album: FlatEntry<'albums'>;
 }
 
 const {album} = Astro.props;

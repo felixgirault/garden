@@ -2,28 +2,28 @@ import {
 	Hct,
 	argbFromHex
 } from '@material/material-color-utilities';
-import {
-	type CollectionEntry,
-	getCollection
-} from 'astro:content';
+import {type CollectionEntry} from 'astro:content';
+import {flatCollection} from './collections';
 
 export type Album = CollectionEntry<'albums'>['data'] & {
 	id: CollectionEntry<'albums'>['id'];
-	index: number;
 	dominantColor: string;
 	accentColor?: string;
 };
 
+export type IndexedAlbum = Album & {
+	index: number;
+};
+
 const fromAlbumEntry = (
-	album: CollectionEntry<'albums'>,
+	album: Album,
 	index: number
-): Album => ({
-	...album.data,
-	id: album.id,
+): IndexedAlbum => ({
+	...album,
 	index
 });
 
-const sortByColor = (albums: Album[]) =>
+const sortByColor = (albums: IndexedAlbum[]) =>
 	albums.toSorted((a, b) => {
 		const aHue = Hct.fromInt(argbFromHex(a.dominantColor)).hue;
 		const bHue = Hct.fromInt(argbFromHex(b.dominantColor)).hue;
@@ -32,7 +32,7 @@ const sortByColor = (albums: Album[]) =>
 
 // Albums are sorted first so their index is predictable and
 // coherent with the covers sprite.
-export const albumCollection = await getCollection('albums')
+export const albumCollection = await flatCollection('albums')
 	.then((albums) =>
 		albums.toSorted((a, b) => a.id.localeCompare(b.id))
 	)
