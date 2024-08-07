@@ -157,6 +157,11 @@ const {
 	import rootsPainter from '../worklets/rootsPainter?worker&url';
 
 	if ('paintWorklet' in CSS) {
+		document.documentElement.style.setProperty(
+			'--roots-seed',
+			Date.now().toString()
+		);
+
 		CSS.paintWorklet.addModule(rootsPainter);
 	}
 </script>

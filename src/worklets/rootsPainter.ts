@@ -1,14 +1,14 @@
 class RootsPainter {
+	static SeedProp = '--roots-seed';
 	static ColorProp = '--roots-color';
 	static ColorVariantProp = '--roots-color-variant';
-	private seed = 0;
 
 	static get inputProperties() {
-		return [this.ColorProp, this.ColorVariantProp];
-	}
-
-	constructor() {
-		this.seed = Date.now();
+		return [
+			this.SeedProp,
+			this.ColorProp,
+			this.ColorVariantProp
+		];
 	}
 
 	paint(
@@ -16,6 +16,9 @@ class RootsPainter {
 		geom: PaintSize,
 		properties: StylePropertyMapReadOnly
 	) {
+		const seed = parseInt(
+			properties.get(RootsPainter.SeedProp)!.toString()
+		);
 		const rootColor = properties
 			.get(RootsPainter.ColorProp)!
 			.toString();
@@ -34,7 +37,7 @@ class RootsPainter {
 		gradient.addColorStop(1, rootBaseColor);
 		ctx.strokeStyle = gradient;
 
-		const random = this.random();
+		const random = this.random(seed);
 		let baseX = 0;
 
 		do {
@@ -76,8 +79,7 @@ class RootsPainter {
 	}
 
 	// @see https://12daysofweb.dev/2021/houdini/#add-randomness-responsibly-with-a-prng
-	random() {
-		let seed = Number(this.seed);
+	random(seed: number) {
 		return () => {
 			seed |= 0;
 			seed = (seed + 0x6d2b79f5) | 0;
