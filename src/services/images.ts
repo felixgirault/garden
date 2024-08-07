@@ -86,3 +86,16 @@ export const getImagePalette = async (
 		accent: accent ? hexFromArgb(accentHct.toInt()) : undefined
 	};
 };
+
+// @see https://github.com/lovell/sharp/issues/1337#issuecomment-412880172
+export const getThumbnailData = async (
+	path: string,
+	size = 10
+): Promise<string> => {
+	const buffer = await sharp(path)
+		.resize(size)
+		.webp()
+		.toBuffer();
+
+	return `data:image/webp;base64,${buffer.toString('base64')}`;
+};

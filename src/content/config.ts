@@ -9,6 +9,7 @@ export const collections = {
 				artist: z.string(),
 				description: z.string().optional(),
 				cover: image(),
+				microCover: z.string().url(),
 				preview: z.string().url(),
 				deezerId: z.number().optional(),
 				spotifyId: z.string().optional(),

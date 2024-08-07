@@ -12,15 +12,15 @@ export async function getStaticPaths() {
 }
 
 const {album} = Astro.props;
-const {title, cover} = album;
+const {title, microCover} = album;
 ---
 
 <Layout
 	theme="dark"
 	themeColor={album.accentColor}
-	{title}
-	{cover}
+	cover={microCover}
 	breadcrumbs={[{title: 'favorite albums', url: '/albums'}]}
+	{title}
 >
 	<Album {album} />
 	<AlbumGrid />

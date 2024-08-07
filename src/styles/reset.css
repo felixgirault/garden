@@ -50,6 +50,16 @@
 	--color-neutral: #8d938f;
 	--color-interactive: var(--color-theme);
 	--color-on-interactive: var(--color-surface);
+	--color-roots: color-mix(
+		in srgb,
+		var(--color-theme),
+		var(--color-surface) 97.5%
+	);
+	--color-roots-variant: color-mix(
+		in srgb,
+		var(--color-theme),
+		var(--color-surface) 95%
+	);
 
 	--shadow-strength: 0.2;
 
@@ -91,6 +101,17 @@
 		var(--color-theme-variant),
 		black 90%
 	);
+	--color-roots: color-mix(
+		in srgb,
+		var(--color-theme),
+		var(--color-surface) 96%
+	);
+	--color-roots-variant: color-mix(
+		in srgb,
+		var(--color-theme),
+		var(--color-surface) 95%
+	);
+
 	--shadow-strength: 0.3;
 }
 

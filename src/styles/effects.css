@@ -30,16 +30,8 @@
 
 @supports (background-image: paint(id)) {
 	.Roots {
-		--roots-color: color-mix(
-			in srgb,
-			var(--color-theme),
-			var(--color-surface) 97.5%
-		);
-		--roots-color-variant: color-mix(
-			in srgb,
-			var(--color-theme),
-			var(--color-surface) 92%
-		);
+		--roots-color: var(--color-roots);
+		--roots-color-variant: var(--color-roots-variant);
 		background-image: paint(roots);
 	}
 }
