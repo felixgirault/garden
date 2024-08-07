@@ -27,3 +27,11 @@
 		var(--color-interactive) 15%
 	);
 }
+
+@supports (background-image: paint(id)) {
+	.Roots {
+		--roots-color: var(--color-roots);
+		--roots-color-variant: var(--color-roots-variant);
+		background-image: paint(roots);
+	}
+}
