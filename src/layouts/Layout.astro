@@ -152,9 +152,12 @@ const {
 	</body>
 </html>
 
-<script is:inline>
+<script>
+	// @see https://github.com/vitejs/vite/issues/10271#issuecomment-1260944521
+	import rootsPainter from '../worklets/rootsPainter?worker&url';
+
 	if ('paintWorklet' in CSS) {
-		CSS.paintWorklet.addModule('/js/rootsPainter.js');
+		CSS.paintWorklet.addModule(rootsPainter);
 	}
 </script>
 

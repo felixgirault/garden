@@ -1,6 +1,7 @@
 class RootsPainter {
 	static ColorProp = '--roots-color';
 	static ColorVariantProp = '--roots-color-variant';
+	private seed = 0;
 
 	static get inputProperties() {
 		return [this.ColorProp, this.ColorVariantProp];
@@ -10,12 +11,16 @@ class RootsPainter {
 		this.seed = Date.now();
 	}
 
-	paint(ctx, geom, properties) {
+	paint(
+		ctx: PaintRenderingContext2D,
+		geom: PaintSize,
+		properties: StylePropertyMapReadOnly
+	) {
 		const rootColor = properties
-			.get(RootsPainter.ColorProp)
+			.get(RootsPainter.ColorProp)!
 			.toString();
 		const rootBaseColor = properties
-			.get(RootsPainter.ColorVariantProp)
+			.get(RootsPainter.ColorVariantProp)!
 			.toString();
 
 		const gradient = ctx.createLinearGradient(
@@ -83,7 +88,13 @@ class RootsPainter {
 	}
 
 	// @see https://stackoverflow.com/a/29325222
-	biasedRandom(random, min, max, bias, influence) {
+	biasedRandom(
+		random: () => number,
+		min: number,
+		max: number,
+		bias: number,
+		influence: number
+	) {
 		const num = random() * (max - min) + min;
 		const mix = random() * influence;
 		return num * (1 - mix) + bias * mix;

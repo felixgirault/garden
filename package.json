@@ -20,6 +20,7 @@
     "@material/material-color-utilities": "^0.3.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^20.14.9",
+    "new-javascript": "^0.4.7",
     "prettier": "^3.3.2",
     "prettier-plugin-astro": "^0.14.0",
     "yaml": "^2.5.0"
