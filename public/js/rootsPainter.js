@@ -6,6 +6,10 @@ class RootsPainter {
 		return [this.ColorProp, this.ColorVariantProp];
 	}
 
+	constructor() {
+		this.seed = Date.now();
+	}
+
 	paint(ctx, geom, properties) {
 		const rootColor = properties
 			.get(RootsPainter.ColorProp)
@@ -25,20 +29,27 @@ class RootsPainter {
 		gradient.addColorStop(1, rootBaseColor);
 		ctx.strokeStyle = gradient;
 
+		const random = this.random();
 		let baseX = 0;
 
 		do {
-			baseX += 20 + Math.random() * 150;
-			ctx.lineWidth = this.biasedRandom(2, 150, 20, 1.5);
-			ctx.globalAlpha = 0.7 + 0.3 * Math.random();
+			baseX += 20 + random() * 150;
+			ctx.globalAlpha = 0.7 + 0.3 * random();
+			ctx.lineWidth = this.biasedRandom(
+				random,
+				5,
+				180,
+				15,
+				1.2
+			);
 
 			let curveX = baseX;
 			let curveY = geom.height;
 
 			do {
-				const dir = Math.random() > 0.5 ? 1 : -1;
-				const curveWidth = (50 + Math.random() * 300) * dir;
-				const curveHeight = 500 + Math.random() * 500;
+				const dir = random() > 0.5 ? 1 : -1;
+				const curveWidth = (50 + random() * 300) * dir;
+				const curveHeight = 500 + random() * 500;
 
 				ctx.beginPath();
 				ctx.moveTo(curveX, curveY);
@@ -59,11 +70,23 @@ class RootsPainter {
 		} while (baseX < geom.width);
 	}
 
+	// @see https://12daysofweb.dev/2021/houdini/#add-randomness-responsibly-with-a-prng
+	random() {
+		let seed = Number(this.seed);
+		return () => {
+			seed |= 0;
+			seed = (seed + 0x6d2b79f5) | 0;
+			let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+			t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+			return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+		};
+	}
+
 	// @see https://stackoverflow.com/a/29325222
-	biasedRandom(min, max, bias, influence) {
-		const random = Math.random() * (max - min) + min;
-		const mix = Math.random() * influence;
-		return random * (1 - mix) + bias * mix;
+	biasedRandom(random, min, max, bias, influence) {
+		const num = random() * (max - min) + min;
+		const mix = random() * influence;
+		return num * (1 - mix) + bias * mix;
 	}
 }
 
