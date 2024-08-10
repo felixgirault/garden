@@ -1,4 +1,10 @@
 ---
+import {easeSinInOut} from 'd3-ease';
+import {
+	scaleStops,
+	scrim,
+	stopsToCssStops
+} from '../services/css';
 import '../styles/reset.css';
 import '../styles/content.css';
 import '../styles/grids.css';
@@ -30,6 +36,11 @@ const {
 	cover,
 	noIndex = false
 } = Astro.props;
+
+const pageCoverMaskStops = stopsToCssStops([
+	[0, 0.2],
+	...scaleStops(scrim(easeSinInOut, 6), [0.2, 0.2], [1, 0])
+]);
 ---
 
 <html
@@ -90,10 +101,21 @@ const {
 			}
 		</style>
 
+		{
+			cover ? (
+				<style
+					set:html={`:root { --page-cover-mask-stops: ${pageCoverMaskStops} }`}
+				/>
+			) : null
+		}
+
 		<title>{title} | fglt</title>
 	</head>
 
-	<body class="Page" {lang}>
+	<body
+		class:list={{Page: true, 'Page--hasCover': !!cover}}
+		{lang}
+	>
 		<div class="Page-container">
 			<header class="Page-header">
 				<p class="Page-title" role="banner">fglt.</p>
@@ -167,44 +189,30 @@ const {
 </script>
 
 <style>
-	.Page {
-		position: relative;
-	}
-
-	.Page::before {
+	.Page--hasCover::before {
+		--gradient-size: closest-side;
 		content: '';
 		position: absolute;
 		top: 0;
 		right: 0;
 		left: 0;
-		height: 80vh;
-		background-image: linear-gradient(
-				to top,
-				var(--color-surface) 0,
-				color-mix(
-						in srgb,
-						var(--color-surface),
-						transparent 30%
-					)
-					30vh,
-				color-mix(
-						in srgb,
-						var(--color-surface),
-						transparent 35%
-					)
-					70vh,
-				color-mix(
-						in srgb,
-						var(--color-surface),
-						transparent 30%
-					)
-					100%
-			),
-			var(--page-cover-image);
-		background-size: 100%, cover;
+		aspect-ratio: 16 / 9;
+		mask-image: radial-gradient(
+			var(--gradient-size),
+			var(--page-cover-mask-stops)
+		);
+		background-image: var(--page-cover-image);
+		background-size: cover;
 		background-repeat: no-repeat;
-		filter: blur(100px);
-		opacity: 0.7;
+		/* This smoothes out the image scaling for whatever reason */
+		background-blend-mode: color;
+	}
+
+	@media (orientation: portrait) {
+		.Page--hasCover::before {
+			--gradient-size: farthest-side;
+			aspect-ratio: 1 / 2;
+		}
 	}
 
 	.Page-container {
