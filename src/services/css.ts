@@ -29,5 +29,5 @@ export const scaleStops = (
 const stopToCssStop = ([x, y]: Stop) =>
 	`hsla(0 0% 0% / ${round(y)}) ${round(100 * x)}%`;
 
-export const stopsToCssGradient = (stops: Stop[]) =>
-	`linear-gradient(${stops.map(stopToCssStop).join(', ')})`;
+export const stopsToCssStops = (stops: Stop[]) =>
+	stops.map(stopToCssStop).join(', ');

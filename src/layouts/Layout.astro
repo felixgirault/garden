@@ -1,9 +1,9 @@
 ---
-import {easePolyInOut, easeSinInOut} from 'd3-ease';
+import {easeSinInOut} from 'd3-ease';
 import {
 	scaleStops,
 	scrim,
-	stopsToCssGradient
+	stopsToCssStops
 } from '../services/css';
 import '../styles/reset.css';
 import '../styles/content.css';
@@ -37,13 +37,9 @@ const {
 	noIndex = false
 } = Astro.props;
 
-const pageCoverMask = stopsToCssGradient([
-	...scaleStops(scrim(easeSinInOut, 6), [0, 0.15], [0.12, 0.2]),
-	...scaleStops(
-		scrim(easePolyInOut.exponent(1.5), 3),
-		[0.45, 0.2],
-		[1, 0]
-	)
+const pageCoverMaskStops = stopsToCssStops([
+	[0, 0.2],
+	...scaleStops(scrim(easeSinInOut, 6), [0.2, 0.2], [1, 0])
 ]);
 ---
 
@@ -183,22 +179,33 @@ const pageCoverMask = stopsToCssGradient([
 
 <style
 	define:vars={{
-		'page-cover-mask': pageCoverMask
+		'page-cover-mask-stops': pageCoverMaskStops
 	}}
 >
 	.Page::before {
+		--gradient-size: closest-side;
 		content: '';
 		position: absolute;
 		top: 0;
 		right: 0;
 		left: 0;
-		height: 90vh;
-		mask-image: var(--page-cover-mask);
+		aspect-ratio: 16 / 9;
+		mask-image: radial-gradient(
+			var(--gradient-size),
+			var(--page-cover-mask-stops)
+		);
 		background-image: var(--page-cover-image);
 		background-size: cover;
 		background-repeat: no-repeat;
 		/* This smoothes out the image scaling for whatever reason */
 		background-blend-mode: color;
+	}
+
+	@media (orientation: portrait) {
+		.Page::before {
+			--gradient-size: farthest-side;
+			aspect-ratio: 1 / 2;
+		}
 	}
 
 	.Page-container {
