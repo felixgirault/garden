@@ -101,10 +101,21 @@ const pageCoverMaskStops = stopsToCssStops([
 			}
 		</style>
 
+		{
+			cover ? (
+				<style
+					set:html={`:root { --page-cover-mask-stops: ${pageCoverMaskStops} }`}
+				/>
+			) : null
+		}
+
 		<title>{title} | fglt</title>
 	</head>
 
-	<body class="Page" {lang}>
+	<body
+		class:list={{Page: true, 'Page--hasCover': !!cover}}
+		{lang}
+	>
 		<div class="Page-container">
 			<header class="Page-header">
 				<p class="Page-title" role="banner">fglt.</p>
@@ -177,12 +188,8 @@ const pageCoverMaskStops = stopsToCssStops([
 	}
 </script>
 
-<style
-	define:vars={{
-		'page-cover-mask-stops': pageCoverMaskStops
-	}}
->
-	.Page::before {
+<style>
+	.Page--hasCover::before {
 		--gradient-size: closest-side;
 		content: '';
 		position: absolute;
@@ -202,7 +209,7 @@ const pageCoverMaskStops = stopsToCssStops([
 	}
 
 	@media (orientation: portrait) {
-		.Page::before {
+		.Page--hasCover::before {
 			--gradient-size: farthest-side;
 			aspect-ratio: 1 / 2;
 		}
