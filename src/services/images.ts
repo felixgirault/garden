@@ -90,7 +90,7 @@ export const getImagePalette = async (
 // @see https://github.com/lovell/sharp/issues/1337#issuecomment-412880172
 export const getThumbnailData = async (
 	path: string,
-	size = 10
+	size = 8
 ): Promise<string> => {
 	const buffer = await sharp(path)
 		.resize(size)
