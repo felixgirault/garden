@@ -213,10 +213,12 @@ a:active {
 button,
 .Button {
 	--color-background-strength: 4%;
-	display: inline-block;
+	display: inline-flex;
+	align-items: center;
+	gap: 0 0.25ch;
 	border: none;
 	border-radius: var(--radius);
-	padding: 0.25em 1ch;
+	padding: 0.25em 1.5ch;
 	outline: 1px solid var(--color-interactive);
 	outline-offset: -1px;
 	background: color-mix(
@@ -239,6 +241,15 @@ button,
 :is(button, .Button):active,
 .Button-trigger:checked + :is(button, .Button) {
 	outline-width: 2px;
+}
+
+:is(button, .Button):has(svg) {
+	padding-inline-start: 1ch;
+}
+
+:is(button, .Button) svg {
+	display: inline-block;
+	height: 1em;
 }
 
 .Button--small {

@@ -1,6 +1,10 @@
 ---
 import {Image} from 'astro:assets';
 import type {Album} from '../services/albums';
+import headphonesIcon from './icons/headphones.svg?raw';
+import headphonesOffIcon from './icons/headphones-off.svg?raw';
+import deezerIcon from './icons/deezer.svg?raw';
+import spotifyIcon from './icons/spotify.svg?raw';
 
 interface Props {
 	album: Album;
@@ -47,14 +51,38 @@ const {
 		/>
 	</aside>
 
-	<ul class="List--raw">
+	<ul class="List--raw List--inline">
+		<li>
+			<button
+				class="Album-previewButton"
+				title="Listen to a preview of a song"
+				data-toggled-title="Stop listening to the song"
+			>
+				<span class="Album-previewOff">
+					<Fragment set:html={headphonesIcon} />
+					Preview
+				</span>
+				<span class="Album-previewOn">
+					<Fragment set:html={headphonesOffIcon} />
+					Stop preview
+				</span>
+			</button>
+
+			<audio class="Album-audio" src={preview} preload="none">
+			</audio>
+		</li>
+
 		{
 			deezerId ? (
 				<li>
 					<a
+						class="Button"
 						href={`https://www.deezer.com/album/${deezerId}`}
-						set:text="Listen on Deezer"
-					/>
+						title="Listen on Deezer"
+						set:text="Deezer"
+					>
+						<Fragment set:html={deezerIcon} />
+					</a>
 				</li>
 			) : null
 		}
@@ -62,20 +90,50 @@ const {
 			spotifyId ? (
 				<li>
 					<a
+						class="Button"
 						href={`https://open.spotify.com/album/${spotifyId}`}
-						set:text="Listen on Spotify"
-					/>
+						title="Listen on Spotify"
+						set:text="Spotify"
+					>
+						<Fragment set:html={spotifyIcon} />
+					</a>
 				</li>
 			) : null
 		}
-		<li>
-			<figure>
-				<figcaption>Track preview</figcaption>
-				<audio src={preview} preload="none" controls></audio>
-			</figure>
-		</li>
 	</ul>
 </article>
+
+<script>
+	const audio =
+		document.querySelector<HTMLAudioElement>('.Album-audio')!;
+	const previewButton =
+		document.querySelector<HTMLButtonElement>(
+			'.Album-previewButton'
+		)!;
+
+	const togglePreviewButton = () => {
+		previewButton.classList.toggle('is-playing');
+		const title = previewButton.dataset.toggledTitle!;
+		previewButton.dataset.toggledTitle = previewButton.title;
+		previewButton.title = title;
+	};
+
+	previewButton.addEventListener('click', () => {
+		if (previewButton.classList.contains('is-playing')) {
+			audio.pause();
+			audio.currentTime = 0;
+		} else {
+			audio.play();
+		}
+
+		togglePreviewButton();
+	});
+
+	audio.addEventListener('ended', () => {
+		audio.currentTime = 0;
+		togglePreviewButton();
+	});
+</script>
 
 <style>
 	article {
@@ -85,9 +143,10 @@ const {
 			'aside'
 			'body';
 		align-items: start;
-		justify-items: start;
+		justify-items: center;
 		gap: 0 4ch;
 		margin-block-end: var(--block-spacing);
+		text-align: center;
 	}
 
 	@media screen and (min-width: 80ch) {
@@ -96,6 +155,8 @@ const {
 				'header aside' min-content
 				'body aside' 1fr
 				/ 2fr 1fr;
+			justify-items: start;
+			text-align: start;
 		}
 	}
 
@@ -109,6 +170,7 @@ const {
 
 	aside {
 		grid-area: aside;
+		margin-bottom: 1lh;
 	}
 
 	h1 {
@@ -121,6 +183,19 @@ const {
 		font-style: italic;
 	}
 
-	[itemprop='description'] {
+	.Album-previewButton span {
+		display: contents;
+	}
+
+	.Album-previewButton .Album-previewOn {
+		display: none;
+	}
+
+	.Album-previewButton.is-playing .Album-previewOn {
+		display: contents;
+	}
+
+	.Album-previewButton.is-playing .Album-previewOff {
+		display: none;
 	}
 </style>
