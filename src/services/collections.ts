@@ -22,3 +22,4 @@ const flatCollection = <C extends CollectionKey>(type: C) =>
 	);
 
 export const albumCollection = await flatCollection('albums');
+export const gameCollection = await flatCollection('games');

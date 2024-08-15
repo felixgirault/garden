@@ -1,0 +1,59 @@
+---
+import {getCollection} from 'astro:content';
+import Game from '../../components/Game.astro';
+import Section from '../../components/Section.astro';
+import Layout from '../../layouts/Layout.astro';
+
+const games = await getCollection('games');
+const {featured, regular} = Object.groupBy(games, ({data}) =>
+	data.isFeatured ? 'featured' : 'regular'
+);
+---
+
+<Layout
+	theme="dark"
+	title="Games you should play"
+	breadcrumbs={[]}
+>
+	<h1>Games you should play</h1>
+
+	<Section isWide>
+		<h2>The very best</h2>
+
+		<ul class="Games-featured List--raw">
+			{
+				featured!.map((game) => (
+					<li>
+						<Game game={game} />
+					</li>
+				))
+			}
+		</ul>
+	</Section>
+
+	<Section>
+		<h2>The very nice</h2>
+
+		<div class="Games-regular List--raw">
+			{
+				regular!.map((game) => (
+					<li>
+						<Game game={game} />
+					</li>
+				))
+			}
+		</div>
+	</Section>
+</Layout>
+
+<style>
+	.Games-featured {
+		columns: 3;
+		gap: 6ch;
+	}
+
+	.Games-regular {
+		columns: 2;
+		gap: 4ch;
+	}
+</style>

@@ -197,6 +197,10 @@ img {
 	block-size: auto;
 }
 
+em {
+	font-family: var(--font-serif);
+}
+
 a {
 	color: var(--color-interactive);
 	text-underline-offset: 0.1lh;

@@ -23,5 +23,15 @@ export const collections = {
 			title: z.string(),
 			date: z.date()
 		})
+	}),
+	games: defineCollection({
+		type: 'content',
+		schema: ({image}) =>
+			z.object({
+				title: z.string(),
+				cover: image(),
+				isFeatured: z.boolean().default(false),
+				steamId: z.number().optional()
+			})
 	})
 };
