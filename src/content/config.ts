@@ -43,6 +43,16 @@ export const collections = {
 			tldr: z.string()
 		})
 	}),
+	games: defineCollection({
+		type: 'content',
+		schema: ({image}) =>
+			z.object({
+				title: z.string(),
+				cover: image(),
+				isFeatured: z.boolean().default(false),
+				steamId: z.number().optional()
+			})
+	}),
 	ideas: defineCollection({
 		loader: glob({
 			pattern: '*.yml',

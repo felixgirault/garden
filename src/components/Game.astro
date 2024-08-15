@@ -1,0 +1,51 @@
+---
+import {Image} from 'astro:assets';
+import type {CollectionEntry} from 'astro:content';
+import steamIcon from './icons/steam.svg?raw';
+
+interface Props {
+	game: CollectionEntry<'games'>;
+}
+
+const {game} = Astro.props;
+const {title, cover, steamId} = game.data;
+const {Content} = await game.render();
+---
+
+<article>
+	<Image
+		class="Backdrop"
+		src={cover}
+		alt=""
+		loading="eager"
+		itemprop="image"
+	/>
+
+	<h3>{title}</h3>
+
+	<Content />
+
+	{
+		steamId ? (
+			<a
+				class="Button"
+				href={`https://store.steampowered.com/app/${steamId}`}
+				title="View on Steam"
+				set:text="Steam"
+			>
+				<Fragment set:html={steamIcon} />
+			</a>
+		) : null
+	}
+</article>
+
+<style>
+	article {
+		margin-block-end: 2lh;
+		break-inside: avoid;
+	}
+
+	h3 {
+		margin-block: 1rem 0.25rem;
+	}
+</style>

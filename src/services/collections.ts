@@ -22,3 +22,5 @@ export const flatCollection = <C extends CollectionKey>(
 	getCollection(type).then((entries) =>
 		Promise.all(entries.map(flattenEntry))
 	);
+
+export const gameCollection = await flatCollection('games');
