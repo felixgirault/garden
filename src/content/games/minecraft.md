@@ -18,3 +18,6 @@ Although being free of hard constraints, there's some goals to
 the game which will lead you to explore every places and
 mechanics of it. Fixed goals with infinite ways to reach them
 makes for a perfect recipe for unforgettable adventures!
+
+If you played already, just load up an old save and see how much
+memories it brings back :)
