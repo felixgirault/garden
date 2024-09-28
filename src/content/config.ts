@@ -23,5 +23,12 @@ export const collections = {
 			title: z.string(),
 			date: z.date()
 		})
+	}),
+	devTips: defineCollection({
+		type: 'content',
+		schema: z.object({
+			title: z.string(),
+			tldr: z.string()
+		})
 	})
 };

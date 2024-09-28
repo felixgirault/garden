@@ -260,6 +260,10 @@ code {
 	font-family: var(--font-mono);
 }
 
+abbr {
+	text-underline-offset: 0.1lh;
+}
+
 blockquote {
 	margin-inline: auto;
 	padding-inline: var(--line-indent);

@@ -1,0 +1,46 @@
+---
+import {getCollection} from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import Card from '../../../components/Card.astro';
+
+const articles = await getCollection('devTips');
+---
+
+<Layout title="Tips & tricks" breadcrumbs={[]}>
+	<h1>Web dev tips & tricks</h1>
+
+	<p>
+		Some quick tips about pretty much anything related to web
+		development.
+	</p>
+
+	<ul>
+		{
+			articles.map((article) => (
+				<li>
+					<Card>
+						<h2 slot="header">
+							<a href={`/dev/tips/${article.slug}`}>
+								{article.data.title}
+							</a>
+						</h2>
+
+						<p slot="body">{article.data.tldr}</p>
+					</Card>
+				</li>
+			))
+		}
+	</ul>
+</Layout>
+
+<style>
+	ul {
+		margin-top: 2lh;
+	}
+
+	h2 {
+		margin-block: 1em 0;
+		font: inherit;
+		font-weight: bold;
+	}
+</style>
