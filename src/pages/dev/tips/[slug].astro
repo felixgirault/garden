@@ -1,0 +1,41 @@
+---
+import {getCollection} from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+	const articles = await getCollection('devTips');
+	return articles.map((article) => ({
+		params: {slug: article.slug},
+		props: {article}
+	}));
+}
+
+const {article} = Astro.props;
+const {Content} = await article.render();
+---
+
+<Layout
+	title="Tips & tricks"
+	breadcrumbs={[{title: 'tips & tricks', url: '/dev/tips'}]}
+>
+	<h1>{article.data.title}</h1>
+
+	<p class="tldr">
+		<strong>
+			<abbr
+				title="too long; didn’t read (a short summary of what's to come)"
+				set:text="tldr"
+			/>:
+		</strong>
+		{article.data.tldr}
+	</p>
+
+	<Content />
+</Layout>
+
+<style>
+	.tldr {
+		margin-block-end: 2em;
+		font-style: italic;
+	}
+</style>
