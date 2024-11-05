@@ -39,6 +39,14 @@ With this fix, you also get the benefit of expanding the
 clickable zone everywhere around the text, up to the borders of
 the block.
 
+A good starting point could be this rule targeting all links inside headings:
+
+```css
+:is(h1, h2, h3, h4, h5, h6) a {
+  display: block;
+}
+```
+
 <style>
 	.link {
 		margin-bottom: 1em;
