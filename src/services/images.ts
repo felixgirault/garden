@@ -99,3 +99,32 @@ export const getThumbnailData = async (
 
 	return `data:image/webp;base64,${buffer.toString('base64')}`;
 };
+
+// Assumes that all images are squares with equal dimensions.
+export const buildSprite = async (
+	paths: string[],
+	size: number,
+	out: string
+) => {
+	const buffers = await Promise.all(
+		paths.map((path) => sharp(path).resize(size).toBuffer())
+	);
+
+	await sharp({
+		create: {
+			width: buffers.length * size,
+			height: size,
+			channels: 3,
+			background: {r: 0, g: 0, b: 0}
+		}
+	})
+		.composite(
+			buffers.map((buffer, i) => ({
+				input: buffer,
+				top: 0,
+				left: i * size
+			}))
+		)
+		.webp()
+		.toFile(out);
+};

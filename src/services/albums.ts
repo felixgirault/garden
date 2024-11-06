@@ -9,13 +9,13 @@ export type Album = CollectionEntry<'albums'>['data'] & {
 	accentColor?: string;
 };
 
-const fromAlbumEntry = async (
+const fromAlbumEntry = (
 	album: CollectionEntry<'albums'>
-): Promise<Album> => ({
+): Album => ({
 	...album.data,
 	id: album.id
 });
 
 export const albumCollection = await getCollection(
 	'albums'
-).then((albums) => Promise.all(albums.map(fromAlbumEntry)));
+).then((albums) => albums.map(fromAlbumEntry));

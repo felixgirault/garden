@@ -1,21 +1,16 @@
 ---
-import {Image} from 'astro:assets';
 import {albumCollection} from '../services/albums';
 import Section from './Section.astro';
 ---
 
 <Section isWide>
-	<ul class="List--raw Grid Grid--10">
+	<ul
+		class="List--raw Grid Grid--10"
+		style={`--album-count: ${albumCollection.length}`}
+	>
 		{
 			albumCollection.map(
-				({
-					id,
-					title,
-					artist,
-					cover,
-					preview,
-					dominantColor
-				}) => {
+				({id, title, artist, preview, dominantColor}, i) => {
 					const linkTitle = `${title} by ${artist}`;
 
 					return (
@@ -25,19 +20,8 @@ import Section from './Section.astro';
 								href={`/albums/${id}`}
 								title={linkTitle}
 								data-preview={preview}
-							>
-								<Image
-									class="Backdrop"
-									src={cover}
-									alt={linkTitle}
-									widths={[60]}
-									sizes="60px"
-									loading="eager"
-									style={{
-										background: dominantColor
-									}}
-								/>
-							</a>
+								style={`--album-index: ${i}; --album-color: ${dominantColor};`}
+							/>
 						</li>
 					);
 				}
@@ -48,7 +32,18 @@ import Section from './Section.astro';
 
 <style>
 	a {
+		--album-index: 0;
+		--album-color: transparent;
 		display: block;
+		border-radius: var(--radius);
+		background-color: var(--album-color);
+		background-image: url('/sprites/album-covers.webp');
+		background-size: auto 100%;
+		background-repeat: no-repeat;
+		background-position-x: calc(
+			100% / (var(--album-count) - 1) * var(--album-index)
+		);
+		aspect-ratio: 1 / 1;
 	}
 
 	a:is(:hover, :focus) {
