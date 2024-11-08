@@ -128,6 +128,7 @@ html {
 	line-height: var(--line-height-m);
 	font-size: var(--font-size-root);
 	font-family: var(--font-sans);
+	scrollbar-gutter: stable;
 }
 
 h1 {
