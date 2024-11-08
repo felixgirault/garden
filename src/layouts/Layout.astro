@@ -63,6 +63,14 @@ const pageCoverMaskStops = stopsToCssStops([
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 
+		<link
+			rel="preload"
+			as="font"
+			href="/fonts/noto-sans.woff2"
+			type="font/woff2"
+			crossorigin
+		/>
+
 		<style>
 			@font-face {
 				font-family: 'Noto Sans';
@@ -74,7 +82,7 @@ const pageCoverMaskStops = stopsToCssStops([
 				font-style: normal;
 				font-weight: 100 700;
 				font-stretch: 100%;
-				font-display: block;
+				font-display: swap;
 			}
 
 			@font-face {
