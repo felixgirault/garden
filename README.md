@@ -12,3 +12,6 @@ I'll strive to use bare web technologies as much as possible,
 leading to a simple and efficient website. I'm currently betting
 on [Astro](https://astro.build/) to provide just the right level
 of abstraction.
+
+Other technologies are listed in
+[the colophon](./src/pages/colophon.md).
