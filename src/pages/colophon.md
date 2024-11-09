@@ -14,6 +14,8 @@ This website is build using the following technologies:
 -  [Slice](https://slice-gui.netlify.app) to adjust the axes of
    variables fonts
 -  [fontTools](https://fonttools.readthedocs.io) to subset fonts
+-  [fontaine](https://github.com/unjs/fontaine) to provide font
+   fallbacks with adjusted metrics
 -  [Deezer API](https://developers.deezer.com/api) to retrieve
    information about [music albums](/albums)
 -  [Material color utilities](https://github.com/material-foundation/material-color-utilities)
