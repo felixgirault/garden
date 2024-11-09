@@ -1,5 +1,6 @@
 ---
 import {easeSinInOut} from 'd3-ease';
+import {hashCode} from '../services/math';
 import {
 	scaleStops,
 	scrim,
@@ -41,6 +42,8 @@ const pageCoverMaskStops = stopsToCssStops([
 	[0, 0.2],
 	...scaleStops(scrim(easeSinInOut, 6), [0.2, 0.2], [1, 0])
 ]);
+
+const seed = hashCode(Astro.url.pathname);
 ---
 
 <html
@@ -177,16 +180,13 @@ const pageCoverMaskStops = stopsToCssStops([
 	</body>
 </html>
 
+<style define:vars={{'roots-seed': seed}}></style>
+
 <script>
 	// @see https://github.com/vitejs/vite/issues/10271#issuecomment-1260944521
 	import rootsPainter from '../worklets/rootsPainter?worker&url';
 
 	if ('paintWorklet' in CSS) {
-		document.documentElement.style.setProperty(
-			'--roots-seed',
-			Date.now().toString()
-		);
-
 		CSS.paintWorklet.addModule(rootsPainter);
 	}
 </script>
