@@ -30,8 +30,9 @@ export const collections = {
 			z.object({
 				title: z.string(),
 				cover: image(),
-				isFeatured: z.boolean().default(false),
-				steamId: z.number().optional()
+				website: z.string().url().optional(),
+				steamId: z.number().optional(),
+				isFeatured: z.boolean().default(false)
 			})
 	})
 };

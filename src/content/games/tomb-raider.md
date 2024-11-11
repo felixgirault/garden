@@ -1,6 +1,7 @@
 ---
 title: Tomb raider reboot series
 cover: tomb-raider.jpg
+steamId: 203160
 ---
 
 There is a vibe to these games that I can't quite wrap my mind

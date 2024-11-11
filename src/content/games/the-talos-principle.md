@@ -1,6 +1,7 @@
 ---
 title: The Talos principle series
 cover: ./the-talos-principle.jpg
+steamId: 257510
 isFeatured: true
 ---
 
