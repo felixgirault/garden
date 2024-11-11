@@ -117,7 +117,14 @@
 		var(--color-theme),
 		var(--color-surface) 95%
 	);
+	--shadow-strength: 0.3;
+}
 
+.Theme--playful {
+	--color-theme: #006bff;
+	--color-theme-variant: #fff100;
+	--color-surface: #fff100;
+	--color-on-surface: #2f2c00;
 	--shadow-strength: 0.3;
 }
 

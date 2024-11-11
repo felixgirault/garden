@@ -11,11 +11,17 @@ const {featured, regular} = Object.groupBy(games, ({data}) =>
 ---
 
 <Layout
-	theme="dark"
+	theme="playful"
 	title="Games you should play"
 	breadcrumbs={[]}
 >
-	<h1>Games you should play</h1>
+	<h1>Games! They're fun!</h1>
+
+	<p>
+		Here are some of the best games I played over the last
+		decades. They're mostly PC games, but most of them could be
+		found on other platforms as well.
+	</p>
 
 	<Section isWide>
 		<h2>The very best</h2>
@@ -50,7 +56,7 @@ const {featured, regular} = Object.groupBy(games, ({data}) =>
 	.Games-featured {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(40ch, 1fr));
-		gap: var(--block-spacing) var(--line-padding);
+		gap: var(--block-spacing) calc(2 * var(--line-padding));
 	}
 
 	.Games-regular {
