@@ -8,7 +8,7 @@ interface Props {
 }
 
 const {game} = Astro.props;
-const {title, cover, steamId} = game.data;
+const {title, cover, website, steamId} = game.data;
 const {Content} = await game.render();
 ---
 
@@ -24,6 +24,17 @@ const {Content} = await game.render();
 	<h3>{title}</h3>
 
 	<Content />
+
+	{
+		website ? (
+			<a
+				class="Button"
+				href={website}
+				title="Visit website"
+				set:text="Website"
+			/>
+		) : null
+	}
 
 	{
 		steamId ? (

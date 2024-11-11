@@ -31,7 +31,7 @@ const {featured, regular} = Object.groupBy(games, ({data}) =>
 		</ul>
 	</Section>
 
-	<Section>
+	<Section isWide>
 		<h2>The very nice</h2>
 
 		<div class="Games-regular List--raw">
@@ -48,12 +48,14 @@ const {featured, regular} = Object.groupBy(games, ({data}) =>
 
 <style>
 	.Games-featured {
-		columns: 3;
-		gap: 6ch;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(40ch, 1fr));
+		gap: var(--block-spacing) var(--line-padding);
 	}
 
 	.Games-regular {
-		columns: 2;
-		gap: 4ch;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(30ch, 1fr));
+		gap: var(--block-spacing) var(--line-padding);
 	}
 </style>

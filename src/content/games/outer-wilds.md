@@ -1,8 +1,8 @@
 ---
 title: Outer Wilds
 cover: ./outer-wilds.jpg
-isFeatured: true
 steamId: 753640
+isFeatured: true
 ---
 
 _The true sense of wonder._

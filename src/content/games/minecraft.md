@@ -1,6 +1,7 @@
 ---
 title: Minecraft
 cover: ./minecraft.jpg
+website: https://www.minecraft.net
 isFeatured: true
 ---
 

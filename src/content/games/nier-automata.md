@@ -5,4 +5,4 @@ steamId: 524220
 isFeatured: true
 ---
 
-Soundtrack
+_A mishmash of genres with an exceptional soudtrack._
