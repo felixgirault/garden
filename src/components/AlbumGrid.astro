@@ -10,7 +10,14 @@ import Section from './Section.astro';
 	>
 		{
 			albumCollection.map(
-				({id, title, artist, preview, dominantColor}, i) => {
+				({
+					id,
+					index,
+					title,
+					artist,
+					preview,
+					dominantColor
+				}) => {
 					const linkTitle = `${title} by ${artist}`;
 
 					return (
@@ -20,7 +27,7 @@ import Section from './Section.astro';
 								href={`/albums/${id}`}
 								title={linkTitle}
 								data-preview={preview}
-								style={`--album-index: ${i}; --album-color: ${dominantColor};`}
+								style={`--album-index: ${index}; --album-color: ${dominantColor};`}
 							/>
 						</li>
 					);
