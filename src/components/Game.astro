@@ -13,13 +13,14 @@ const {Content} = await game.render();
 ---
 
 <article>
-	<Image
-		class="Backdrop"
-		src={cover}
-		alt=""
-		loading="eager"
-		itemprop="image"
-	/>
+	<div class="thumbnail">
+		<Image
+			src={cover}
+			alt=""
+			loading="eager"
+			itemprop="image"
+		/>
+	</div>
 
 	<h3>{title}</h3>
 
@@ -54,6 +55,16 @@ const {Content} = await game.render();
 	article {
 		margin-block-end: 2lh;
 		break-inside: avoid;
+	}
+
+	.thumbnail {
+		border-radius: var(--radius);
+		background: var(--color-theme);
+	}
+
+	.thumbnail img {
+		width: 100%;
+		mix-blend-mode: luminosity;
 	}
 
 	h3 {
