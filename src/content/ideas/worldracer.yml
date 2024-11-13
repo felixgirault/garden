@@ -1,0 +1,9 @@
+title: Worldracer
+description: A racing game in 2d top view, based on OpenStreetMap data.
+features:
+  - Pick a starting point
+  - Pick a finish point
+  - Place checkpoints
+  - Race with other players
+  - Publish race tracks
+  - Pick cars specs for a given track (speed, acceleration, …)

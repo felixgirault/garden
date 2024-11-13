@@ -1,0 +1,10 @@
+title: Progressive metronome
+description: A metronome that is constantly accelerating to be used for training purposes.
+features:
+  - Pick a starting BPM
+  - Pick a time signature
+  - Pick a rate of acceleration
+  - Use a constant acceleration (i.e. add x BPM per minute)
+  - Use a stepped acceleration (i.e. add x BPM per bar)
+
+
