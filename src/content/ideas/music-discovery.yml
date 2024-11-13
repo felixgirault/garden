@@ -1,0 +1,7 @@
+title: Music discovery
+description: A gamified way to discover new music.
+features:
+  - Choose an album to start from
+  - Unlock other albums by listening to the first one (other albums from the same artist, albums from similar artists, …)
+  - Pick an album suggestion to start again from there
+  - Go back in the tree to branch out anywhere

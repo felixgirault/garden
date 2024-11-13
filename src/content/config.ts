@@ -30,5 +30,13 @@ export const collections = {
 			title: z.string(),
 			tldr: z.string()
 		})
+	}),
+	ideas: defineCollection({
+		type: 'data',
+		schema: z.object({
+			title: z.string(),
+			description: z.string(),
+			features: z.array(z.string())
+		})
 	})
 };

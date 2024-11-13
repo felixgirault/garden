@@ -23,7 +23,6 @@ import Card from './Card.astro';
 				<Card>
 					<h4 slot="header">
 						<a
-							slot="footer"
 							href="/dev/resources"
 							set:text="Resources"
 						/>
@@ -40,16 +39,25 @@ import Card from './Card.astro';
 			<li>
 				<Card>
 					<h4 slot="header">
-						<a
-							slot="footer"
-							href="/dev/tips"
-							set:text="Tips & tricks"
-						/>
+						<a href="/dev/tips" set:text="Tips & tricks" />
 					</h4>
 
 					<p slot="body">
 						Quick tips about anything related to web
 						development.
+					</p>
+				</Card>
+			</li>
+
+			<li>
+				<Card>
+					<h4 slot="header">
+						<a href="/ideas" set:text="Ideas" />
+					</h4>
+
+					<p slot="body">
+						Concepts of apps I would like to see exist,
+						whoever builds them.
 					</p>
 				</Card>
 			</li>
