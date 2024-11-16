@@ -1,7 +1,9 @@
 ---
 layout: ../layouts/MarkdownLayout.astro
 title: Colophon
-breadcrumbs: []
+breadcrumbs:
+   - title: slash pages
+     url: /slash
 ---
 
 # Colophon
