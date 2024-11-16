@@ -1,7 +1,9 @@
 ---
 layout: ../layouts/MarkdownLayout.astro
 title: Hello
-breadcrumbs: []
+breadcrumbs:
+   - title: slash pages
+     url: /slash
 ---
 
 # Hello

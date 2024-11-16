@@ -5,7 +5,10 @@ import Layout from '../layouts/Layout.astro';
 const ideas = await getCollection('ideas');
 ---
 
-<Layout title="Ideas" breadcrumbs={[]}>
+<Layout
+	title="Ideas"
+	breadcrumbs={[{title: 'slash pages', url: '/slash'}]}
+>
 	<h1>Ideas</h1>
 
 	<p>
