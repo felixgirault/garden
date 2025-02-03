@@ -16,6 +16,7 @@ _Contact_
 
 _Social_
 
+-  [Bluesky](https://bsky.app/profile/fglt.fr)
 -  [Twitter](https://x.com/_fg_)
 -  [LinkedIn](https://www.linkedin.com/in/felixgirault/)
 
