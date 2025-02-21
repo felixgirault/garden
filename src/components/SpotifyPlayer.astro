@@ -1,0 +1,67 @@
+---
+import type {SpotifyOnIframeApiReady} from '../services/spotify';
+
+declare global {
+	interface Window {
+		onSpotifyIframeApiReady: SpotifyOnIframeApiReady;
+	}
+}
+---
+
+<div id="SpotifyPlayer"></div>
+
+<script
+	is:inline
+	async
+	src="https://open.spotify.com/embed/iframe-api/v1"
+></script>
+
+<script>
+	import type {
+		SpotifyController,
+		SpotifyId
+	} from '../services/spotify';
+
+	const setupPlayer = (controller: SpotifyController) => {
+		let currentId: SpotifyId;
+
+		const load = (id: string) => {
+			currentId = id;
+			controller.loadUri(`spotify:track:${currentId}`);
+			controller.play();
+		};
+
+		document.addEventListener('click', (event) => {
+			const spotifyIdContainer = (
+				event.target as HTMLElement
+			).closest<HTMLElement>('[data-spotify-id]');
+
+			if (spotifyIdContainer) {
+				load(spotifyIdContainer.dataset.spotifyId!);
+			}
+		});
+
+		controller.addListener('playback_update', ({data}) => {
+			if (data.isPaused && data.position === 0) {
+				const nextItem = document.querySelector<HTMLElement>(
+					`[data-spotify-id="${currentId}"] + [data-spotify-id]`
+				);
+
+				if (nextItem) {
+					load(nextItem.dataset.spotifyId!);
+				}
+			}
+		});
+	};
+
+	window.onSpotifyIframeApiReady = (api) => {
+		api.createController(
+			document.getElementById('SpotifyPlayer')!,
+			{
+				width: '100%',
+				height: '152'
+			},
+			setupPlayer
+		);
+	};
+</script>
