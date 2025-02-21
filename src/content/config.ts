@@ -1,5 +1,7 @@
 import {glob} from 'astro/loaders';
 import {defineCollection, z} from 'astro:content';
+import {fetchDbData} from '../services/db';
+import {fromDbTracks} from '../services/moodboard';
 
 export const collections = {
 	albums: defineCollection({
@@ -50,6 +52,18 @@ export const collections = {
 			title: z.string(),
 			description: z.string(),
 			features: z.array(z.string())
+		})
+	}),
+	moodboardTracks: defineCollection({
+		loader: async () => {
+			const tracks = await fetchDbData();
+			return fromDbTracks(tracks);
+		},
+		schema: z.object({
+			title: z.string(),
+			artist: z.string(),
+			energy: z.number(),
+			valence: z.number()
 		})
 	})
 };
