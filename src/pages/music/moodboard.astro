@@ -1,0 +1,357 @@
+---
+import {getCollection} from 'astro:content';
+import Section from '../../components/Section.astro';
+import SpotifyPlayer from '../../components/SpotifyPlayer.astro';
+import Layout from '../../layouts/Layout.astro';
+
+const trackCollection = await getCollection('moodboardTracks');
+const tracks = trackCollection.map(({id, data}) => ({
+	id,
+	...data
+}));
+
+const presets = {
+	Chill: [
+		[60, 10],
+		[90, 10]
+	],
+	Energetic: [
+		[80, 90],
+		[90, 90]
+	],
+	Progressive: [
+		[0, 0],
+		[20, 10],
+		[80, 90],
+		[100, 100]
+	]
+};
+
+declare global {
+	interface Window {
+		moodboardTracks: typeof tracks;
+	}
+}
+---
+
+<Layout theme="dark" title="Moodboard" breadcrumbs={[]}>
+	<h1>Moodboard</h1>
+
+	<p>Draw yourself a playlist! 🖌️</p>
+
+	<p>
+		{tracks.length} tracks are hidden in the board below.
+		<br />
+		They are arranged according to their perceived happiness and
+		energy: saddest on the left to happiest on the right, calmer
+		at the bottom to hotter at the top.
+	</p>
+	<p>
+		Some presets are available below for you to get an idea of
+		how this works.
+	</p>
+
+	<ul class="List--inline">
+		{
+			Object.entries(presets).map(([label, path]) => (
+				<li>
+					<button data-preset={JSON.stringify(path)}>
+						{label}
+					</button>
+				</li>
+			))
+		}
+	</ul>
+
+	<Section isWide>
+		<div class="Board" aria-hidden="true">
+			<canvas class="Board-canvas"></canvas>
+
+			<p class="Board-label Board-label--top">▲ energetic</p>
+			<p class="Board-label Board-label--right">▲ happy</p>
+			<p class="Board-label Board-label--bottom">▼ chill</p>
+			<p class="Board-label Board-label--left">▼ sad</p>
+		</div>
+	</Section>
+
+	<SpotifyPlayer />
+
+	<table class="Results">
+		<thead>
+			<tr>
+				<th class="Results-actions" scope="col">Play</th>
+				<th class="Results-title" scope="col">Title</th>
+				<th class="Results-artist" scope="col">Artist</th>
+			</tr>
+		</thead>
+
+		<tbody id="results"></tbody>
+	</table>
+</Layout>
+
+<style>
+	.Board {
+		position: relative;
+		margin-bottom: var(--block-spacing);
+	}
+
+	.Board-label {
+		position: absolute;
+		margin: 0;
+		color: var(--color-surface);
+		font-weight: bold;
+		font-variant: all-small-caps;
+		white-space: nowrap;
+	}
+
+	.Board-label--top {
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.Board-label--right {
+		right: 0;
+		top: 50%;
+		writing-mode: sideways-rl;
+		transform: translateY(-50%);
+	}
+
+	.Board-label--bottom {
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.Board-label--left {
+		left: 0;
+		top: 50%;
+		writing-mode: sideways-rl;
+		transform: translateY(-50%);
+	}
+
+	.Board-canvas {
+		display: block;
+		width: 100%;
+		height: 50vh;
+		background: linear-gradient(
+				to right,
+				rgba(0, 0, 255, 0.5),
+				rgba(0, 255, 0, 0.5)
+			),
+			linear-gradient(
+				to top,
+				rgba(255, 0, 0, 0.5),
+				rgba(255, 255, 0, 0.5)
+			),
+			#fff;
+		background-blend-mode: normal;
+		touch-action: none;
+	}
+
+	/*
+        Setting the width of table columns avoids a whole
+        lot of work for the layout engine, particularly on
+        large tables.
+     */
+	.Results-title {
+		width: 60%;
+	}
+
+	.Results-artist {
+		width: 40%;
+		color: var(--color-neutral);
+	}
+</style>
+
+<script define:vars={{tracks}}>
+	window.moodboardTracks = tracks;
+</script>
+
+<script>
+	import {CurveInterpolator} from 'curve-interpolator';
+
+	type Point = [x: number, y: number];
+
+	const tracks = window.moodboardTracks;
+	const drawingDefinition = 20;
+	const renderingDefinition = 5;
+	const maxResultCount = 50;
+	const maxValue = 100;
+	const canvas = document.querySelector('canvas')!;
+	const ctx = canvas.getContext('2d')!;
+	const results =
+		document.querySelector<HTMLTableSectionElement>(
+			'#results'
+		)!;
+
+	let controlPoints: Point[] = [];
+	let interpolator: CurveInterpolator | null;
+	let isDrawing = false;
+
+	const updateCanvasDimensions = () => {
+		const {width, height} = canvas.getBoundingClientRect();
+		canvas.width = width;
+		canvas.height = height;
+	};
+
+	const fromCanvasCoords = ([x, y]: Point): Point => [
+		(x / canvas.width) * maxValue,
+		maxValue - (y / canvas.height) * maxValue
+	];
+
+	const toCanvasCoords = ([x, y]: Point): Point => [
+		(x / maxValue) * canvas.width,
+		canvas.height - (y / maxValue) * canvas.height
+	];
+
+	const distance = ([x1, y1]: Point, [x2, y2]: Point) =>
+		Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+
+	const drawPath = () => {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		if (controlPoints.length < 2) {
+			interpolator = null;
+			return;
+		}
+
+		interpolator = new CurveInterpolator(controlPoints, {
+			tension: 0.2,
+			alpha: 0.5
+		});
+
+		const ratio =
+			(canvas.width * canvas.height) / (maxValue * maxValue);
+		const points = interpolator.getPoints(
+			(interpolator.length / renderingDefinition) * ratio
+		) as Point[];
+
+		const [startX, startY] = toCanvasCoords(points[0]);
+
+		const path = new Path2D();
+		path.moveTo(startX, startY);
+
+		for (let i = 1; i < points.length; i++) {
+			const [x, y] = toCanvasCoords(points[i]);
+			path.lineTo(x, y);
+		}
+
+		ctx.strokeStyle = '#0d0604';
+		ctx.lineCap = 'round';
+		ctx.lineWidth = 0.5 * ratio;
+		ctx.stroke(path);
+	};
+
+	const updatePlaylist = () => {
+		if (!interpolator) {
+			results.innerHTML = '';
+			return;
+		}
+
+		results.innerHTML = tracks
+			.map((track) => {
+				const position = interpolator!.getNearestPosition([
+					track.valence,
+					track.energy
+				]);
+
+				return {
+					...track,
+					d: position.distance,
+					u: position.u
+				};
+			})
+			.toSorted((a, b) => a.d - b.d)
+			.slice(0, maxResultCount)
+			.toSorted((a, b) => a.u - b.u)
+			.map(
+				({id, title, artist}) => `
+                    <tr data-spotify-id="${id}">
+                        <td class="Results-actions">
+                            <button class="Button--small" title="Play">
+                                ►
+                            </button>
+                        </td>
+                        <td class="Results-title">${title}</td>
+                        <td class="Results-artist">${artist}</td>
+                    </tr>
+                `
+			)
+			.join('');
+	};
+
+	const startDrawing = (point: Point) => {
+		isDrawing = true;
+		controlPoints = [point];
+		drawPath();
+	};
+
+	const draw = (point: Point) => {
+		const previousPoint =
+			controlPoints[controlPoints.length - 1];
+		const d = distance(
+			toCanvasCoords(previousPoint),
+			toCanvasCoords(point)
+		);
+
+		if (d >= drawingDefinition) {
+			controlPoints.push(point);
+			drawPath();
+		}
+	};
+
+	const endDrawing = (point: Point) => {
+		isDrawing = false;
+		controlPoints.push(point);
+		drawPath();
+		updatePlaylist();
+	};
+
+	const pointFromPointerEvent = (e: PointerEvent) =>
+		fromCanvasCoords([e.offsetX, e.offsetY]);
+
+	canvas.addEventListener('pointerdown', (e) => {
+		startDrawing(pointFromPointerEvent(e));
+	});
+
+	canvas.addEventListener('pointermove', (e) => {
+		if (isDrawing) {
+			draw(pointFromPointerEvent(e));
+		}
+	});
+
+	canvas.addEventListener('pointerup', (e) => {
+		if (isDrawing && e.button === 0) {
+			endDrawing(pointFromPointerEvent(e));
+		}
+	});
+
+	canvas.addEventListener('pointerout', (e) => {
+		if (isDrawing) {
+			endDrawing(pointFromPointerEvent(e));
+		}
+	});
+
+	document
+		.querySelectorAll<HTMLButtonElement>('[data-preset]')
+		.forEach((button) => {
+			button.addEventListener('click', () => {
+				const path = JSON.parse(
+					button.dataset.preset!
+				) as Point[];
+
+				controlPoints = path;
+
+				drawPath();
+				updatePlaylist();
+			});
+		});
+
+	const resizeObserver = new ResizeObserver(
+		updateCanvasDimensions
+	);
+
+	resizeObserver.observe(canvas);
+	updateCanvasDimensions();
+</script>
