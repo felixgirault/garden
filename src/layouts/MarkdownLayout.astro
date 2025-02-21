@@ -2,9 +2,9 @@
 import Layout from './Layout.astro';
 
 const {frontmatter} = Astro.props;
-const {title, breadcrumbs} = frontmatter;
+const {title, breadcrumbs, theme} = frontmatter;
 ---
 
-<Layout {title} {breadcrumbs}>
+<Layout {title} {breadcrumbs} {theme}>
 	<slot />
 </Layout>

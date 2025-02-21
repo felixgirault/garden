@@ -1,3 +1,5 @@
+/albums /music/albums
+/albums/* /music/albums/:splat
 /resources /dev/resources
 /astuces/boostez-votre-creativite /archives/boostez-votre-creativite
 /astuces/de-bons-defauts /archives/de-bons-defauts
