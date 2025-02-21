@@ -22,9 +22,9 @@ const archives = await getCollection('archives');
 					(a, b) =>
 						b.data.date.getTime() - a.data.date.getTime()
 				)
-				.map(({slug, data}) => (
+				.map(({id, data}) => (
 					<li>
-						<a href={`/archives/${slug}`}>{data.title}</a>
+						<a href={`/archives/${id}`}>{data.title}</a>
 					</li>
 				))
 		}

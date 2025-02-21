@@ -20,7 +20,7 @@ const articles = await getCollection('devTips');
 				<li>
 					<Card>
 						<h2 slot="header">
-							<a href={`/dev/tips/${article.slug}`}>
+							<a href={`/dev/tips/${article.id}`}>
 								{article.data.title}
 							</a>
 						</h2>
