@@ -1,18 +1,18 @@
 ---
-import {getCollection} from 'astro:content';
+import {getCollection, render} from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 
 export async function getStaticPaths() {
 	const archives = await getCollection('archives');
 	return archives.map((archive) => ({
-		params: {slug: archive.slug},
+		params: {id: archive.id},
 		props: {archive}
 	}));
 }
 
 const {archive} = Astro.props;
 const {title, date} = archive.data;
-const {Content} = await archive.render();
+const {Content} = await render(archive);
 ---
 
 <Layout
