@@ -183,6 +183,7 @@ declare global {
 
 <script>
 	import {CurveInterpolator} from 'curve-interpolator';
+	import {random, randomIndices} from '../services/math';
 	import type {MoodboardTrack} from '../services/moodboard';
 	import {kdTree} from 'kd-tree-javascript';
 
@@ -243,23 +244,11 @@ declare global {
 		canvas.height - (y / maxValue) * canvas.height
 	];
 
-	// @see https://stackoverflow.com/a/12646864/2391359
-	const shuffle = <T,>(array: Array<T>) => {
-		for (let i = array.length - 1; i >= 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[array[i], array[j]] = [array[j], array[i]];
-		}
-	};
-
-	const randomPath = (): Point[] => {
-		const pointCount = Math.ceil(3 + Math.random() * 3);
-		return Array(pointCount)
-			.fill(0)
-			.map(() => [
-				Math.random() * maxValue,
-				Math.random() * maxValue
-			]);
-	};
+	const randomPath = (min = 2, max = 5): Point[] =>
+		Array.from({length: random(min, max + 1)}, () => [
+			random(1, maxValue),
+			random(1, maxValue)
+		]);
 
 	const drawPath = (lastPointOverride?: Point) => {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -364,26 +353,20 @@ declare global {
 
 		const used = new WeakSet<MoodboardTrack>();
 		const nearestTracks: MoodboardTrack[] = [];
-		const order = Array.from(
-			{length: neighbors.length},
-			(_, i) => i
-		);
-
-		shuffle(order);
 
 		// Traversing neighbors in a random order avoids
 		// accumulating errors to the end of the list.
-		order.forEach((i) => {
+		for (const i of randomIndices(neighbors.length)) {
 			const neighbor = neighbors[i];
 
 			for (const track of neighbor()) {
 				if (!used.has(track)) {
 					used.add(track);
 					nearestTracks[i] = track;
-					return;
+					break;
 				}
 			}
-		});
+		}
 
 		const results = nearestTracks
 			.filter((track) => !!track)
