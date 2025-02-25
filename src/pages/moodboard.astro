@@ -215,6 +215,7 @@ declare global {
 	let controlPoints: Point[] = [];
 	let interpolator: CurveInterpolator | null;
 	let isDrawing = false;
+	let frameId = 0;
 
 	const distance = ([x1, y1]: Point, [x2, y2]: Point) =>
 		Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
@@ -421,22 +422,27 @@ declare global {
 	};
 
 	const draw = (point: Point) => {
-		const previousPoint =
-			controlPoints[controlPoints.length - 1];
-		const d = distance(
-			toCanvasCoords(previousPoint),
-			toCanvasCoords(point)
-		);
+		cancelAnimationFrame(frameId);
+		frameId = requestAnimationFrame(() => {
+			const previousPoint =
+				controlPoints[controlPoints.length - 1];
+			const d = distance(
+				toCanvasCoords(previousPoint),
+				toCanvasCoords(point)
+			);
 
-		if (d >= drawingDefinition) {
-			controlPoints.push(point);
-			drawPath();
-		} else {
-			drawPath(point);
-		}
+			if (d >= drawingDefinition) {
+				controlPoints.push(point);
+				drawPath();
+			} else {
+				drawPath(point);
+			}
+		});
 	};
 
 	const endDrawing = (point: Point) => {
+		cancelAnimationFrame(frameId);
+
 		isDrawing = false;
 		controlPoints.push(point);
 		drawPath();
