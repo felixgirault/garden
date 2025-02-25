@@ -21,3 +21,42 @@ export const hashCode = (string: string) => {
 
 	return hash;
 };
+
+// @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values
+export const random = (min: number, max: number) => {
+	const minCeiled = Math.ceil(min);
+	const maxFloored = Math.floor(max);
+
+	return Math.floor(
+		Math.random() * (maxFloored - minCeiled) + minCeiled
+	);
+};
+
+// @see https://stackoverflow.com/a/17445304/2391359
+export const gcd = (a: number, b: number): number =>
+	b ? gcd(b, a % b) : Math.abs(a);
+
+// @see https://www.geeksforgeeks.org/eulers-totient-function/
+export const findCoprime = (n: number, start = 0) => {
+	for (let i = start; i < n; i++) {
+		if (gcd(i, n) === 1) {
+			return i;
+		}
+	}
+
+	return 1;
+};
+
+// Yields each number from 0 to count in a random order.
+// @see https://en.wikipedia.org/wiki/Full_cycle
+export function* randomIndices(count: number) {
+	// We're skipping the first coprimes as they yield poor
+	// results. Higher numbers feel more random.
+	const increment = findCoprime(count, Math.round(count / 3));
+	let index = random(0, count);
+
+	for (let i = 0; i < count; i++) {
+		index = (index + increment) % count;
+		yield index;
+	}
+}
