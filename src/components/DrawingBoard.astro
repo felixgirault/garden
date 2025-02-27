@@ -1,0 +1,302 @@
+<fglt-drawing-board aria-hidden="true">
+	<canvas></canvas>
+
+	<p class="top">▲ energetic</p>
+	<p class="right">▸ happy</p>
+	<p class="bottom">▼ chill</p>
+	<p class="left">◂ sad</p>
+</fglt-drawing-board>
+
+<style>
+	fglt-drawing-board {
+		position: relative;
+		margin-bottom: var(--block-spacing);
+	}
+
+	canvas {
+		display: block;
+		width: 100%;
+		height: 50vh;
+		background: linear-gradient(
+				to right,
+				rgba(0, 0, 255, 0.5),
+				rgba(0, 255, 0, 0.5)
+			),
+			linear-gradient(
+				to top,
+				rgba(255, 0, 0, 0.5),
+				rgba(255, 255, 0, 0.5)
+			),
+			#fff;
+		background-blend-mode: normal;
+		touch-action: none;
+	}
+
+	p {
+		position: absolute;
+		margin: 0;
+		color: var(--color-surface);
+		font-weight: bold;
+		font-variant: all-small-caps;
+		white-space: nowrap;
+	}
+
+	.top {
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.right {
+		right: 0;
+		top: 50%;
+		writing-mode: vertical-rl;
+		transform: translateY(-50%);
+	}
+
+	.bottom {
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.left {
+		left: 0;
+		top: 50%;
+		writing-mode: vertical-rl;
+		transform: translateY(-50%);
+	}
+</style>
+
+<script>
+	import {
+		type Point,
+		distance,
+		interpolateSpline,
+		makePath
+	} from '../services/2d';
+
+	export class DrawingBoard extends HTMLElement {
+		static DrawingDefinition = 5;
+		static RenderingDefinition = 1;
+
+		#canvas!: HTMLCanvasElement;
+		#ctx!: CanvasRenderingContext2D;
+		#canvasSize = 1;
+		#curve: Point[] = [];
+		#points: Point[] = [];
+		#pointerId = 0;
+		#frameId = 0;
+		#isDrawing = false;
+		#isLastCurvePointTemporary = false;
+
+		connectedCallback() {
+			this.#canvas =
+				this.querySelector<HTMLCanvasElement>('canvas')!;
+			this.#ctx = this.#canvas.getContext('2d')!;
+
+			const resizeObserver = new ResizeObserver(() => {
+				this.updateCanvasDimensions();
+			});
+
+			resizeObserver.observe(this.#canvas);
+			this.updateCanvasDimensions();
+
+			this.#canvas.addEventListener(
+				'pointerdown',
+				(event) => {
+					if (!this.#isDrawing) {
+						this.#pointerId = event.pointerId;
+						this.startDrawing(
+							this.pointFromPointerEvent(event)
+						);
+					}
+				}
+			);
+
+			this.#canvas.addEventListener(
+				'pointermove',
+				(event) => {
+					if (
+						this.#isDrawing &&
+						event.pointerId === this.#pointerId
+					) {
+						this.draw(this.pointFromPointerEvent(event));
+					}
+				}
+			);
+
+			this.#canvas.addEventListener('pointerup', (event) => {
+				if (
+					this.#isDrawing &&
+					event.pointerId === this.#pointerId
+				) {
+					this.endDrawing(
+						this.pointFromPointerEvent(event)
+					);
+				}
+			});
+
+			this.#canvas.addEventListener('pointerout', (event) => {
+				if (
+					this.#isDrawing &&
+					event.pointerId === this.#pointerId
+				) {
+					this.endDrawing(
+						this.pointFromPointerEvent(event)
+					);
+				}
+			});
+		}
+
+		setCurve(curve: Point[]) {
+			this.#isDrawing = false;
+			this.#curve = curve;
+			this.#points = [];
+			this.#render();
+			this.#emitCurve();
+		}
+
+		setPoints(points: Point[]) {
+			this.#points = points;
+			this.#render();
+		}
+
+		updateCanvasDimensions() {
+			const {width, height} =
+				this.#canvas.getBoundingClientRect();
+			this.#canvas.width = width;
+			this.#canvas.height = height;
+			this.#canvasSize = distance([0, 0], [width, height]);
+		}
+
+		fromCanvasCoords([x, y]: Point): Point {
+			return [
+				x / this.#canvas.width,
+				1 - y / this.#canvas.height
+			];
+		}
+
+		toCanvasCoords([x, y]: Point): Point {
+			return [
+				x * this.#canvas.width,
+				this.#canvas.height - y * this.#canvas.height
+			];
+		}
+
+		pointFromPointerEvent(e: PointerEvent) {
+			return this.fromCanvasCoords([e.offsetX, e.offsetY]);
+		}
+
+		startDrawing(point: Point) {
+			this.#isDrawing = true;
+			this.#isLastCurvePointTemporary = false;
+			this.#curve = [point];
+			this.#points = [];
+			this.#render();
+		}
+
+		draw(point: Point) {
+			cancelAnimationFrame(this.#frameId);
+
+			this.#frameId = requestAnimationFrame(() => {
+				const previousPoint = this.#curve.at(
+					this.#isLastCurvePointTemporary ? -2 : -1
+				);
+
+				if (!previousPoint) {
+					return;
+				}
+
+				const d = distance(
+					this.toCanvasCoords(previousPoint),
+					this.toCanvasCoords(point)
+				);
+
+				if (this.#isLastCurvePointTemporary) {
+					this.#curve.pop();
+				}
+
+				this.#curve.push(point);
+				this.#isLastCurvePointTemporary =
+					d < DrawingBoard.DrawingDefinition;
+
+				this.#render();
+			});
+		}
+
+		endDrawing(point: Point) {
+			cancelAnimationFrame(this.#frameId);
+
+			this.#isDrawing = false;
+			this.#curve = this.#curve.concat([point]);
+			this.#render();
+			this.#emitCurve();
+		}
+
+		#render() {
+			this.#ctx.clearRect(
+				0,
+				0,
+				this.#canvas.width,
+				this.#canvas.height
+			);
+
+			this.#drawCurve();
+			this.#drawPoints();
+		}
+
+		#drawCurve() {
+			if (this.#curve.length < 2) {
+				return;
+			}
+
+			const points = interpolateSpline(
+				this.#curve,
+				(length) =>
+					Math.round(
+						(length / DrawingBoard.RenderingDefinition) *
+							this.#canvasSize
+					)
+			);
+
+			const path = makePath(
+				points.map(this.toCanvasCoords.bind(this))
+			);
+
+			this.#ctx.strokeStyle = '#0d0604';
+			this.#ctx.lineCap = 'round';
+			this.#ctx.lineJoin = 'round';
+			this.#ctx.lineWidth = 0.03 * this.#canvasSize;
+			this.#ctx.stroke(path);
+		}
+
+		#drawPoints() {
+			this.#points.forEach((point) => {
+				const [x, y] = this.toCanvasCoords(point);
+
+				this.#ctx.beginPath();
+				this.#ctx.arc(
+					x,
+					y,
+					0.002 * this.#canvasSize,
+					0,
+					2 * Math.PI
+				);
+
+				this.#ctx.fillStyle = '#ff7452';
+				this.#ctx.fill();
+			});
+		}
+
+		#emitCurve() {
+			this.dispatchEvent(
+				new CustomEvent('drawend', {
+					detail: this.#curve
+				})
+			);
+		}
+	}
+
+	customElements.define('fglt-drawing-board', DrawingBoard);
+</script>

@@ -1,8 +1,10 @@
 ---
 import {getCollection} from 'astro:content';
-import Section from '../components/Section.astro';
-import SpotifyPlayer from '../components/SpotifyPlayer.astro';
 import Layout from '../layouts/Layout.astro';
+import Section from '../components/Section.astro';
+import DrawingBoard from '../components/DrawingBoard.astro';
+import SpotifyPlayer from '../components/SpotifyPlayer.astro';
+import Playlist from '../components/Playlist.astro';
 
 const trackCollection = await getCollection('moodboardTracks');
 const tracks = trackCollection.map(({id, data}) => ({
@@ -12,18 +14,18 @@ const tracks = trackCollection.map(({id, data}) => ({
 
 const presets = {
 	Chill: [
-		[60, 10],
-		[90, 10]
+		[0.6, 0.1],
+		[0.9, 0.1]
 	],
 	Energetic: [
-		[80, 90],
-		[90, 90]
+		[0.8, 0.9],
+		[0.9, 0.9]
 	],
 	Progressive: [
 		[0, 0],
-		[20, 10],
-		[80, 90],
-		[100, 100]
+		[0.2, 0.1],
+		[0.8, 0.9],
+		[1, 1]
 	],
 	Random: []
 };
@@ -66,396 +68,40 @@ declare global {
 	</ul>
 
 	<Section isWide>
-		<div class="Board" aria-hidden="true">
-			<canvas class="Board-canvas"></canvas>
-
-			<p class="Board-label Board-label--top">▲ energetic</p>
-			<p class="Board-label Board-label--right">▲ happy</p>
-			<p class="Board-label Board-label--bottom">▼ chill</p>
-			<p class="Board-label Board-label--left">▼ sad</p>
-		</div>
+		<DrawingBoard />
 	</Section>
 
 	<SpotifyPlayer />
-
-	<ul id="results"></ul>
-
-	<template id="result">
-		<li class="Result" data-spotify-id="">
-			<button class="Result-actions" title="">►</button>
-			<span class="Result-title"></span>
-			<span class="Result-artist"></span>
-		</li>
-	</template>
+	<Playlist />
 </Layout>
-
-<style>
-	.Board {
-		position: relative;
-		margin-bottom: var(--block-spacing);
-	}
-
-	.Board-label {
-		position: absolute;
-		margin: 0;
-		color: var(--color-surface);
-		font-weight: bold;
-		font-variant: all-small-caps;
-		white-space: nowrap;
-	}
-
-	.Board-label--top {
-		top: 0;
-		left: 50%;
-		transform: translateX(-50%);
-	}
-
-	.Board-label--right {
-		right: 0;
-		top: 50%;
-		writing-mode: sideways-rl;
-		transform: translateY(-50%);
-	}
-
-	.Board-label--bottom {
-		bottom: 0;
-		left: 50%;
-		transform: translateX(-50%);
-	}
-
-	.Board-label--left {
-		left: 0;
-		top: 50%;
-		writing-mode: sideways-rl;
-		transform: translateY(-50%);
-	}
-
-	.Board-canvas {
-		display: block;
-		width: 100%;
-		height: 50vh;
-		background: linear-gradient(
-				to right,
-				rgba(0, 0, 255, 0.5),
-				rgba(0, 255, 0, 0.5)
-			),
-			linear-gradient(
-				to top,
-				rgba(255, 0, 0, 0.5),
-				rgba(255, 255, 0, 0.5)
-			),
-			#fff;
-		background-blend-mode: normal;
-		touch-action: none;
-	}
-
-	.Result {
-		display: grid;
-		grid-template:
-			'actions title'
-			'actions artist'
-			/ min-content 1fr;
-		gap: 0 1ch;
-		margin-bottom: 1em;
-	}
-
-	.Result-actions {
-		grid-area: actions;
-		align-self: center;
-	}
-
-	.Result-title {
-		grid-area: title;
-	}
-
-	.Result-artist {
-		grid-area: artist;
-		color: var(--color-neutral);
-		line-height: 1;
-		font-family: var(--font-serif);
-		font-size: var(--font-size-s);
-	}
-</style>
 
 <script is:inline define:vars={{tracks}}>
 	window.moodboardTracks = tracks;
 </script>
 
 <script>
-	import {CurveInterpolator} from 'curve-interpolator';
-	import {random, randomIndices} from '../services/math';
-	import type {MoodboardTrack} from '../services/moodboard';
-	import {kdTree} from 'kd-tree-javascript';
+	import type {DrawingBoard} from '../components/DrawingBoard.astro.0.mts';
+	import type {Playlist} from '../components/Playlist.astro.0.mts';
+	import {randomPoints, type Point} from '../services/2d';
+	import {MoodboardTrackSpace} from '../services/moodboard';
 
-	type Point = [x: number, y: number];
+	const space = new MoodboardTrackSpace(window.moodboardTracks);
+	const playlist =
+		document.querySelector<Playlist>('fglt-playlist')!;
+	const board = document.querySelector<DrawingBoard>(
+		'fglt-drawing-board'
+	)!;
 
-	const tracks = window.moodboardTracks;
-	const tree = new kdTree<MoodboardTrack>(
-		tracks,
-		(a, b) =>
-			(a.valence - b.valence) ** 2 +
-			(a.energy - b.energy) ** 2,
-		['valence', 'energy']
-	);
+	board.addEventListener('drawend', ((e: CustomEvent) => {
+		const tracks = space
+			.searchAlongPath(e.detail)
+			.filter((track) => !!track);
 
-	const drawingDefinition = 20;
-	const renderingDefinition = 5;
-	const maxResultCount = 50;
-	const maxValue = 100;
-	const canvas = document.querySelector('canvas')!;
-	const ctx = canvas.getContext('2d')!;
-	const resultTemplate =
-		document.querySelector<HTMLTemplateElement>('#result')!;
-	const resultList =
-		document.querySelector<HTMLTableSectionElement>(
-			'#results'
-		)!;
-
-	let canvasSize = 1;
-	let renderingRatio = 1;
-	let controlPoints: Point[] = [];
-	let interpolator: CurveInterpolator | null;
-	let isDrawing = false;
-	let frameId = 0;
-
-	const distance = ([x1, y1]: Point, [x2, y2]: Point) =>
-		Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-
-	const updateCanvasDimensions = () => {
-		const {width, height} = canvas.getBoundingClientRect();
-		canvas.width = width;
-		canvas.height = height;
-		canvasSize = distance(
-			[0, 0],
-			[canvas.width, canvas.height]
+		playlist.setTracks(tracks);
+		board.setPoints(
+			tracks.map(({valence, energy}) => [valence, energy])
 		);
-
-		renderingRatio =
-			(canvas.width * canvas.height) / (maxValue * maxValue);
-	};
-
-	const fromCanvasCoords = ([x, y]: Point): Point => [
-		(x / canvas.width) * maxValue,
-		maxValue - (y / canvas.height) * maxValue
-	];
-
-	const toCanvasCoords = ([x, y]: Point): Point => [
-		(x / maxValue) * canvas.width,
-		canvas.height - (y / maxValue) * canvas.height
-	];
-
-	const randomPath = (min = 2, max = 5): Point[] =>
-		Array.from({length: random(min, max + 1)}, () => [
-			random(1, maxValue),
-			random(1, maxValue)
-		]);
-
-	const drawPath = (lastPointOverride?: Point) => {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-		const drawableControlPoints = lastPointOverride
-			? controlPoints.slice(0, -1).concat([lastPointOverride])
-			: controlPoints;
-
-		if (drawableControlPoints.length < 2) {
-			interpolator = null;
-			return;
-		}
-
-		interpolator = new CurveInterpolator(
-			drawableControlPoints,
-			{
-				tension: 0.2,
-				alpha: 0.5
-			}
-		);
-
-		const pointCount = Math.round(
-			(interpolator.length / renderingDefinition) *
-				renderingRatio
-		);
-
-		const points = interpolator.getPoints(
-			pointCount
-		) as Point[];
-
-		const [startX, startY] = toCanvasCoords(points[0]);
-
-		const path = new Path2D();
-		path.moveTo(startX, startY);
-
-		for (let i = 0; i < points.length; i++) {
-			const [x, y] = toCanvasCoords(points[i]);
-			path.lineTo(x, y);
-		}
-
-		ctx.strokeStyle = '#0d0604';
-		ctx.lineCap = 'round';
-		ctx.lineJoin = 'round';
-		ctx.lineWidth = 0.03 * canvasSize;
-		ctx.stroke(path);
-	};
-
-	const drawTracks = (tracks: MoodboardTrack[]) => {
-		tracks.forEach(({energy, valence}) => {
-			const [x, y] = toCanvasCoords([valence, energy]);
-
-			ctx.beginPath();
-			ctx.arc(x, y, 0.002 * canvasSize, 0, 2 * Math.PI);
-			ctx.fillStyle = '#ff7452';
-			ctx.fill();
-		});
-	};
-
-	const updatePlaylist = () => {
-		resultList.innerHTML = '';
-
-		if (!interpolator) {
-			return;
-		}
-
-		const points = interpolator.getPoints(
-			maxResultCount
-		) as Point[];
-
-		// Instead of searching for many neighbors everytime,
-		// a small search is made first, which should cover
-		// almost every case. If there is not enough results,
-		// the search is made again with a greater search
-		// radius. Then rinse and repeat.
-		const neighbors = points.map(
-			([valence, energy]) =>
-				function* () {
-					let count = 3;
-					let lowerBound = 0;
-
-					while (count < tracks.length) {
-						const nearest = tree
-							.nearest(
-								{
-									valence,
-									energy
-								} as MoodboardTrack,
-								count
-							)
-							.filter(([_, d]) => d > lowerBound)
-							.toSorted((a, b) => a[1] - b[1]);
-
-						for (const [track] of nearest) {
-							yield track;
-						}
-
-						count **= 3;
-						lowerBound = nearest[nearest.length - 1][1];
-					}
-				}
-		);
-
-		const used = new WeakSet<MoodboardTrack>();
-		const nearestTracks: MoodboardTrack[] = [];
-
-		// Traversing neighbors in a random order avoids
-		// accumulating errors to the end of the list.
-		for (const i of randomIndices(neighbors.length)) {
-			const neighbor = neighbors[i];
-
-			for (const track of neighbor()) {
-				if (!used.has(track)) {
-					used.add(track);
-					nearestTracks[i] = track;
-					break;
-				}
-			}
-		}
-
-		const results = nearestTracks
-			.filter((track) => !!track)
-			.map(({id, title, artist}) => {
-				const result = resultTemplate.content.cloneNode(
-					true
-				) as DocumentFragment;
-
-				result.querySelector<HTMLElement>(
-					'.Result'
-				)!.dataset.spotifyId = id;
-
-				result
-					.querySelector<HTMLElement>('.Result-actions')!
-					.setAttribute('title', `Play ${id}`);
-
-				result.querySelector<HTMLElement>(
-					'.Result-title'
-				)!.innerText = title;
-
-				result.querySelector<HTMLElement>(
-					'.Result-artist'
-				)!.innerText = `by ${artist}`;
-
-				return result;
-			});
-
-		resultList.append(...results);
-		drawTracks(nearestTracks);
-	};
-
-	const startDrawing = (point: Point) => {
-		isDrawing = true;
-		controlPoints = [point];
-		drawPath();
-	};
-
-	const draw = (point: Point) => {
-		cancelAnimationFrame(frameId);
-		frameId = requestAnimationFrame(() => {
-			const previousPoint =
-				controlPoints[controlPoints.length - 1];
-			const d = distance(
-				toCanvasCoords(previousPoint),
-				toCanvasCoords(point)
-			);
-
-			if (d >= drawingDefinition) {
-				controlPoints.push(point);
-				drawPath();
-			} else {
-				drawPath(point);
-			}
-		});
-	};
-
-	const endDrawing = (point: Point) => {
-		cancelAnimationFrame(frameId);
-
-		isDrawing = false;
-		controlPoints.push(point);
-		drawPath();
-		updatePlaylist();
-	};
-
-	const pointFromPointerEvent = (e: PointerEvent) =>
-		fromCanvasCoords([e.offsetX, e.offsetY]);
-
-	canvas.addEventListener('pointerdown', (e) => {
-		startDrawing(pointFromPointerEvent(e));
-	});
-
-	canvas.addEventListener('pointermove', (e) => {
-		if (isDrawing) {
-			draw(pointFromPointerEvent(e));
-		}
-	});
-
-	canvas.addEventListener('pointerup', (e) => {
-		if (isDrawing && e.button === 0) {
-			endDrawing(pointFromPointerEvent(e));
-		}
-	});
-
-	canvas.addEventListener('pointerout', (e) => {
-		if (isDrawing) {
-			endDrawing(pointFromPointerEvent(e));
-		}
-	});
+	}) as EventListener);
 
 	document
 		.querySelectorAll<HTMLButtonElement>('[data-preset]')
@@ -465,17 +111,7 @@ declare global {
 					button.dataset.preset!
 				) as Point[];
 
-				controlPoints = path.length ? path : randomPath();
-
-				drawPath();
-				updatePlaylist();
+				board.setCurve(path.length ? path : randomPoints());
 			});
 		});
-
-	const resizeObserver = new ResizeObserver(
-		updateCanvasDimensions
-	);
-
-	resizeObserver.observe(canvas);
-	updateCanvasDimensions();
 </script>
