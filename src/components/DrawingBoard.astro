@@ -163,11 +163,14 @@
 		}
 
 		updateCanvasDimensions() {
-			const {width, height} =
-				this.#canvas.getBoundingClientRect();
-			this.#canvas.width = width;
-			this.#canvas.height = height;
-			this.#canvasSize = distance([0, 0], [width, height]);
+			this.#withinFrame(() => {
+				const {width, height} =
+					this.#canvas.getBoundingClientRect();
+				this.#canvas.width = width;
+				this.#canvas.height = height;
+				this.#canvasSize = distance([0, 0], [width, height]);
+				this.#render();
+			});
 		}
 
 		fromCanvasCoords([x, y]: Point): Point {
@@ -179,8 +182,10 @@
 
 		toCanvasCoords([x, y]: Point): Point {
 			return [
-				x * this.#canvas.width,
-				this.#canvas.height - y * this.#canvas.height
+				Math.round(x * this.#canvas.width),
+				Math.round(
+					this.#canvas.height - y * this.#canvas.height
+				)
 			];
 		}
 
@@ -197,9 +202,7 @@
 		}
 
 		draw(point: Point) {
-			cancelAnimationFrame(this.#frameId);
-
-			this.#frameId = requestAnimationFrame(() => {
+			this.#withinFrame(() => {
 				const previousPoint = this.#curve.at(
 					this.#isLastCurvePointTemporary ? -2 : -1
 				);
@@ -226,12 +229,17 @@
 		}
 
 		endDrawing(point: Point) {
-			cancelAnimationFrame(this.#frameId);
+			this.#withinFrame(() => {
+				this.#isDrawing = false;
+				this.#curve = this.#curve.concat([point]);
+				this.#render();
+				this.#emitCurve();
+			});
+		}
 
-			this.#isDrawing = false;
-			this.#curve = this.#curve.concat([point]);
-			this.#render();
-			this.#emitCurve();
+		#withinFrame(callback: () => void) {
+			cancelAnimationFrame(this.#frameId);
+			this.#frameId = requestAnimationFrame(callback);
 		}
 
 		#render() {
