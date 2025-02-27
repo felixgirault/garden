@@ -2,8 +2,8 @@
 	<ol></ol>
 
 	<template>
-		<li data-spotify-id="">
-			<button class="play" title="">►</button>
+		<li>
+			<button class="play" title="" data-id="">►</button>
 			<span class="title"></span>
 			<span class="artist"></span>
 		</li>
@@ -28,12 +28,13 @@
 
 	.title {
 		grid-area: title;
+		line-height: 1.2;
 	}
 
 	.artist {
 		grid-area: artist;
 		color: var(--color-neutral);
-		line-height: 1;
+		line-height: 1.2;
 		font-family: var(--font-serif);
 		font-size: var(--font-size-s);
 	}
@@ -56,11 +57,31 @@
 				this.querySelector<HTMLOListElement>('ol')!;
 			this.#itemTemplate =
 				this.querySelector<HTMLTemplateElement>('template')!;
+
+			this.addEventListener('click', (event) => {
+				if (event.target instanceof HTMLButtonElement) {
+					this.dispatchEvent(
+						new CustomEvent('play', {
+							detail: event.target.dataset.id
+						})
+					);
+				}
+			});
 		}
 
 		setTracks(tracks: PlaylistTrack[]) {
 			this.#tracks = tracks;
 			this.#render();
+		}
+
+		nextTrack(trackId: string) {
+			const index = this.#tracks.findIndex(
+				({id}) => id === trackId
+			);
+
+			return index < 0
+				? undefined
+				: this.#tracks.at(index + 1);
 		}
 
 		#render() {
@@ -75,10 +96,11 @@
 				true
 			) as DocumentFragment;
 
-			result.querySelector('li')!.dataset.spotifyId = id;
-			result
-				.querySelector('.play')!
-				.setAttribute('title', `Play ${id}`);
+			const play =
+				result.querySelector<HTMLButtonElement>('.play')!;
+
+			play.setAttribute('title', `Play ${title}`);
+			play.dataset.id = id;
 
 			result.querySelector('.title')!.innerHTML = title;
 			result.querySelector('.artist')!.innerHTML =

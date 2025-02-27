@@ -82,12 +82,16 @@ declare global {
 <script>
 	import type {DrawingBoard} from '../components/DrawingBoard.astro.0.mts';
 	import type {Playlist} from '../components/Playlist.astro.0.mts';
+	import type {SpotifyPlayer} from '../components/SpotifyPlayer.astro.0.mts';
 	import {randomPoints, type Point} from '../services/2d';
 	import {MoodboardTrackSpace} from '../services/moodboard';
 
 	const space = new MoodboardTrackSpace(window.moodboardTracks);
 	const playlist =
 		document.querySelector<Playlist>('fglt-playlist')!;
+	const player = document.querySelector<SpotifyPlayer>(
+		'fglt-spotify-player'
+	)!;
 	const board = document.querySelector<DrawingBoard>(
 		'fglt-drawing-board'
 	)!;
@@ -103,6 +107,17 @@ declare global {
 		);
 	}) as EventListener);
 
+	playlist.addEventListener('play', ((e: CustomEvent) => {
+		player.play(e.detail);
+	}) as EventListener);
+
+	player.addEventListener('playbackend', ((e: CustomEvent) => {
+		const next = playlist.nextTrack(e.detail);
+
+		if (next) {
+			player.play(next.id);
+		}
+	}) as EventListener);
 	document
 		.querySelectorAll<HTMLButtonElement>('[data-preset]')
 		.forEach((button) => {
