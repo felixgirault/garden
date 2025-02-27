@@ -1,0 +1,92 @@
+<fglt-playlist>
+	<ol></ol>
+
+	<template>
+		<li data-spotify-id="">
+			<button class="play" title="">►</button>
+			<span class="title"></span>
+			<span class="artist"></span>
+		</li>
+	</template>
+</fglt-playlist>
+
+<style>
+	li {
+		display: grid;
+		grid-template:
+			'play title'
+			'play artist'
+			/ min-content 1fr;
+		gap: 0 1ch;
+		margin-bottom: 1em;
+	}
+
+	.play {
+		grid-area: play;
+		align-self: center;
+	}
+
+	.title {
+		grid-area: title;
+	}
+
+	.artist {
+		grid-area: artist;
+		color: var(--color-neutral);
+		line-height: 1;
+		font-family: var(--font-serif);
+		font-size: var(--font-size-s);
+	}
+</style>
+
+<script>
+	type PlaylistTrack = {
+		id: string;
+		title: string;
+		artist: string;
+	};
+
+	export class Playlist extends HTMLElement {
+		#list!: HTMLUListElement;
+		#itemTemplate!: HTMLTemplateElement;
+		#tracks: PlaylistTrack[] = [];
+
+		connectedCallback() {
+			this.#list =
+				this.querySelector<HTMLOListElement>('ol')!;
+			this.#itemTemplate =
+				this.querySelector<HTMLTemplateElement>('template')!;
+		}
+
+		setTracks(tracks: PlaylistTrack[]) {
+			this.#tracks = tracks;
+			this.#render();
+		}
+
+		#render() {
+			this.#list.innerHTML = '';
+			this.#list.append(
+				...this.#tracks.map(this.#renderItem, this)
+			);
+		}
+
+		#renderItem({id, title, artist}: PlaylistTrack) {
+			const result = this.#itemTemplate.content.cloneNode(
+				true
+			) as DocumentFragment;
+
+			result.querySelector('li')!.dataset.spotifyId = id;
+			result
+				.querySelector('.play')!
+				.setAttribute('title', `Play ${id}`);
+
+			result.querySelector('.title')!.innerHTML = title;
+			result.querySelector('.artist')!.innerHTML =
+				`by ${artist}`;
+
+			return result;
+		}
+	}
+
+	customElements.define('fglt-playlist', Playlist);
+</script>
