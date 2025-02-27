@@ -8,13 +8,21 @@ declare global {
 }
 ---
 
-<div id="SpotifyPlayer"></div>
+<fglt-spotify-player data-width="100%" data-height="80">
+</fglt-spotify-player>
 
-<script
-	is:inline
-	async
-	src="https://open.spotify.com/embed/iframe-api/v1"
-></script>
+<style>
+	fglt-spotify-player {
+		display: block;
+	}
+
+	fglt-spotify-player :global(iframe) {
+		border-radius: 0;
+		block-size: auto;
+		inline-size: 100%;
+		aspect-ratio: revert;
+	}
+</style>
 
 <script>
 	import type {
@@ -22,46 +30,70 @@ declare global {
 		SpotifyId
 	} from '../services/spotify';
 
-	const setupPlayer = (controller: SpotifyController) => {
-		let currentId: SpotifyId;
+	export class SpotifyPlayer extends HTMLElement {
+		#controller: SpotifyController | null = null;
+		#currentTrackId: SpotifyId | null = null;
+		#currentTrackHasChanged = false;
 
-		const load = (id: string) => {
-			currentId = id;
-			controller.loadUri(`spotify:track:${currentId}`);
-			controller.play();
-		};
+		connectedCallback() {
+			const placeholder = document.createElement('div');
+			this.appendChild(placeholder);
 
-		document.addEventListener('click', (event) => {
-			const spotifyIdContainer = (
-				event.target as HTMLElement
-			).closest<HTMLElement>('[data-spotify-id]');
-
-			if (spotifyIdContainer) {
-				load(spotifyIdContainer.dataset.spotifyId!);
-			}
-		});
-
-		controller.addListener('playback_update', ({data}) => {
-			if (data.isPaused && data.position === 0) {
-				const nextItem = document.querySelector<HTMLElement>(
-					`[data-spotify-id="${currentId}"] + [data-spotify-id]`
+			window.onSpotifyIframeApiReady = (api) => {
+				api.createController(
+					placeholder,
+					{
+						width: this.dataset.width,
+						height: this.dataset.height
+					},
+					(controller: SpotifyController) => {
+						this.#controller = controller;
+						this.#setup();
+					}
 				);
+			};
 
-				if (nextItem) {
-					load(nextItem.dataset.spotifyId!);
+			this.#load();
+		}
+
+		play(id: string) {
+			this.#currentTrackId = id;
+			this.#controller?.loadUri(`spotify:track:${id}`);
+			this.#controller?.play();
+		}
+
+		#load() {
+			const script = document.createElement('script');
+			script.setAttribute(
+				'src',
+				'https://open.spotify.com/embed/iframe-api/v1'
+			);
+
+			document.body.appendChild(script);
+		}
+
+		#setup() {
+			this.#controller!.addListener(
+				'playback_update',
+				({data}) => {
+					if (this.#currentTrackHasChanged) {
+						if (!data.isPaused && data.position > 0) {
+							this.#currentTrackHasChanged = false;
+						}
+					} else {
+						if (data.isPaused && data.position === 0) {
+							this.#currentTrackHasChanged = true;
+							this.dispatchEvent(
+								new CustomEvent('playbackend', {
+									detail: this.#currentTrackId
+								})
+							);
+						}
+					}
 				}
-			}
-		});
-	};
+			);
+		}
+	}
 
-	window.onSpotifyIframeApiReady = (api) => {
-		api.createController(
-			document.getElementById('SpotifyPlayer')!,
-			{
-				width: '100%',
-				height: '152'
-			},
-			setupPlayer
-		);
-	};
+	customElements.define('fglt-spotify-player', SpotifyPlayer);
 </script>
