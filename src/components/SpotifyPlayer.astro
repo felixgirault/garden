@@ -14,13 +14,16 @@ declare global {
 <style>
 	fglt-spotify-player {
 		display: block;
+		border-radius: 12px;
+		background: var(--color-surface-variant);
 	}
 
 	fglt-spotify-player :global(iframe) {
+		display: none;
 		border-radius: 0;
-		block-size: auto;
+		block-size: 80px;
 		inline-size: 100%;
-		aspect-ratio: revert;
+		aspect-ratio: unset;
 	}
 </style>
 
@@ -57,6 +60,7 @@ declare global {
 		}
 
 		play(id: string) {
+			this.querySelector('iframe')!.style.display = 'block';
 			this.#currentTrackId = id;
 			this.#controller?.loadUri(`spotify:track:${id}`);
 			this.#controller?.play();

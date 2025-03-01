@@ -11,19 +11,39 @@
 </fglt-playlist>
 
 <style>
+	ol {
+		columns: 30ch;
+		column-gap: var(--line-padding);
+		counter-reset: order 0;
+	}
+
 	li {
+		position: relative;
 		display: grid;
 		grid-template:
-			'play title'
-			'play artist'
+			'play title order'
+			'play artist order'
 			/ min-content 1fr;
+		align-items: start;
 		gap: 0 1ch;
-		margin-bottom: 1em;
+		margin-block-end: 1em;
+		padding-inline-end: 3ch;
+		counter-increment: count;
+		break-inside: avoid;
+	}
+
+	li::before {
+		content: counter(count, decimal);
+		position: absolute;
+		top: 0;
+		right: 0;
+		color: var(--color-neutral);
+		line-height: 1.2;
+		font-weight: bold;
 	}
 
 	.play {
 		grid-area: play;
-		align-self: center;
 	}
 
 	.title {
@@ -48,15 +68,13 @@
 	};
 
 	export class Playlist extends HTMLElement {
-		#list!: HTMLUListElement;
+		#list!: HTMLOListElement;
 		#itemTemplate!: HTMLTemplateElement;
 		#tracks: PlaylistTrack[] = [];
 
 		connectedCallback() {
-			this.#list =
-				this.querySelector<HTMLOListElement>('ol')!;
-			this.#itemTemplate =
-				this.querySelector<HTMLTemplateElement>('template')!;
+			this.#list = this.querySelector('ol')!;
+			this.#itemTemplate = this.querySelector('template')!;
 
 			this.addEventListener('click', (event) => {
 				if (event.target instanceof HTMLButtonElement) {
