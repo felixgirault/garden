@@ -56,26 +56,42 @@ declare global {
 		how this works.
 	</p>
 
-	<ul class="List--inline">
-		{
-			Object.entries(presets).map(([label, path]) => (
-				<li>
-					<button data-preset={JSON.stringify(path)}>
-						{label}
-					</button>
-				</li>
-			))
-		}
-	</ul>
-
 	<Section isWide>
+		<ul>
+			{
+				Object.entries(presets).map(([label, path]) => (
+					<li>
+						<button data-preset={JSON.stringify(path)}>
+							{label}
+						</button>
+					</li>
+				))
+			}
+		</ul>
+
 		<DrawingBoard />
 		<DrawingForm />
+		<SpotifyPlayer />
 	</Section>
 
-	<SpotifyPlayer />
-	<Playlist />
+	<Section isWide>
+		<Playlist />
+	</Section>
 </Layout>
+
+<style>
+	ul {
+		display: flex;
+		justify-content: center;
+		gap: 1ch;
+		padding: 0;
+		list-style: none;
+	}
+
+	div {
+		margin-block-end: var(--block-spacing);
+	}
+</style>
 
 <script is:inline define:vars={{tracks}}>
 	window.moodboardTracks = tracks;
