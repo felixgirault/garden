@@ -48,6 +48,8 @@
 		white 98%
 	);
 	--color-on-surface-variant: var(--color-on-surface);
+	--color-input-surface: var(--color-surface);
+	--color-on-input-surface: var(--color-on-surface);
 	--color-neutral: #8d938f;
 	--color-interactive: var(--color-theme);
 	--color-on-interactive: var(--color-surface);
@@ -65,6 +67,7 @@
 	--shadow-strength: 0.2;
 
 	--radius: 0.5rem;
+	--radius-s: 0.2rem;
 }
 
 @media screen and (min-height: 35rlh) {
@@ -102,6 +105,8 @@
 		var(--color-theme-variant),
 		black 90%
 	);
+	--color-input-surface: var(--color-on-surface);
+	--color-on-input-surface: var(--color-surface);
 	--color-roots: color-mix(
 		in srgb,
 		var(--color-theme),
@@ -289,12 +294,24 @@ input {
 	accent-color: var(--color-interactive);
 }
 
+input,
+select,
+textarea {
+	box-sizing: border-box;
+	border-radius: var(--radius-s);
+	border: 1px solid var(--color-on-input-surface);
+	padding: 0.25em 1ch;
+	background: var(--color-input-surface);
+	color: var(--color-on-input-surface);
+	font: inherit;
+}
+
 label {
 	display: block;
 }
 
 iframe {
-	border-radius: var(--radius);
+	border-radius: var(--radius-s);
 	inline-size: 100%;
 	block-size: 100%;
 	aspect-ratio: 16 / 9;
