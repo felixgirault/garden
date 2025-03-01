@@ -5,6 +5,7 @@ import Section from '../components/Section.astro';
 import DrawingBoard from '../components/DrawingBoard.astro';
 import SpotifyPlayer from '../components/SpotifyPlayer.astro';
 import Playlist from '../components/Playlist.astro';
+import DrawingForm from '../components/DrawingForm.astro';
 
 const trackCollection = await getCollection('moodboardTracks');
 const tracks = trackCollection.map(({id, data}) => ({
@@ -69,6 +70,7 @@ declare global {
 
 	<Section isWide>
 		<DrawingBoard />
+		<DrawingForm />
 	</Section>
 
 	<SpotifyPlayer />
@@ -81,6 +83,7 @@ declare global {
 
 <script>
 	import type {DrawingBoard} from '../components/DrawingBoard.astro.0.mts';
+	import type {DrawingForm} from '../components/DrawingForm.astro.0.mts';
 	import type {Playlist} from '../components/Playlist.astro.0.mts';
 	import type {SpotifyPlayer} from '../components/SpotifyPlayer.astro.0.mts';
 	import {randomPoints, type Point} from '../services/2d';
@@ -95,6 +98,13 @@ declare global {
 	const board = document.querySelector<DrawingBoard>(
 		'fglt-drawing-board'
 	)!;
+	const form = document.querySelector<DrawingForm>(
+		'fglt-drawing-form'
+	)!;
+
+	form.addEventListener('path', ((e: CustomEvent) => {
+		board.setCurve(e.detail);
+	}) as EventListener);
 
 	board.addEventListener('drawend', ((e: CustomEvent) => {
 		const tracks = space
@@ -118,6 +128,7 @@ declare global {
 			player.play(next.id);
 		}
 	}) as EventListener);
+
 	document
 		.querySelectorAll<HTMLButtonElement>('[data-preset]')
 		.forEach((button) => {
@@ -126,7 +137,18 @@ declare global {
 					button.dataset.preset!
 				) as Point[];
 
-				board.setCurve(path.length ? path : randomPoints());
+				form.setPoints(path.length ? path : randomPoints());
 			});
 		});
+
+	document.addEventListener('DOMContentLoaded', () => {
+		form.setPoints([
+			[0.25, 0.35],
+			[0.45, 0.7],
+			[0.4, 0.4],
+			[0.55, 0.6],
+			[0.6, 0.45],
+			[0.8, 0.5]
+		]);
+	});
 </script>
