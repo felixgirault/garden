@@ -21,6 +21,7 @@
 		{
 			"files": "*.astro",
 			"options": {
+				"htmlWhitespaceSensitivity": "css",
 				"parser": "astro"
 			}
 		},

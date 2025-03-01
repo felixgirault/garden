@@ -1,3 +1,9 @@
+export const clamp = (
+	number: number,
+	min: number,
+	max: number
+) => (number < min ? min : number > max ? max : number);
+
 // @see https://stackoverflow.com/a/48764436
 export const round = (exp: number, places = 4) => {
 	exp = Math.round(Number(`${exp}e+${places}`));
