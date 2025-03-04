@@ -30,6 +30,11 @@ const sortByColor = (albums: Album[]) =>
 		return bHue - aHue;
 	});
 
+// Albums are sorted first so their index is predictable and
+// coherent with the covers sprite.
 export const albumCollection = await getCollection('albums')
+	.then((albums) =>
+		albums.toSorted((a, b) => a.id.localeCompare(b.id))
+	)
 	.then((albums) => albums.map(fromAlbumEntry))
 	.then(sortByColor);

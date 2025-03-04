@@ -23,5 +23,5 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# sprites
-/public/sprites
+# album covers sprite
+/src/content/albums/covers.jpg

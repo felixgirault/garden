@@ -125,6 +125,5 @@ export const buildSprite = async (
 				left: i * size
 			}))
 		)
-		.webp()
 		.toFile(out);
 };

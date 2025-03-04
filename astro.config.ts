@@ -32,22 +32,23 @@ export default defineConfig({
 					logger.info('Generating album covers sprite…');
 
 					const albumsPath = './src/content/albums';
-					const spritesPath = './public/sprites';
+					const coversFileName = 'covers.jpg';
 					const paths = fs
 						.readdirSync(albumsPath)
-						.filter((file) => file.endsWith('.jpg'))
-						.map((fileName) =>
+						.filter(
+							(file) =>
+								file.endsWith('.jpg') &&
+								file !== coversFileName
+						)
+						.toSorted((a, b) => a.localeCompare(b))
+						.map((fileName, i) =>
 							path.resolve(albumsPath, fileName)
 						);
-
-					fs.mkdirSync(spritesPath, {
-						recursive: true
-					});
 
 					await buildSprite(
 						paths,
 						64,
-						path.resolve(spritesPath, 'album-covers.webp')
+						path.resolve(albumsPath, coversFileName)
 					);
 				}
 			}

@@ -1,12 +1,21 @@
 ---
+import {getImage} from 'astro:assets';
 import {albumCollection} from '../services/albums';
 import Section from './Section.astro';
+import covers from '../content/albums/covers.jpg';
+
+const optimizedCovers = await getImage({
+	src: covers
+});
 ---
 
 <Section isWide>
 	<ul
 		class="List--raw Grid Grid--10"
-		style={`--album-count: ${albumCollection.length}`}
+		style={{
+			'--album-count': albumCollection.length,
+			'--album-covers': `url(${optimizedCovers.src})`
+		}}
 	>
 		{
 			albumCollection.map(
@@ -44,7 +53,7 @@ import Section from './Section.astro';
 		display: block;
 		border-radius: var(--radius);
 		background-color: var(--album-color);
-		background-image: url('/sprites/album-covers.webp');
+		background-image: var(--album-covers);
 		background-size: auto 100%;
 		background-repeat: no-repeat;
 		background-position-x: calc(
