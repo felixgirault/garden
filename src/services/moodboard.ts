@@ -10,6 +10,7 @@ export type MoodboardTrack = {
 	artist: string;
 	energy: number;
 	valence: number;
+	isAlbumHighlight: boolean;
 };
 
 export const fromDbTracks = (data: DbData): MoodboardTrack[] => {
@@ -34,7 +35,8 @@ export const fromDbTracks = (data: DbData): MoodboardTrack[] => {
 			valence: round(
 				track.attributes.valence / DbTrackAttributesMax,
 				3
-			)
+			),
+			isAlbumHighlight: !!track?.isAlbumHighlight
 		}));
 };
 

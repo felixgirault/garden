@@ -16,6 +16,7 @@ export type DbTrack = {
 	artistId: DbArtist['id'];
 	spotifyId: SpotifyId;
 	attributes: DbTrackAttributes;
+	isAlbumHighlight?: boolean;
 };
 
 export type DbData = {

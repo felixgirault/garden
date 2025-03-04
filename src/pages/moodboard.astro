@@ -75,6 +75,21 @@ declare global {
 	</Section>
 
 	<Section isWide>
+		<form>
+			<label for="highlights">One track per album</label>
+			<input id="highlights" type="checkbox" value="1" />
+
+			<label for="limit">Playlist length</label>
+			<input
+				id="limit"
+				type="number"
+				min="10"
+				max="100"
+				step="10"
+				value="50"
+			/>
+		</form>
+
 		<Playlist />
 	</Section>
 </Layout>
@@ -106,6 +121,12 @@ declare global {
 	import {MoodboardTrackSpace} from '../services/moodboard';
 
 	const space = new MoodboardTrackSpace(window.moodboardTracks);
+	const highlightsSpace = new MoodboardTrackSpace(
+		window.moodboardTracks.filter(
+			({isAlbumHighlight}) => isAlbumHighlight
+		)
+	);
+
 	const playlist =
 		document.querySelector<Playlist>('fglt-playlist')!;
 	const player = document.querySelector<SpotifyPlayer>(
@@ -118,19 +139,32 @@ declare global {
 		'fglt-drawing-form'
 	)!;
 
-	form.addEventListener('path', ((e: CustomEvent) => {
-		board.setCurve(e.detail);
-	}) as EventListener);
+	const highlightsInput =
+		document.querySelector<HTMLInputElement>('#highlights')!;
+	const limitInput =
+		document.querySelector<HTMLInputElement>('#limit')!;
 
-	board.addEventListener('drawend', ((e: CustomEvent) => {
-		const tracks = space
-			.searchAlongPath(e.detail)
+	const search = (path: Point[]) => {
+		const s = highlightsInput.checked
+			? highlightsSpace
+			: space;
+
+		const tracks = s
+			.searchAlongPath(path, Number(limitInput.value))
 			.filter((track) => !!track);
 
 		playlist.setTracks(tracks);
 		board.setPoints(
 			tracks.map(({valence, energy}) => [valence, energy])
 		);
+	};
+
+	form.addEventListener('path', ((e: CustomEvent) => {
+		board.setCurve(e.detail);
+	}) as EventListener);
+
+	board.addEventListener('drawend', ((e: CustomEvent) => {
+		search(e.detail);
 	}) as EventListener);
 
 	playlist.addEventListener('play', ((e: CustomEvent) => {
@@ -166,5 +200,13 @@ declare global {
 			[0.6, 0.45],
 			[0.8, 0.5]
 		]);
+	});
+
+	highlightsInput.addEventListener('change', () => {
+		search(board.getCurve());
+	});
+
+	limitInput.addEventListener('change', () => {
+		search(board.getCurve());
 	});
 </script>

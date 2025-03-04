@@ -63,7 +63,8 @@ export const collections = {
 			title: z.string(),
 			artist: z.string(),
 			energy: z.number(),
-			valence: z.number()
+			valence: z.number(),
+			isAlbumHighlight: z.boolean()
 		})
 	})
 };
