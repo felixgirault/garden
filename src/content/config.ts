@@ -62,8 +62,10 @@ export const collections = {
 		schema: z.object({
 			title: z.string(),
 			artist: z.string(),
+			duration: z.number(),
 			energy: z.number(),
-			valence: z.number()
+			valence: z.number(),
+			isAlbumHighlight: z.boolean()
 		})
 	})
 };

@@ -50,6 +50,7 @@
 	--color-on-surface-variant: var(--color-on-surface);
 	--color-input-surface: var(--color-surface);
 	--color-on-input-surface: var(--color-on-surface);
+	--color-input-border: var(--color-on-surface);
 	--color-neutral: #8d938f;
 	--color-interactive: var(--color-theme);
 	--color-on-interactive: var(--color-surface);
@@ -105,8 +106,7 @@
 		var(--color-theme-variant),
 		black 90%
 	);
-	--color-input-surface: var(--color-on-surface);
-	--color-on-input-surface: var(--color-surface);
+	--color-input-border: var(--color-neutral);
 	--color-roots: color-mix(
 		in srgb,
 		var(--color-theme),
@@ -299,7 +299,7 @@ select,
 textarea {
 	box-sizing: border-box;
 	border-radius: var(--radius-s);
-	border: 1px solid var(--color-on-input-surface);
+	border: 1px solid var(--color-input-border);
 	padding: 0.25em 1ch;
 	background: var(--color-input-surface);
 	color: var(--color-on-input-surface);

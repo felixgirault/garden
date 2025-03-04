@@ -8,8 +8,10 @@ export type MoodboardTrack = {
 	id: SpotifyId;
 	title: string;
 	artist: string;
+	duration: number;
 	energy: number;
 	valence: number;
+	isAlbumHighlight: boolean;
 };
 
 export const fromDbTracks = (data: DbData): MoodboardTrack[] => {
@@ -27,6 +29,7 @@ export const fromDbTracks = (data: DbData): MoodboardTrack[] => {
 			id: track.spotifyId,
 			title: track.title,
 			artist: artists[track.artistId].name,
+			duration: track.duration,
 			energy: round(
 				track.attributes.energy / DbTrackAttributesMax,
 				3
@@ -34,11 +37,12 @@ export const fromDbTracks = (data: DbData): MoodboardTrack[] => {
 			valence: round(
 				track.attributes.valence / DbTrackAttributesMax,
 				3
-			)
+			),
+			isAlbumHighlight: !!track?.isAlbumHighlight
 		}));
 };
 
-export class MoodboardTrackSpace {
+export class MoodboardTrackIndex {
 	#tracks: MoodboardTrack[];
 	#tree: kdTree.kdTree<MoodboardTrack>;
 
@@ -62,7 +66,7 @@ export class MoodboardTrackSpace {
 		// the search is made again with a greater search
 		// radius. Then rinse and repeat.
 		const neighbors = points.map(function* (
-			this: MoodboardTrackSpace,
+			this: MoodboardTrackIndex,
 			[valence, energy]
 		) {
 			let count = 3;

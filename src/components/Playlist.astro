@@ -1,4 +1,8 @@
 <fglt-playlist>
+	<div role="status" aria-live="polite">
+		<p id="status"></p>
+	</div>
+
 	<ol></ol>
 
 	<template>
@@ -11,7 +15,13 @@
 </fglt-playlist>
 
 <style>
+	[role='status'] {
+		margin-block-end: 1lh;
+		color: var(--color-neutral);
+	}
+
 	ol {
+		padding: 0;
 		columns: 30ch;
 		column-gap: var(--line-padding);
 		counter-reset: order 0;
@@ -61,20 +71,28 @@
 </style>
 
 <script>
+	import {formatTime} from '../services/format';
+
 	type PlaylistTrack = {
 		id: string;
 		title: string;
 		artist: string;
+		duration: number;
 	};
 
 	export class Playlist extends HTMLElement {
 		#list!: HTMLOListElement;
 		#itemTemplate!: HTMLTemplateElement;
+		#status!: HTMLParagraphElement;
 		#tracks: PlaylistTrack[] = [];
 
 		connectedCallback() {
 			this.#list = this.querySelector('ol')!;
 			this.#itemTemplate = this.querySelector('template')!;
+			this.#status =
+				document.querySelector<HTMLParagraphElement>(
+					'#status'
+				)!;
 
 			this.addEventListener('click', (event) => {
 				if (event.target instanceof HTMLButtonElement) {
@@ -103,6 +121,12 @@
 		}
 
 		#render() {
+			const seconds = this.#tracks.reduce(
+				(total, {duration}) => total + duration,
+				0
+			);
+
+			this.#status.innerText = `${this.#tracks.length} tracks, ${formatTime(seconds)}`;
 			this.#list.innerHTML = '';
 			this.#list.append(
 				...this.#tracks.map(this.#renderItem, this)
@@ -120,8 +144,8 @@
 			play.setAttribute('title', `Play ${title}`);
 			play.dataset.id = id;
 
-			result.querySelector('.title')!.innerHTML = title;
-			result.querySelector('.artist')!.innerHTML =
+			result.querySelector('.title')!.textContent = title;
+			result.querySelector('.artist')!.textContent =
 				`by ${artist}`;
 
 			return result;

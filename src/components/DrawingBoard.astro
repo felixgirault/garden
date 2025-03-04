@@ -150,6 +150,10 @@
 			this.updateCanvasDimensions();
 		}
 
+		getCurve() {
+			return this.#curve;
+		}
+
 		setCurve(curve: Point[]) {
 			this.#isDrawing = false;
 			this.#curve = curve;

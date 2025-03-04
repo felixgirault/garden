@@ -6,6 +6,7 @@ import DrawingBoard from '../components/DrawingBoard.astro';
 import SpotifyPlayer from '../components/SpotifyPlayer.astro';
 import Playlist from '../components/Playlist.astro';
 import DrawingForm from '../components/DrawingForm.astro';
+import MoodboardFilterForm from '../components/MoodboardFilterForm.astro';
 
 const trackCollection = await getCollection('moodboardTracks');
 const tracks = trackCollection.map(({id, data}) => ({
@@ -71,25 +72,37 @@ declare global {
 
 		<DrawingBoard />
 		<DrawingForm />
-		<SpotifyPlayer />
+		<MoodboardFilterForm />
 	</Section>
 
 	<Section isWide>
 		<Playlist />
 	</Section>
+
+	<SpotifyPlayer />
 </Layout>
 
 <style>
 	ul {
 		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
 		justify-content: center;
 		gap: 1ch;
 		padding: 0;
 		list-style: none;
 	}
 
-	div {
-		margin-block-end: var(--block-spacing);
+	form {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: flex-start;
+		margin-block-end: 2lh;
+	}
+
+	label {
+		margin-inline: 1ch;
 	}
 </style>
 
@@ -100,12 +113,26 @@ declare global {
 <script>
 	import type {DrawingBoard} from '../components/DrawingBoard.astro.0.mts';
 	import type {DrawingForm} from '../components/DrawingForm.astro.0.mts';
+	import type {
+		MoodboardFilterForm,
+		MoodboardFilters
+	} from '../components/MoodboardFilterForm.astro.0.mts';
 	import type {Playlist} from '../components/Playlist.astro.0.mts';
 	import type {SpotifyPlayer} from '../components/SpotifyPlayer.astro.0.mts';
 	import {randomPoints, type Point} from '../services/2d';
-	import {MoodboardTrackSpace} from '../services/moodboard';
+	import {shuffled} from '../services/math';
+	import {MoodboardTrackIndex} from '../services/moodboard';
 
-	const space = new MoodboardTrackSpace(window.moodboardTracks);
+	const fullIndex = new MoodboardTrackIndex(
+		window.moodboardTracks
+	);
+
+	const highlightsIndex = new MoodboardTrackIndex(
+		window.moodboardTracks.filter(
+			({isAlbumHighlight}) => isAlbumHighlight
+		)
+	);
+
 	const playlist =
 		document.querySelector<Playlist>('fglt-playlist')!;
 	const player = document.querySelector<SpotifyPlayer>(
@@ -117,20 +144,45 @@ declare global {
 	const form = document.querySelector<DrawingForm>(
 		'fglt-drawing-form'
 	)!;
+	const filters = document.querySelector<MoodboardFilterForm>(
+		'fglt-moodboard-filter-form'
+	)!;
+
+	const search = (
+		path: Point[],
+		{set, sort, limit}: MoodboardFilters
+	) => {
+		const index =
+			set === 'highlights' ? highlightsIndex : fullIndex;
+
+		const tracks = index
+			.searchAlongPath(path, limit)
+			.filter((track) => !!track);
+
+		board.setPoints(
+			tracks.map(({valence, energy}) => [valence, energy])
+		);
+
+		const sortedTracks =
+			sort === 'asc'
+				? tracks
+				: sort === 'desc'
+					? tracks.toReversed()
+					: shuffled(tracks);
+
+		playlist.setTracks(sortedTracks);
+	};
 
 	form.addEventListener('path', ((e: CustomEvent) => {
 		board.setCurve(e.detail);
 	}) as EventListener);
 
 	board.addEventListener('drawend', ((e: CustomEvent) => {
-		const tracks = space
-			.searchAlongPath(e.detail)
-			.filter((track) => !!track);
+		search(e.detail, filters.filters);
+	}) as EventListener);
 
-		playlist.setTracks(tracks);
-		board.setPoints(
-			tracks.map(({valence, energy}) => [valence, energy])
-		);
+	filters.addEventListener('submit', ((e: CustomEvent) => {
+		search(board.getCurve(), e.detail);
 	}) as EventListener);
 
 	playlist.addEventListener('play', ((e: CustomEvent) => {
