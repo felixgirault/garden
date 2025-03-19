@@ -41,7 +41,7 @@ export default defineConfig({
 								file !== coversFileName
 						)
 						.toSorted((a, b) => a.localeCompare(b))
-						.map((fileName, i) =>
+						.map((fileName) =>
 							path.resolve(albumsPath, fileName)
 						);
 
