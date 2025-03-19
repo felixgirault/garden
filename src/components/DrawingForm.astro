@@ -1,0 +1,151 @@
+<fglt-drawing-form>
+	<form>
+		<label for="coordinates">Path</label>
+
+		<p id="coordinates-hint">
+			Use this field to draw a path through the board.
+			<br />
+			Each line represents a point of the path in the form
+			<code>happiness,energy</code> on a scale from 0 to 100.
+			<br />
+			For example <code>0,100</code> would target sad energetic
+			tracks, <code>80,20</code>
+			would target happy chill tracks, and so on.
+		</p>
+
+		<textarea
+			id="coordinates"
+			rows="6"
+			aria-described-by="coordinates-hint"></textarea>
+
+		<button class="button" type="submit">
+			Find tracks along the path
+		</button>
+	</form>
+</fglt-drawing-form>
+
+<style>
+	fglt-drawing-form {
+		display: block;
+	}
+
+	form {
+		position: absolute;
+		left: -9999px;
+		display: grid;
+		grid-template:
+			'label _' min-content
+			'input hint'
+			'input submit' min-content
+			/ 1fr 1fr;
+		gap: 0 var(--line-padding);
+		margin-block-end: 1em;
+	}
+
+	form:focus-within,
+	form.focused {
+		position: revert;
+	}
+
+	label {
+		grid-area: label;
+	}
+
+	textarea {
+		grid-area: input;
+	}
+
+	p {
+		grid-area: hint;
+	}
+
+	button {
+		grid-area: submit;
+		justify-self: start;
+	}
+</style>
+
+<script>
+	import type {Point} from '../services/2d';
+	import {clamp} from '../services/math';
+
+	export class DrawingForm extends HTMLElement {
+		#form!: HTMLFormElement;
+		#coordinates!: HTMLTextAreaElement;
+
+		connectedCallback() {
+			this.#form = this.querySelector('form')!;
+			this.#coordinates = this.querySelector('textarea')!;
+
+			// Makes the form stay visible once in has been focused.
+			this.#form.addEventListener('focusin', () => {
+				this.#form.classList.add('focused');
+			});
+
+			this.#form.addEventListener('submit', (e) => {
+				e.preventDefault();
+				this.#submit();
+			});
+		}
+
+		setPoints(points: Point[]) {
+			this.#coordinates.value = points
+				.map((p) =>
+					p.map((c) => Math.round(c * 100)).join(',')
+				)
+				.join('\n');
+
+			this.#submit();
+		}
+
+		#submit() {
+			const lines = this.#coordinates.value.split('\n');
+			const points: Point[] = [];
+
+			this.#coordinates.setCustomValidity('');
+
+			for (let i = 0; i < lines.length; i++) {
+				const line = lines[i];
+
+				if (!line.trim().length) {
+					continue;
+				}
+
+				const components = lines[i]
+					.split(',', 2)
+					.map(Number);
+
+				if (components.length < 2) {
+					this.#coordinates.setCustomValidity(
+						`There should be two numbers on line ${i + 1}`
+					);
+					break;
+				}
+
+				points.push(
+					components.map((c) =>
+						clamp(c / 100, 0, 100)
+					) as Point
+				);
+			}
+
+			if (points.length < 2) {
+				this.#coordinates.setCustomValidity(
+					`There should be at least two points`
+				);
+			}
+
+			if (!this.#coordinates.reportValidity()) {
+				return;
+			}
+
+			this.dispatchEvent(
+				new CustomEvent('path', {
+					detail: points
+				})
+			);
+		}
+	}
+
+	customElements.define('fglt-drawing-form', DrawingForm);
+</script>

@@ -1,0 +1,156 @@
+<fglt-playlist>
+	<div role="status" aria-live="polite">
+		<p id="status"></p>
+	</div>
+
+	<ol></ol>
+
+	<template>
+		<li>
+			<button class="play" title="" data-id="">►</button>
+			<span class="title"></span>
+			<span class="artist"></span>
+		</li>
+	</template>
+</fglt-playlist>
+
+<style>
+	[role='status'] {
+		margin-block-end: 1lh;
+		color: var(--color-neutral);
+	}
+
+	ol {
+		padding: 0;
+		columns: 30ch;
+		column-gap: var(--line-padding);
+		counter-reset: order 0;
+	}
+
+	li {
+		position: relative;
+		display: grid;
+		grid-template:
+			'play title order'
+			'play artist order'
+			/ min-content 1fr;
+		align-items: start;
+		gap: 0 1ch;
+		margin-block-end: 1em;
+		padding-inline-end: 3ch;
+		counter-increment: count;
+		break-inside: avoid;
+	}
+
+	li::before {
+		content: counter(count, decimal);
+		position: absolute;
+		top: 0;
+		right: 0;
+		color: var(--color-neutral);
+		line-height: 1.2;
+		font-weight: bold;
+	}
+
+	.play {
+		grid-area: play;
+	}
+
+	.title {
+		grid-area: title;
+		line-height: 1.2;
+	}
+
+	.artist {
+		grid-area: artist;
+		color: var(--color-neutral);
+		line-height: 1.2;
+		font-family: var(--font-serif);
+		font-size: var(--font-size-s);
+	}
+</style>
+
+<script>
+	import {formatTime} from '../services/format';
+
+	type PlaylistTrack = {
+		id: string;
+		title: string;
+		artist: string;
+		duration: number;
+	};
+
+	export class Playlist extends HTMLElement {
+		#list!: HTMLOListElement;
+		#itemTemplate!: HTMLTemplateElement;
+		#status!: HTMLParagraphElement;
+		#tracks: PlaylistTrack[] = [];
+
+		connectedCallback() {
+			this.#list = this.querySelector('ol')!;
+			this.#itemTemplate = this.querySelector('template')!;
+			this.#status =
+				document.querySelector<HTMLParagraphElement>(
+					'#status'
+				)!;
+
+			this.addEventListener('click', (event) => {
+				if (event.target instanceof HTMLButtonElement) {
+					this.dispatchEvent(
+						new CustomEvent('play', {
+							detail: event.target.dataset.id
+						})
+					);
+				}
+			});
+		}
+
+		setTracks(tracks: PlaylistTrack[]) {
+			this.#tracks = tracks;
+			this.#render();
+		}
+
+		nextTrack(trackId: string) {
+			const index = this.#tracks.findIndex(
+				({id}) => id === trackId
+			);
+
+			return index < 0
+				? undefined
+				: this.#tracks.at(index + 1);
+		}
+
+		#render() {
+			const seconds = this.#tracks.reduce(
+				(total, {duration}) => total + duration,
+				0
+			);
+
+			this.#status.innerText = `${this.#tracks.length} tracks, ${formatTime(seconds)}`;
+			this.#list.innerHTML = '';
+			this.#list.append(
+				...this.#tracks.map(this.#renderItem, this)
+			);
+		}
+
+		#renderItem({id, title, artist}: PlaylistTrack) {
+			const result = this.#itemTemplate.content.cloneNode(
+				true
+			) as DocumentFragment;
+
+			const play =
+				result.querySelector<HTMLButtonElement>('.play')!;
+
+			play.setAttribute('title', `Play ${title}`);
+			play.dataset.id = id;
+
+			result.querySelector('.title')!.textContent = title;
+			result.querySelector('.artist')!.textContent =
+				`by ${artist}`;
+
+			return result;
+		}
+	}
+
+	customElements.define('fglt-playlist', Playlist);
+</script>

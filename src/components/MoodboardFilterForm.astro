@@ -1,0 +1,90 @@
+<fglt-moodboard-filter-form>
+	<form>
+		<label for="limit">Search for</label>
+		<select class="InvisibleInput" id="limit" name="limit">
+			<option value="10">10 tracks</option>
+			<option value="20">20 tracks</option>
+			<option value="50" selected>50 tracks</option>
+			<option value="100">100 tracks</option>
+		</select>
+
+		<label for="set">in</label>
+		<select class="InvisibleInput" id="set" name="set">
+			<option value="all">all tracks</option>
+			<option value="highlights">best album tracks</option>
+		</select>
+
+		<p>and</p>
+		<label for="sort">sort</label>
+		<select class="InvisibleInput" id="sort" name="sort">
+			<option value="asc">from start to end</option>
+			<option value="desc">from end to start</option>
+			<option value="random">randomly</option>
+		</select>
+	</form>
+</fglt-moodboard-filter-form>
+
+<style>
+	fglt-moodboard-filter-form {
+		display: block;
+	}
+
+	form {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: center;
+		gap: 1ch;
+	}
+
+	p {
+		margin: 0;
+	}
+</style>
+
+<script>
+	export type MoodboardFilters = {
+		set: 'all' | 'highlights';
+		sort: 'asc' | 'desc' | 'random';
+		limit: number;
+	};
+
+	export class MoodboardFilterForm extends HTMLElement {
+		#form!: HTMLFormElement;
+
+		connectedCallback() {
+			this.#form = this.querySelector('form')!;
+
+			this.#form.addEventListener('change', () => {
+				this.#submit();
+			});
+
+			this.#form.addEventListener('submit', (e) => {
+				e.preventDefault();
+				this.#submit();
+			});
+		}
+
+		get filters(): MoodboardFilters {
+			const data = new FormData(this.#form);
+			return {
+				set: data.get('set') as MoodboardFilters['set'],
+				sort: data.get('sort') as MoodboardFilters['sort'],
+				limit: parseInt(data.get('limit')!.toString(), 10)
+			};
+		}
+
+		#submit() {
+			this.dispatchEvent(
+				new CustomEvent('submit', {
+					detail: this.filters
+				})
+			);
+		}
+	}
+
+	customElements.define(
+		'fglt-moodboard-filter-form',
+		MoodboardFilterForm
+	);
+</script>

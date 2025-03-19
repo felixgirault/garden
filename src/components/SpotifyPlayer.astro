@@ -1,0 +1,109 @@
+---
+import type {SpotifyOnIframeApiReady} from '../services/spotify';
+
+declare global {
+	interface Window {
+		onSpotifyIframeApiReady: SpotifyOnIframeApiReady;
+	}
+}
+---
+
+<fglt-spotify-player data-width="100%" data-height="80">
+</fglt-spotify-player>
+
+<style>
+	fglt-spotify-player {
+		position: fixed;
+		right: 0.5em;
+		bottom: 0.5em;
+		left: 0.5em;
+		display: block;
+	}
+
+	fglt-spotify-player :global(iframe) {
+		display: none;
+		margin: 0 auto;
+		max-inline-size: var(--line-length);
+		border: 0;
+		border-radius: 12px;
+		block-size: 80px;
+		inline-size: 100%;
+		aspect-ratio: unset;
+		background: var(--color-surface-variant);
+	}
+</style>
+
+<script>
+	import type {
+		SpotifyController,
+		SpotifyId
+	} from '../services/spotify';
+
+	export class SpotifyPlayer extends HTMLElement {
+		#controller: SpotifyController | null = null;
+		#currentTrackId: SpotifyId | null = null;
+		#currentTrackHasChanged = false;
+
+		connectedCallback() {
+			const placeholder = document.createElement('iframe');
+			this.appendChild(placeholder);
+
+			window.onSpotifyIframeApiReady = (api) => {
+				api.createController(
+					placeholder,
+					{
+						width: this.dataset.width,
+						height: this.dataset.height
+					},
+					(controller: SpotifyController) => {
+						this.#controller = controller;
+						this.#setup();
+					}
+				);
+			};
+
+			this.#load();
+		}
+
+		play(id: string) {
+			this.querySelector('iframe')!.style.display = 'block';
+			this.#currentTrackId = id;
+			this.#controller?.loadUri(`spotify:track:${id}`);
+			this.#controller?.play();
+		}
+
+		#load() {
+			const script = document.createElement('script');
+			script.setAttribute(
+				'src',
+				'https://open.spotify.com/embed/iframe-api/v1'
+			);
+
+			document.body.appendChild(script);
+		}
+
+		#setup() {
+			this.#controller!.addListener(
+				'playback_update',
+				({data}) => {
+					if (this.#currentTrackHasChanged) {
+						if (!data.isPaused && data.position > 0) {
+							this.#currentTrackHasChanged = false;
+						}
+					} else {
+						if (data.isPaused && data.position === 0) {
+							this.#currentTrackHasChanged = true;
+							this.dispatchEvent(
+								new CustomEvent('playbackend', {
+									detail: this.#currentTrackId
+								})
+							);
+						}
+					}
+				}
+			);
+		}
+	}
+
+	customElements.define('fglt-spotify-player', SpotifyPlayer);
+</script>

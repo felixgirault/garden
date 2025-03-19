@@ -1,0 +1,222 @@
+---
+import {getCollection} from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Section from '../components/Section.astro';
+import DrawingBoard from '../components/DrawingBoard.astro';
+import SpotifyPlayer from '../components/SpotifyPlayer.astro';
+import Playlist from '../components/Playlist.astro';
+import DrawingForm from '../components/DrawingForm.astro';
+import MoodboardFilterForm from '../components/MoodboardFilterForm.astro';
+
+const trackCollection = await getCollection('moodboardTracks');
+const tracks = trackCollection.map(({id, data}) => ({
+	id,
+	...data
+}));
+
+const presets = {
+	Chill: [
+		[0.6, 0.1],
+		[0.9, 0.1]
+	],
+	Energetic: [
+		[0.8, 0.9],
+		[0.9, 0.9]
+	],
+	Progressive: [
+		[0, 0],
+		[0.2, 0.1],
+		[0.8, 0.9],
+		[1, 1]
+	],
+	Random: []
+};
+
+declare global {
+	interface Window {
+		moodboardTracks: typeof tracks;
+	}
+}
+---
+
+<Layout theme="dark" title="Moodboard" breadcrumbs={[]}>
+	<h1>Moodboard</h1>
+
+	<p>Draw yourself a playlist! 🖌️</p>
+
+	<p>
+		{tracks.length} tracks are laid out in the board below.
+		<br />
+		They are arranged according to their perceived happiness and
+		energy, from saddest on the left to happiest on the right, from
+		calmer at the bottom to hotter at the top.
+	</p>
+
+	<p>
+		Some presets are available below for you to get an idea of
+		how this works.
+	</p>
+
+	<Section isWide>
+		<ul>
+			{
+				Object.entries(presets).map(([label, path]) => (
+					<li>
+						<button data-preset={JSON.stringify(path)}>
+							{label}
+						</button>
+					</li>
+				))
+			}
+		</ul>
+
+		<DrawingBoard />
+		<DrawingForm />
+		<MoodboardFilterForm />
+	</Section>
+
+	<Section isWide>
+		<Playlist />
+	</Section>
+
+	<SpotifyPlayer />
+</Layout>
+
+<style>
+	ul {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: center;
+		gap: 1ch;
+		padding: 0;
+		list-style: none;
+	}
+
+	form {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: flex-start;
+		margin-block-end: 2lh;
+	}
+
+	label {
+		margin-inline: 1ch;
+	}
+</style>
+
+<script is:inline define:vars={{tracks}}>
+	window.moodboardTracks = tracks;
+</script>
+
+<script>
+	import type {DrawingBoard} from '../components/DrawingBoard.astro.0.mts';
+	import type {DrawingForm} from '../components/DrawingForm.astro.0.mts';
+	import type {
+		MoodboardFilterForm,
+		MoodboardFilters
+	} from '../components/MoodboardFilterForm.astro.0.mts';
+	import type {Playlist} from '../components/Playlist.astro.0.mts';
+	import type {SpotifyPlayer} from '../components/SpotifyPlayer.astro.0.mts';
+	import {randomPoints, type Point} from '../services/2d';
+	import {shuffled} from '../services/math';
+	import {MoodboardTrackIndex} from '../services/moodboard';
+
+	const fullIndex = new MoodboardTrackIndex(
+		window.moodboardTracks
+	);
+
+	const highlightsIndex = new MoodboardTrackIndex(
+		window.moodboardTracks.filter(
+			({isAlbumHighlight}) => isAlbumHighlight
+		)
+	);
+
+	const playlist =
+		document.querySelector<Playlist>('fglt-playlist')!;
+	const player = document.querySelector<SpotifyPlayer>(
+		'fglt-spotify-player'
+	)!;
+	const board = document.querySelector<DrawingBoard>(
+		'fglt-drawing-board'
+	)!;
+	const form = document.querySelector<DrawingForm>(
+		'fglt-drawing-form'
+	)!;
+	const filters = document.querySelector<MoodboardFilterForm>(
+		'fglt-moodboard-filter-form'
+	)!;
+
+	const search = (
+		path: Point[],
+		{set, sort, limit}: MoodboardFilters
+	) => {
+		const index =
+			set === 'highlights' ? highlightsIndex : fullIndex;
+
+		const tracks = index
+			.searchAlongPath(path, limit)
+			.filter((track) => !!track);
+
+		board.setPoints(
+			tracks.map(({valence, energy}) => [valence, energy])
+		);
+
+		const sortedTracks =
+			sort === 'asc'
+				? tracks
+				: sort === 'desc'
+					? tracks.toReversed()
+					: shuffled(tracks);
+
+		playlist.setTracks(sortedTracks);
+	};
+
+	form.addEventListener('path', ((e: CustomEvent) => {
+		board.setCurve(e.detail);
+	}) as EventListener);
+
+	board.addEventListener('drawend', ((e: CustomEvent) => {
+		search(e.detail, filters.filters);
+	}) as EventListener);
+
+	filters.addEventListener('submit', ((e: CustomEvent) => {
+		search(board.getCurve(), e.detail);
+	}) as EventListener);
+
+	playlist.addEventListener('play', ((e: CustomEvent) => {
+		player.play(e.detail);
+	}) as EventListener);
+
+	player.addEventListener('playbackend', ((e: CustomEvent) => {
+		const next = playlist.nextTrack(e.detail);
+
+		if (next) {
+			player.play(next.id);
+		}
+	}) as EventListener);
+
+	document
+		.querySelectorAll<HTMLButtonElement>('[data-preset]')
+		.forEach((button) => {
+			button.addEventListener('click', () => {
+				const path = JSON.parse(
+					button.dataset.preset!
+				) as Point[];
+
+				form.setPoints(path.length ? path : randomPoints());
+			});
+		});
+
+	document.addEventListener('DOMContentLoaded', () => {
+		form.setPoints([
+			[0.25, 0.35],
+			[0.45, 0.7],
+			[0.4, 0.4],
+			[0.55, 0.6],
+			[0.6, 0.45],
+			[0.8, 0.5]
+		]);
+	});
+</script>
