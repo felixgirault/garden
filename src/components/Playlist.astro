@@ -21,28 +21,42 @@ import playIcon from './icons/player-play.svg?raw';
 </fglt-playlist>
 
 <style>
+	fglt-playlist {
+		display: block;
+		container-type: inline-size;
+		inline-size: 100%;
+	}
+
 	[role='status'] {
 		color: var(--color-neutral);
 	}
 
 	ol {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(25ch, 1fr));
+		gap: 1em var(--line-padding);
+		margin: 0;
 		padding: 0;
-		columns: calc(var(--line-length) / 2);
-		column-gap: 5ch;
 		counter-reset: order 0;
+	}
+
+	@container (min-width: 60ch) {
+		ol {
+			display: grid;
+			grid-template-columns: 1fr;
+		}
 	}
 
 	li {
 		position: relative;
 		display: grid;
 		grid-template:
-			'order title play'
+			'order title play' min-content
 			'order artist play'
 			/ min-content 1fr auto;
-		align-items: baseline;
+		align-items: flex-start;
 		gap: 0 1ch;
-		border-radius: var(--radius);
-		padding: 0.5em 1ch;
+		border-radius: var(--radius-s);
 		counter-increment: count;
 		break-inside: avoid;
 	}
@@ -50,23 +64,20 @@ import playIcon from './icons/player-play.svg?raw';
 	li::before {
 		content: counter(count, decimal);
 		grid-area: order;
+		grid-template:
+			'order title artist play'
+			/ min-content auto 1fr auto;
+		border-radius: 100%;
 		min-inline-size: 2ch;
 		color: var(--color-neutral);
 		text-align: end;
-		font-weight: bold;
 		font-variant-numeric: tabular-nums;
 		aspect-ratio: 1 / 1;
-	}
-
-	@media screen and (orientation: landscape) and (max-width: 120ch) {
-		li {
-			grid-template:
-				'order title artist play'
-				/ min-content auto 1fr auto;
-		}
+		mix-blend-mode: difference;
 	}
 
 	li:hover {
+		box-shadow: 0 0 0 0.5em var(--color-surface-variant);
 		background: var(--color-surface-variant);
 	}
 
@@ -76,7 +87,6 @@ import playIcon from './icons/player-play.svg?raw';
 
 	.play {
 		grid-area: play;
-		align-self: center;
 	}
 
 	@media screen and (orientation: landscape) and (max-width: 120ch) {
@@ -107,6 +117,8 @@ import playIcon from './icons/player-play.svg?raw';
 		title: string;
 		artist: string;
 		duration: number;
+		energy: number;
+		valence: number;
 	};
 
 	export class Playlist extends HTMLElement {
@@ -124,10 +136,14 @@ import playIcon from './icons/player-play.svg?raw';
 				)!;
 
 			this.addEventListener('click', (event) => {
-				if (event.target instanceof HTMLButtonElement) {
+				const button = (
+					event.target as HTMLElement
+				).closest<HTMLElement>('.play');
+
+				if (button) {
 					this.dispatchEvent(
 						new CustomEvent('play', {
-							detail: event.target.dataset.id
+							detail: button.dataset.id
 						})
 					);
 				}
@@ -166,10 +182,21 @@ import playIcon from './icons/player-play.svg?raw';
 			);
 		}
 
-		#renderItem({id, title, artist}: PlaylistTrack) {
+		#renderItem({
+			id,
+			title,
+			artist,
+			energy,
+			valence
+		}: PlaylistTrack) {
 			const result = this.#itemTemplate.content.cloneNode(
 				true
 			) as DocumentFragment;
+
+			const item = result.querySelector<HTMLLIElement>('li')!;
+
+			item.style.setProperty('--energy', energy.toString());
+			item.style.setProperty('--valence', valence.toString());
 
 			const play =
 				result.querySelector<HTMLButtonElement>('.play')!;
