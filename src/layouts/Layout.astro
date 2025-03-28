@@ -131,7 +131,12 @@ const seed = hashCode(Astro.url.pathname);
 		{lang}
 	>
 		<div class="Page-container">
-			<header class="Page-header">
+			<header
+				class:list={{
+					'Page-header': true,
+					'VisuallyHidden': isFullScreen
+				}}
+			>
 				<p class="Page-title" role="banner">fglt.</p>
 
 				{
@@ -157,7 +162,13 @@ const seed = hashCode(Astro.url.pathname);
 				<slot />
 			</main>
 
-			<footer class="Page-footer" role="contentinfo">
+			<footer
+				role="contentinfo"
+				class:list={{
+					'Page-footer': true,
+					'VisuallyHidden': isFullScreen
+				}}
+			>
 				<p>Homegrown by Félix Girault.</p>
 
 				<ul class="List--raw List--inline List--dotted">
@@ -251,17 +262,6 @@ const seed = hashCode(Astro.url.pathname);
 		margin-block: 1lh var(--block-spacing);
 	}
 
-	.Page--fullScreen .Page-header {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		justify-content: center;
-		gap: 1ch;
-		margin-block: 0;
-		font-size: var(--font-size-s);
-	}
-
 	.Page--fullScreen .Page-header :is(p, ul) {
 		margin-block: 0;
 	}
@@ -280,10 +280,6 @@ const seed = hashCode(Astro.url.pathname);
 	.Page-footer::before {
 		content: '* * *';
 		color: var(--color-neutral);
-	}
-
-	.Page--fullScreen .Page-footer {
-		display: none;
 	}
 
 	.Page-footer p {

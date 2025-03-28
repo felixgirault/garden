@@ -1,24 +1,22 @@
 <fglt-moodboard-filter-form>
 	<form>
-		<label for="limit">Search for</label>
+		<label for="limit">Find</label>
 		<select class="InvisibleInput" id="limit" name="limit">
-			<option value="10">10 tracks</option>
-			<option value="20">20 tracks</option>
-			<option value="50" selected>50 tracks</option>
-			<option value="100">100 tracks</option>
+			<option value="10">10</option>
+			<option value="20">20</option>
+			<option value="50" selected>50</option>
+			<option value="100">100</option>
 		</select>
 
-		<label for="set">in</label>
+		<label for="set">of</label>
 		<select class="InvisibleInput" id="set" name="set">
 			<option value="all">all tracks</option>
-			<option value="highlights">best album tracks</option>
+			<option value="highlights">best tracks</option>
 		</select>
 
-		<p>and</p>
-		<label for="sort">sort</label>
+		<label for="sort">ordered</label>
 		<select class="InvisibleInput" id="sort" name="sort">
-			<option value="asc">from start to end</option>
-			<option value="desc">from end to start</option>
+			<option value="drawing">as drawn</option>
 			<option value="random">randomly</option>
 		</select>
 	</form>
@@ -44,7 +42,7 @@
 <script>
 	export type MoodboardFilters = {
 		set: 'all' | 'highlights';
-		sort: 'asc' | 'desc' | 'random';
+		sort: 'drawing' | 'random';
 		limit: number;
 	};
 

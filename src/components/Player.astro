@@ -12,65 +12,85 @@ declare global {
 ---
 
 <fglt-player>
-	<p class="info">
-		<span class="title Ellipsis"></span>
-		<span class="artist Ellipsis"></span>
-	</p>
+	<div class="player">
+		<p class="info">
+			<span class="title Ellipsis"></span>
+			<span class="artist Ellipsis"></span>
+		</p>
 
-	<img class="cover Backdrop Reflection" alt="" />
+		<img class="cover Backdrop Reflection" alt="" />
 
-	<div
-		class="progress"
-		role="progressbar"
-		aria-label="Elapsed time"
-		aria-valuemin="0"
-		aria-valuenow="0"
-		aria-valuetext="0 seconds"
-	>
+		<div
+			class="progress"
+			role="progressbar"
+			aria-label="Elapsed time"
+			aria-valuemin="0"
+			aria-valuenow="0"
+			aria-valuetext="0 seconds"
+		>
+		</div>
+
+		<div class="controls">
+			<button
+				class="previous Button--icon"
+				title="Previous track"
+			>
+				<Fragment set:html={skipBackIcon} />
+			</button>
+
+			<button class="playPause Button--icon">
+				<span class="play">
+					<span class="VisuallyHidden">Play</span>
+					<Fragment set:html={playIcon} />
+				</span>
+
+				<span class="pause">
+					<span class="VisuallyHidden">Pause</span>
+					<Fragment set:html={pauseIcon} />
+				</span>
+			</button>
+
+			<button class="next Button--icon" title="Next track">
+				<Fragment set:html={skipForwardIcon} />
+			</button>
+		</div>
 	</div>
-
-	<button class="previous Button--icon" title="Previous track">
-		<Fragment set:html={skipBackIcon} />
-	</button>
-
-	<button class="playPause Button--icon">
-		<span class="play">
-			Play <Fragment set:html={playIcon} />
-		</span>
-		<span class="pause">
-			Pause <Fragment set:html={pauseIcon} />
-		</span>
-	</button>
-
-	<button class="next Button--icon" title="Next track">
-		<Fragment set:html={skipForwardIcon} />
-	</button>
 </fglt-player>
 
 <style>
 	fglt-player {
+		display: block;
+		width: 100%;
+		container-type: inline-size;
+	}
+
+	.player {
 		display: grid;
 		grid-template:
-			'cover info previous playPause next'
-			'cover progress previous playPause next' min-content
-			/ auto 1fr auto auto auto;
+			'info controls'
+			'progress controls' min-content
+			/ 1fr auto;
 		align-items: center;
-		gap: 0.25lh 1ch;
+		gap: 0.25lh 2ch;
 		border-radius: var(--radius);
 		padding: 0.5em 1ch;
-		max-width: var(--line-length);
 		background: var(--color-surface-variant);
 	}
 
-	fglt-player:has(.title:empty) {
-		display: none;
+	@container (min-width: 40ch) {
+		.player {
+			grid-template:
+				'cover info controls'
+				'cover progress controls' min-content
+				/ auto 1fr auto;
+		}
 	}
 
 	.info {
 		grid-area: info;
 		margin: 0;
-		text-align: center;
 		line-height: 1.2;
+		font-size: var(--font-size-s);
 	}
 
 	.title {
@@ -83,24 +103,26 @@ declare global {
 	}
 
 	.cover {
+		display: none;
 		grid-area: cover;
 		aspect-ratio: 1 / 1;
 		height: 2lh;
 	}
 
-	.cover:not([src]) {
-		visibility: hidden;
+	@container (min-width: 40ch) {
+		.cover:not([src]) {
+			display: block;
+		}
 	}
 
-	.previous {
-		grid-area: previous;
+	.controls {
+		grid-area: controls;
+		display: flex;
+		justify-content: center;
+		gap: 0 0.5ch;
 	}
 
-	.playPause {
-		grid-area: playPause;
-	}
-
-	fglt-player .pause {
+	.pause {
 		display: none;
 	}
 

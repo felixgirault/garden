@@ -57,40 +57,34 @@ declare global {
 				this.#api.player.pausePlayback(SpotifyCurrentDevice);
 			});
 
-			this.#loadPlayer();
+			this.#loadDevice();
 		}
 
-		loadPlaylist(trackIds: SpotifyId[], offset?: SpotifyId) {
-			this.#player.promise
-				.then((player) => {
-					player.connect();
-				})
-				.then(() =>
-					this.#api.player.startResumePlayback(
-						SpotifyCurrentDevice,
-						undefined,
-						trackIds.map(spotifyTrackUri),
-						offset
-							? {
-									uri: spotifyTrackUri(offset)
-								}
-							: undefined
-					)
-				);
+		async loadPlaylist(
+			trackIds: SpotifyId[],
+			offset?: SpotifyId
+		) {
+			await this.#api.authenticate();
+			await this.#player.promise;
+			await this.#api.player.startResumePlayback(
+				SpotifyCurrentDevice,
+				undefined,
+				trackIds.map(spotifyTrackUri),
+				offset
+					? {
+							uri: spotifyTrackUri(offset)
+						}
+					: undefined
+			);
 		}
 
-		//
-		//
-		//
-		//
-		//
-		// load only if no device
-		//
-		//
-		//
-		//
-		//
-		#loadPlayer() {
+		async #loadDevice() {
+			const token = await this.#api.getAccessToken();
+
+			if (!token) {
+				return;
+			}
+
 			window.onSpotifyWebPlaybackSDKReady = () => {
 				const player = new window.Spotify.Player({
 					name: 'Moodboard',
@@ -132,7 +126,6 @@ declare global {
 				player.addListener(
 					'player_state_changed',
 					(state) => {
-						console.log(state);
 						this.#updateState(state);
 					}
 				);
@@ -145,6 +138,7 @@ declare global {
 					});
 				}, 500);
 
+				player.connect();
 				this.#player.resolve(player);
 			};
 

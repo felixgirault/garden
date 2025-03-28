@@ -1,35 +1,17 @@
 ---
 import {getCollection} from 'astro:content';
-import DrawingBoard from '../components/DrawingBoard.astro';
-import DrawingForm from '../components/DrawingForm.astro';
-import MoodboardFilterForm from '../components/MoodboardFilterForm.astro';
-import Playlist from '../components/Playlist.astro';
-import SpotifyPlayer from '../components/SpotifyPlayer.astro';
 import Layout from '../layouts/Layout.astro';
+import homeIcon from '../components/icons/home.svg?raw';
+import searchIcon from '../components/icons/pencil-search.svg?raw';
+import playlistIcon from '../components/icons/playlist.svg?raw';
+import MoodboardSearchPanel from '../components/MoodboardSearchPanel.astro';
+import MoodboardResultsPanel from '../components/MoodboardResultsPanel.astro';
 
 const trackCollection = await getCollection('moodboardTracks');
 const tracks = trackCollection.map(({id, data}) => ({
 	id,
 	...data
 }));
-
-const presets = {
-	Chill: [
-		[0.6, 0.1],
-		[0.9, 0.1]
-	],
-	Energetic: [
-		[0.8, 0.9],
-		[0.9, 0.9]
-	],
-	Progressive: [
-		[0, 0],
-		[0.2, 0.1],
-		[0.8, 0.9],
-		[1, 1]
-	],
-	Random: []
-};
 
 declare global {
 	interface Window {
@@ -48,61 +30,31 @@ declare global {
 		<link rel="manifest" href="/moodboard-manifest.json" />
 	</Fragment>
 
+	<ul class="nav List--raw List--inline">
+		<li class="home">
+			<a class="Button" href="/">
+				<Fragment set:html={homeIcon} /> Home
+			</a>
+		</li>
+		<li>
+			<a class="Button" href="#search">
+				<Fragment set:html={searchIcon} /> Search
+			</a>
+		</li>
+		<li>
+			<a class="Button" href="#results">
+				<Fragment set:html={playlistIcon} /> Playlist
+			</a>
+		</li>
+	</ul>
+
 	<div class="app">
-		<div class="panel search">
-			<div class="info">
-				<h1>Moodboard</h1>
-
-				<p class="Subtitle">Draw yourself a playlist!</p>
-
-				<p>
-					On the board below, {tracks.length} music tracks are
-					laid out according to their perceived happiness and
-					energy, from saddest on the left to happiest on the
-					right, from calmer at the bottom to hotter at the top.
-				</p>
-
-				<p>
-					You may try the following presets to get an idea
-					of how this works:
-				</p>
-
-				<ul class="presets">
-					{
-						Object.entries(presets).map(
-							([label, path]) => (
-								<li>
-									<button
-										class="Button--small"
-										data-preset={JSON.stringify(path)}
-									>
-										{label}
-									</button>
-								</li>
-							)
-						)
-					}
-				</ul>
-			</div>
-
-			<div class="board">
-				<DrawingBoard />
-				<DrawingForm />
-			</div>
+		<div class="panel" id="search">
+			<MoodboardSearchPanel trackCount={tracks.length} />
 		</div>
 
-		<div class="panel results">
-			<div class="filters">
-				<MoodboardFilterForm />
-			</div>
-
-			<div class="playlist">
-				<Playlist />
-			</div>
-
-			<div class="player">
-				<SpotifyPlayer />
-			</div>
+		<div class="panel results" id="results">
+			<MoodboardResultsPanel />
 		</div>
 	</div>
 </Layout>
@@ -113,11 +65,47 @@ declare global {
 		scroll-snap-align: start end;
 	}
 
+	.nav {
+		position: fixed;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: grid;
+		grid-auto-columns: 1fr;
+		margin: 0;
+	}
+
+	@media screen and (orientation: portrait) and (min-width: 90ch),
+		screen and (orientation: landscape) and (min-width: 120ch) {
+		.nav {
+			display: none;
+		}
+	}
+
+	.nav li {
+		grid-row: 1;
+	}
+
+	.nav a {
+		box-sizing: border-box;
+		border-radius: 0;
+		box-shadow: none;
+		width: 100%;
+		background: var(--color-surface-variant);
+		justify-content: center;
+	}
+
+	@media screen and (display-mode: standalone) {
+		.home {
+			display: none;
+		}
+	}
+
 	.app {
 		display: grid;
-		grid-template:
-			'search results' 1fr
-			/ 100% 100%;
+		grid-template-columns: 100% 100%;
+		grid-template-rows: 1fr;
+		gap: 0;
 		margin-inline: auto;
 		max-inline-size: var(--line-length--wide);
 		block-size: 100vh;
@@ -129,108 +117,39 @@ declare global {
 	@media screen and (orientation: portrait) and (min-width: 90ch),
 		screen and (orientation: landscape) and (min-width: 120ch) {
 		.app {
-			grid-template:
-				'search results' 1fr
-				/ 1fr 1fr;
-			align-items: baseline;
-			gap: 1lh 5vw;
+			grid-template-columns: 1fr 1fr;
+			grid-template-rows: 1fr;
 			overflow-x: initial;
 		}
 	}
 
 	.panel {
+		--panel-block-padding: var(--block-spacing);
+		--panel-nav-padding: 1lh;
 		box-sizing: border-box;
-		display: grid;
-		gap: 1lh 0;
 		min-block-size: 0;
 		max-block-size: 100%;
 		block-size: 100%;
 		inline-size: 100%;
-		padding: 2lh var(--line-padding) 1lh var(--line-padding);
+		padding: var(--panel-block-padding) var(--line-padding)
+			calc(
+				var(--panel-block-padding) + var(--panel-nav-padding)
+			)
+			var(--line-padding);
 		scroll-snap-align: start;
 		scroll-snap-stop: always;
 	}
 
-	@media screen and (min-height: 50lh) {
+	@media screen and (orientation: portrait) and (min-width: 90ch),
+		screen and (orientation: landscape) and (min-width: 120ch) {
 		.panel {
-			padding-block: 10vh;
+			--panel-nav-padding: 0lh;
 		}
 	}
 
-	.search {
-		grid-area: search;
-		grid-template:
-			'info' min-content
-			'board' 1fr;
-	}
-
-	@media screen and (orientation: landscape) and (max-width: 90ch) {
-		.search {
-			grid-template:
-				'info board'
-				/ 1fr 1fr;
-		}
-	}
-
-	.info {
-		grid-area: info;
-	}
-
-	.board {
-		grid-area: board;
-		display: flex;
-		align-items: stretch;
-	}
-
-	.results {
-		grid-template:
-			'filters' min-content
-			'playlist' 1fr
-			'player' auto;
-	}
-
-	.filters {
-		grid-area: filters;
-	}
-
-	.playlist {
-		grid-area: playlist;
-		height: 100%;
-		padding-inline-end: 1ch;
-		overflow-y: auto;
-		scrollbar-width: thin;
-		scrollbar-color: var(--color-interactive)
-			var(--color-surface-variant);
-	}
-
-	@media screen and (min-width: 90ch) {
-		.playlist {
-			overscroll-behavior: contain;
-		}
-	}
-
-	.player {
-		grid-area: player;
-	}
-
-	p:has(+ .presets) {
-		display: inline;
-	}
-
-	.presets {
-		display: inline;
-		padding: 0;
-		list-style: none;
-	}
-
-	.presets li {
-		display: inline;
-	}
-
-	@media screen and (display-mode: standalone) {
-		:global(.Page-header),
-		:global(.Page-footer) {
-			display: none !important;
+	@media screen and (min-height: 55lh) {
+		.panel {
+			--panel-block-padding: var(--block-spacing);
 		}
 	}
 </style>
@@ -240,107 +159,39 @@ declare global {
 </script>
 
 <script>
-	import type {DrawingBoard} from '../components/DrawingBoard.astro.0.mts';
-	import type {DrawingForm} from '../components/DrawingForm.astro.0.mts';
-	import type {
-		MoodboardFilterForm,
-		MoodboardFilters
-	} from '../components/MoodboardFilterForm.astro.0.mts';
-	import type {Playlist} from '../components/Playlist.astro.0.mts';
-	import type {SpotifyPlayer} from '../components/SpotifyPlayer.astro.0.mts';
-	import {randomPoints, type Point} from '../services/2d';
-	import {shuffled} from '../services/math';
-	import {MoodboardTrackIndex} from '../services/moodboard';
+	import type {MoodboardResultsPanel} from '../components/MoodboardResultsPanel.astro.0.mts';
+	import type {MoodboardSearchPanel} from '../components/MoodboardSearchPanel.astro.0.mts';
+	import type {Point} from '../services/2d';
+	import {
+		MoodboardDefaultPreset,
+		type MoodboardTrack
+	} from '../services/moodboard';
 
-	const fullIndex = new MoodboardTrackIndex(
-		window.moodboardTracks
-	);
-
-	const highlightsIndex = new MoodboardTrackIndex(
-		window.moodboardTracks.filter(
-			({isAlbumHighlight}) => isAlbumHighlight
-		)
-	);
-
-	const playlist =
-		document.querySelector<Playlist>('fglt-playlist')!;
-	const player = document.querySelector<SpotifyPlayer>(
-		'fglt-spotify-player'
-	)!;
-	const board = document.querySelector<DrawingBoard>(
-		'fglt-drawing-board'
-	)!;
-	const form = document.querySelector<DrawingForm>(
-		'fglt-drawing-form'
-	)!;
-	const filters = document.querySelector<MoodboardFilterForm>(
-		'fglt-moodboard-filter-form'
+	const search = document.querySelector<MoodboardSearchPanel>(
+		'fglt-moodboard-search-panel'
 	)!;
 
-	const search = (
-		path: Point[],
-		{set, sort, limit}: MoodboardFilters
+	const results = document.querySelector<MoodboardResultsPanel>(
+		'fglt-moodboard-results-panel'
+	)!;
+
+	results.index(window.moodboardTracks);
+
+	results.addEventListener('results', ((
+		e: CustomEvent<MoodboardTrack[]>
 	) => {
-		const index =
-			set === 'highlights' ? highlightsIndex : fullIndex;
-
-		const tracks = index
-			.searchAlongPath(path, limit)
-			.filter((track) => !!track);
-
-		board.setPoints(
-			tracks.map(({valence, energy}) => [valence, energy])
-		);
-
-		const sortedTracks =
-			sort === 'asc'
-				? tracks
-				: sort === 'desc'
-					? tracks.toReversed()
-					: shuffled(tracks);
-
-		playlist.setTracks(sortedTracks);
-	};
-
-	form.addEventListener('path', ((e: CustomEvent) => {
-		board.setCurve(e.detail);
-	}) as EventListener);
-
-	board.addEventListener('drawend', ((e: CustomEvent) => {
-		search(e.detail, filters.filters);
-	}) as EventListener);
-
-	filters.addEventListener('submit', ((e: CustomEvent) => {
-		search(board.getCurve(), e.detail);
-	}) as EventListener);
-
-	playlist.addEventListener('play', ((e: CustomEvent) => {
-		player.loadPlaylist(
-			playlist.tracks.map(({id}) => id),
-			e.detail
+		search.setPoints(
+			e.detail.map(({valence, energy}) => [valence, energy])
 		);
 	}) as EventListener);
 
-	document
-		.querySelectorAll<HTMLButtonElement>('[data-preset]')
-		.forEach((button) => {
-			button.addEventListener('click', () => {
-				const path = JSON.parse(
-					button.dataset.preset!
-				) as Point[];
-
-				form.setPoints(path.length ? path : randomPoints());
-			});
-		});
+	search.addEventListener('submit', ((
+		e: CustomEvent<Point[]>
+	) => {
+		results.searchAlongPath(e.detail);
+	}) as EventListener);
 
 	document.addEventListener('DOMContentLoaded', () => {
-		form.setPoints([
-			[0.25, 0.35],
-			[0.45, 0.7],
-			[0.4, 0.4],
-			[0.55, 0.6],
-			[0.6, 0.45],
-			[0.8, 0.5]
-		]);
+		search.setPath(MoodboardDefaultPreset);
 	});
 </script>

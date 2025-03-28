@@ -1,4 +1,4 @@
-<fglt-drawing-board aria-hidden="true" open>
+<fglt-drawing-board aria-hidden="true">
 	<canvas></canvas>
 
 	<p class="top">▲ energetic</p>
@@ -12,12 +12,11 @@
 		display: block;
 		position: relative;
 		border-radius: var(--radius);
-		height: 2lh;
+		inline-size: 100%;
+		block-size: 100%;
+		max-block-size: var(--line-length);
+		contain: size;
 		overflow: hidden;
-	}
-
-	fglt-drawing-board[open] {
-		height: 100%;
 	}
 
 	canvas {
@@ -37,21 +36,17 @@
 			background-blend-mode: saturation;
 			*/
 		touch-action: none;
+		cursor: pointer;
 	}
 
 	p {
 		position: absolute;
-		display: none;
 		margin: 0;
 		color: var(--color-surface);
 		font-weight: bold;
 		font-variant: all-small-caps;
 		white-space: nowrap;
 		pointer-events: none;
-	}
-
-	fglt-drawing-board[open] p {
-		display: block;
 	}
 
 	.top {
@@ -97,7 +92,7 @@
 		#ctx!: CanvasRenderingContext2D;
 		#canvasRatio = 1;
 		#resizeObserver!: ResizeObserver;
-		#curve: Point[] = [];
+		#path: Point[] = [];
 		#points: Point[] = [];
 		#pointerId = 0;
 		#frameId = 0;
@@ -107,10 +102,6 @@
 		connectedCallback() {
 			this.#canvas = this.querySelector('canvas')!;
 			this.#ctx = this.#canvas.getContext('2d')!;
-
-			this.#canvas.addEventListener('click', (event) => {
-				//this.toggle();
-			});
 
 			this.#canvas.addEventListener(
 				'pointerdown',
@@ -162,20 +153,16 @@
 				this.updateCanvasDimensions();
 			});
 
-			this.#resizeObserver.observe(this.#canvas);
+			this.#resizeObserver.observe(this);
 			this.updateCanvasDimensions();
 		}
 
-		getCurve() {
-			return this.#curve;
-		}
-
-		setCurve(curve: Point[]) {
+		setPath(path: Point[]) {
 			this.#isDrawing = false;
-			this.#curve = curve;
+			this.#path = path;
 			this.#points = [];
 			this.#render();
-			this.#emitCurve();
+			this.#emitPath();
 		}
 
 		setPoints(points: Point[]) {
@@ -183,14 +170,9 @@
 			this.#render();
 		}
 
-		toggle() {
-			this.toggleAttribute('open');
-		}
-
 		updateCanvasDimensions() {
 			this.#withinFrame(() => {
-				const {width, height} =
-					this.#canvas.getBoundingClientRect();
+				const {width, height} = this.getBoundingClientRect();
 				this.#canvas.width = width;
 				this.#canvas.height = height;
 				this.#canvasRatio = (width + height) / 2;
@@ -221,14 +203,14 @@
 		startDrawing(point: Point) {
 			this.#isDrawing = true;
 			this.#isLastCurvePointTemporary = false;
-			this.#curve = [point];
+			this.#path = [point];
 			this.#points = [];
 			this.#render();
 		}
 
 		draw(point: Point) {
 			this.#withinFrame(() => {
-				const previousPoint = this.#curve.at(
+				const previousPoint = this.#path.at(
 					this.#isLastCurvePointTemporary ? -2 : -1
 				);
 
@@ -242,10 +224,10 @@
 				);
 
 				if (this.#isLastCurvePointTemporary) {
-					this.#curve.pop();
+					this.#path.pop();
 				}
 
-				this.#curve.push(point);
+				this.#path.push(point);
 				this.#isLastCurvePointTemporary =
 					d < DrawingBoard.DrawingDefinition;
 
@@ -256,9 +238,9 @@
 		endDrawing(point: Point) {
 			this.#withinFrame(() => {
 				this.#isDrawing = false;
-				this.#curve = this.#curve.concat([point]);
+				this.#path = this.#path.concat([point]);
 				this.#render();
-				this.#emitCurve();
+				this.#emitPath();
 			});
 		}
 
@@ -275,17 +257,17 @@
 				this.#canvas.height
 			);
 
-			this.#drawCurve();
+			this.#drawPath();
 			this.#drawPoints();
 		}
 
-		#drawCurve() {
-			if (this.#curve.length < 2) {
+		#drawPath() {
+			if (this.#path.length < 2) {
 				return;
 			}
 
 			const points = interpolateSpline(
-				this.#curve,
+				this.#path,
 				(length) => {
 					const count =
 						(length / DrawingBoard.RenderingDefinition) *
@@ -323,10 +305,10 @@
 			});
 		}
 
-		#emitCurve() {
+		#emitPath() {
 			this.dispatchEvent(
 				new CustomEvent('drawend', {
-					detail: this.#curve
+					detail: this.#path
 				})
 			);
 		}

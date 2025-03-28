@@ -23,7 +23,7 @@
 
 	--font-weight-bold: 600;
 
-	--block-spacing: 2rlh;
+	--block-spacing: 1rlh;
 	--line-length: 70ch;
 	--line-length--wide: 150ch;
 	--line-padding: 3ch;
@@ -71,19 +71,25 @@
 	--radius-s: 0.2rem;
 }
 
-@media screen and (min-height: 35rlh) {
+@media screen and (min-height: 30rlh) {
+	:root {
+		--block-spacing: 2rlh;
+	}
+}
+
+@media screen and (min-height: 50rlh) {
 	:root {
 		--block-spacing: 3rlh;
 	}
 }
 
-@media screen and (min-width: 100ch) and (min-height: 40rlh) {
+@media screen and (min-width: 100ch) and (min-height: 50rlh) {
 	:root {
 		--block-spacing: 4rlh;
 	}
 }
 
-@media screen and (min-width: 150ch) and (min-height: 50rlh) {
+@media screen and (min-width: 150ch) and (min-height: 60rlh) {
 	:root {
 		--block-spacing: 5rlh;
 	}
@@ -149,7 +155,7 @@ h1:has(+ .Subtitle) {
 }
 
 h1 + .Subtitle {
-	margin-block-end: 2rlh;
+	margin-block-end: 1rlh;
 	color: var(--color-neutral);
 	font-style: italic;
 }
@@ -224,19 +230,19 @@ a:active {
 
 button,
 .Button {
-	--color-background-strength: 4%;
+	--button-border-width: 1px;
+	--button-background-strength: 4%;
 	display: inline-flex;
 	align-items: center;
 	gap: 0 0.25ch;
+	box-shadow: inset 0 0 0 1px var(--color-interactive);
 	border: none;
 	border-radius: var(--radius);
 	padding: 0.25em 1.5ch;
-	outline: 1px solid var(--color-interactive);
-	outline-offset: -1px;
 	background: color-mix(
 		in srgb,
 		transparent,
-		var(--color-interactive) var(--color-background-strength)
+		var(--color-interactive) var(--button-background-strength)
 	);
 	color: var(--color-interactive);
 	text-decoration: none;
@@ -247,12 +253,12 @@ button,
 
 :is(button, .Button):is(:hover, :focus),
 .Button-trigger:checked + :is(button, .Button) {
-	--color-background-strength: 15%;
+	--button-background-strength: 15%;
 }
 
 :is(button, .Button):active,
 .Button-trigger:checked + :is(button, .Button) {
-	outline-width: 2px;
+	--button-border-width: 2px;
 }
 
 :is(button, .Button):has(svg) {
@@ -261,8 +267,8 @@ button,
 
 :is(button, .Button) svg {
 	display: inline-block;
-	width: 1em;
-	height: 1em;
+	inline-size: 1em;
+	block-size: 1em;
 }
 
 .Button--small {

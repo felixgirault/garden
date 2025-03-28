@@ -73,5 +73,29 @@ export const spotifyApi = () =>
 			'user-modify-playback-state',
 			'user-read-email',
 			'user-read-private'
-		]
+		],
+		{
+			deserializer: {
+				// The API sometimes returns a text response
+				// instead of JSON, which makes the default
+				// deserializer yield errors.
+				// This silences them.
+				async deserialize<TReturnType>(
+					response: Response
+				): Promise<TReturnType> {
+					const text = await response.text();
+
+					if (text.length > 0) {
+						try {
+							const json = JSON.parse(text);
+							return json as TReturnType;
+						} catch (e) {
+							return text as TReturnType;
+						}
+					}
+
+					return null as TReturnType;
+				}
+			}
+		}
 	);
