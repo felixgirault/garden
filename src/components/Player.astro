@@ -71,7 +71,7 @@ declare global {
 			'progress controls' min-content
 			/ 1fr auto;
 		align-items: center;
-		gap: 0.25lh 2ch;
+		gap: 0.25lh 1ch;
 		border-radius: var(--radius);
 		padding: 0.5em 1ch;
 		background: var(--color-surface-variant);
@@ -110,7 +110,7 @@ declare global {
 	}
 
 	@container (min-width: 40ch) {
-		.cover:not([src]) {
+		.cover {
 			display: block;
 		}
 	}
