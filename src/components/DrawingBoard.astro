@@ -9,6 +9,12 @@
 
 <style>
 	fglt-drawing-board {
+		--energetic: red;
+		--energetic: yellow;
+		--happy: yellow;
+		--happy: green;
+		--chill: aqua;
+		--sad: indigo;
 		display: block;
 		position: relative;
 		border-radius: var(--radius);
@@ -17,36 +23,46 @@
 		max-block-size: var(--line-length);
 		contain: size;
 		overflow: hidden;
+		background: linear-gradient(
+			to bottom left,
+			var(--energetic),
+			var(--sad)
+		);
+	}
+
+	fglt-drawing-board::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			to bottom left,
+			var(--happy),
+			var(--chill)
+		);
+		mask-image: linear-gradient(
+			to top left,
+			white,
+			transparent
+		);
 	}
 
 	canvas {
+		position: relative;
 		display: block;
 		width: 100%;
 		height: 100%;
-		background: linear-gradient(to right, blue, green),
-			linear-gradient(to top, yellow, red);
-		background-blend-mode: screen;
-		/*
-		background: linear-gradient(to top, blue, red),
-			linear-gradient(
-				to right,
-				rgba(128, 128, 128, 0.5),
-				white
-			);
-			background-blend-mode: saturation;
-			*/
-		touch-action: none;
 		cursor: pointer;
 	}
 
 	p {
 		position: absolute;
 		margin: 0;
-		color: var(--color-surface);
+		color: var(--color-on-surface);
 		font-weight: bold;
 		font-variant: all-small-caps;
 		white-space: nowrap;
 		pointer-events: none;
+		mix-blend-mode: overlay;
 	}
 
 	.top {
@@ -81,11 +97,12 @@
 		type Point,
 		distance,
 		interpolateSpline,
+		isAngleAcute,
 		makePath
 	} from '../services/2d';
 
 	export class DrawingBoard extends HTMLElement {
-		static DrawingDefinition = 5;
+		static DrawingDefinition = 20;
 		static RenderingDefinition = 2;
 
 		#canvas!: HTMLCanvasElement;
@@ -93,11 +110,11 @@
 		#canvasRatio = 1;
 		#resizeObserver!: ResizeObserver;
 		#path: Point[] = [];
+		#danglingPathPoint: Point | null = null;
 		#points: Point[] = [];
 		#pointerId = 0;
 		#frameId = 0;
 		#isDrawing = false;
-		#isLastCurvePointTemporary = false;
 
 		connectedCallback() {
 			this.#canvas = this.querySelector('canvas')!;
@@ -160,6 +177,7 @@
 		setPath(path: Point[]) {
 			this.#isDrawing = false;
 			this.#path = path;
+			this.#danglingPathPoint = null;
 			this.#points = [];
 			this.#render();
 			this.#emitPath();
@@ -202,19 +220,33 @@
 
 		startDrawing(point: Point) {
 			this.#isDrawing = true;
-			this.#isLastCurvePointTemporary = false;
 			this.#path = [point];
+			this.#danglingPathPoint = null;
 			this.#points = [];
 			this.#render();
 		}
 
 		draw(point: Point) {
 			this.#withinFrame(() => {
-				const previousPoint = this.#path.at(
-					this.#isLastCurvePointTemporary ? -2 : -1
-				);
+				if (!this.#path.length) {
+					return;
+				}
 
-				if (!previousPoint) {
+				const previousPoint = this.#path.at(-1)!;
+
+				// Adds a point in case of a sharp turn in
+				// between valid points.
+				if (
+					this.#danglingPathPoint &&
+					isAngleAcute(
+						previousPoint,
+						this.#danglingPathPoint,
+						point
+					)
+				) {
+					this.#path.push(point);
+					this.#danglingPathPoint = null;
+					this.#render();
 					return;
 				}
 
@@ -223,21 +255,23 @@
 					this.toCanvasCoords(point)
 				);
 
-				if (this.#isLastCurvePointTemporary) {
-					this.#path.pop();
+				// Moves the dangling point if it is still
+				// close to the previous point.
+				if (d < DrawingBoard.DrawingDefinition) {
+					this.#danglingPathPoint = point;
+					this.#render();
+					return;
 				}
 
 				this.#path.push(point);
-				this.#isLastCurvePointTemporary =
-					d < DrawingBoard.DrawingDefinition;
-
+				this.#danglingPathPoint = null;
 				this.#render();
 			});
 		}
 
 		endDrawing(point: Point) {
+			this.#isDrawing = false;
 			this.#withinFrame(() => {
-				this.#isDrawing = false;
 				this.#path = this.#path.concat([point]);
 				this.#render();
 				this.#emitPath();
@@ -262,21 +296,13 @@
 		}
 
 		#drawPath() {
-			if (this.#path.length < 2) {
+			const points = this.#interpolatePath();
+
+			if (!points.length) {
 				return;
 			}
 
-			const points = interpolateSpline(
-				this.#path,
-				(length) => {
-					const count =
-						(length / DrawingBoard.RenderingDefinition) *
-						this.#canvasRatio;
-					return Math.max(Math.round(count), 1);
-				}
-			);
-
-			const path = makePath(
+			const canvasPath = makePath(
 				points.map(this.toCanvasCoords.bind(this))
 			);
 
@@ -284,10 +310,13 @@
 			this.#ctx.lineCap = 'round';
 			this.#ctx.lineJoin = 'round';
 			this.#ctx.lineWidth = 0.05 * this.#canvasRatio;
-			this.#ctx.stroke(path);
+			this.#ctx.stroke(canvasPath);
 		}
 
 		#drawPoints() {
+			this.#ctx.fillStyle = '#ffeae5';
+			this.#ctx.globalAlpha = 0.6;
+
 			this.#points.forEach((point) => {
 				const [x, y] = this.toCanvasCoords(point);
 
@@ -295,13 +324,36 @@
 				this.#ctx.arc(
 					x,
 					y,
-					0.003 * this.#canvasRatio,
+					0.005 * this.#canvasRatio,
 					0,
 					2 * Math.PI
 				);
 
-				this.#ctx.fillStyle = '#83a892';
 				this.#ctx.fill();
+			});
+
+			this.#ctx.globalAlpha = 1;
+		}
+
+		#interpolatePath() {
+			if (!this.#path.length) {
+				return [];
+			}
+
+			if (this.#path.length === 1) {
+				const start = this.#path.at(0)!;
+				return [start, this.#danglingPathPoint || start];
+			}
+
+			const path = this.#danglingPathPoint
+				? this.#path.concat([this.#danglingPathPoint])
+				: this.#path;
+
+			return interpolateSpline(path, (length) => {
+				const count =
+					(length / DrawingBoard.RenderingDefinition) *
+					this.#canvasRatio;
+				return Math.max(Math.round(count), 1);
 			});
 		}
 
