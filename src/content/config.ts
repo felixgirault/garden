@@ -1,4 +1,4 @@
-import {glob} from 'astro/loaders';
+import {file, glob} from 'astro/loaders';
 import {defineCollection, z} from 'astro:content';
 import {fetchDbData} from '../services/db';
 import {fromDbTracks} from '../services/moodboard';
@@ -66,6 +66,20 @@ export const collections = {
 			energy: z.number(),
 			valence: z.number(),
 			isAlbumHighlight: z.boolean()
+		})
+	}),
+	webrings: defineCollection({
+		loader: glob({
+			pattern: '*.md',
+			base: './src/content/webrings'
+		}),
+		schema: z.object({
+			title: z.string(),
+			icon: z.string(),
+			url: z.string().url(),
+			previousUrl: z.string().url(),
+			nextUrl: z.string().url(),
+			randomUrl: z.string().url()
 		})
 	})
 };

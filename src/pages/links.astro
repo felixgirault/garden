@@ -1,0 +1,74 @@
+---
+import {getCollection, render} from 'astro:content';
+import Card from '../components/Card.astro';
+import Layout from '../layouts/Layout.astro';
+
+const webrings = await getCollection('webrings');
+---
+
+<Layout
+	title="Links"
+	breadcrumbs={[{title: 'slash pages', url: '/slash'}]}
+>
+	<h1>Links</h1>
+
+	<h2>Webrings</h2>
+
+	<p>Surf the web like it's the '90s again!</p>
+
+	<ul>
+		<li>
+			{
+				webrings.map(async (webring) => {
+					const {Content, headings} = await render(webring);
+
+					return (
+						<Card>
+							<h4 slot="header">
+								<a
+									href={webring.data.url}
+									set:text={webring.data.title}
+								/>
+							</h4>
+
+							<span slot="icon" aria-hidden="true">
+								{webring.data.icon}
+							</span>
+
+							<div slot="body">
+								<Content />
+							</div>
+
+							<ul
+								slot="footer"
+								class="List--raw List--inline List--dotted"
+							>
+								<li>
+									<a
+										href={webring.data.previousUrl}
+										title="Previous website in the ring"
+										set:text="⇜ previous"
+									/>
+								</li>
+								<li>
+									<a
+										href={webring.data.randomUrl}
+										title="Random website in the ring"
+										set:text="random"
+									/>
+								</li>
+								<li>
+									<a
+										href={webring.data.nextUrl}
+										title="Next website in the ring"
+										set:text="next ⇝"
+									/>
+								</li>
+							</ul>
+						</Card>
+					);
+				})
+			}
+		</li>
+	</ul>
+</Layout>
