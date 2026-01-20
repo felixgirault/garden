@@ -28,6 +28,7 @@ const webrings = await getCollection('webrings');
 								<a
 									href={webring.data.url}
 									set:text={webring.data.title}
+									rel="external"
 								/>
 							</h4>
 
@@ -48,6 +49,8 @@ const webrings = await getCollection('webrings');
 										href={webring.data.previousUrl}
 										title="Previous website in the ring"
 										set:text="⇜ previous"
+										rel="external"
+										referrerpolicy="strict-origin"
 									/>
 								</li>
 								<li>
@@ -55,6 +58,8 @@ const webrings = await getCollection('webrings');
 										href={webring.data.randomUrl}
 										title="Random website in the ring"
 										set:text="random"
+										rel="external"
+										referrerpolicy="strict-origin"
 									/>
 								</li>
 								<li>
@@ -62,6 +67,8 @@ const webrings = await getCollection('webrings');
 										href={webring.data.nextUrl}
 										title="Next website in the ring"
 										set:text="next ⇝"
+										rel="external"
+										referrerpolicy="strict-origin"
 									/>
 								</li>
 							</ul>
