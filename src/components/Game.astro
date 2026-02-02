@@ -22,49 +22,59 @@ const {Content} = await game.render();
 		/>
 	</div>
 
-	<h3>{title}</h3>
+	<div class="body">
+		<h3>{title}</h3>
 
-	<Content />
+		<Content />
 
-	{
-		website ? (
-			<a
-				class="Button"
-				href={website}
-				title="Visit website"
-				set:text="Website"
-			/>
-		) : null
-	}
+		{
+			website ? (
+				<a
+					class="Button"
+					href={website}
+					title="Visit website"
+					set:text="Website"
+				/>
+			) : null
+		}
 
-	{
-		steamId ? (
-			<a
-				class="Button"
-				href={`https://store.steampowered.com/app/${steamId}`}
-				title="View on Steam"
-				set:text="Steam"
-			>
-				<Fragment set:html={steamIcon} />
-			</a>
-		) : null
-	}
+		{
+			steamId ? (
+				<a
+					class="Button"
+					href={`https://store.steampowered.com/app/${steamId}`}
+					title="View on Steam"
+					set:text="Steam"
+				>
+					<Fragment set:html={steamIcon} />
+				</a>
+			) : null
+		}
+	</div>
 </article>
 
 <style>
 	article {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
 		margin-block-end: 2lh;
 		break-inside: avoid;
 	}
 
 	.thumbnail {
+		grid-column: 1 / span 2;
 		border-radius: var(--radius);
 		background: var(--color-theme);
 	}
 
 	.thumbnail img {
 		width: 100%;
-		mix-blend-mode: luminosity;
+		mix-blend-mode: hard-light;
+	}
+
+	.body {
+		grid-column: 2 / span 2;
+		grid-row: 2;
 	}
 
 	h3 {

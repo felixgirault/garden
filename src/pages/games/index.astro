@@ -11,7 +11,7 @@ const {featured, regular} = Object.groupBy(games, ({data}) =>
 ---
 
 <Layout
-	theme="playful"
+	theme="dark"
 	title="Games you should play"
 	breadcrumbs={[]}
 >
@@ -23,10 +23,10 @@ const {featured, regular} = Object.groupBy(games, ({data}) =>
 		found on other platforms as well.
 	</p>
 
-	<Section isWide>
+	<Section>
 		<h2>The very best</h2>
 
-		<ul class="Games-featured List--raw">
+		<ul class="List--raw">
 			{
 				featured!.map((game) => (
 					<li>
@@ -37,10 +37,10 @@ const {featured, regular} = Object.groupBy(games, ({data}) =>
 		</ul>
 	</Section>
 
-	<Section isWide>
+	<Section>
 		<h2>The very nice</h2>
 
-		<div class="Games-regular List--raw">
+		<div class="List--raw">
 			{
 				regular!.map((game) => (
 					<li>
@@ -51,17 +51,3 @@ const {featured, regular} = Object.groupBy(games, ({data}) =>
 		</div>
 	</Section>
 </Layout>
-
-<style>
-	.Games-featured {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(40ch, 1fr));
-		gap: var(--block-spacing) calc(2 * var(--line-padding));
-	}
-
-	.Games-regular {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(30ch, 1fr));
-		gap: var(--block-spacing) var(--line-padding);
-	}
-</style>

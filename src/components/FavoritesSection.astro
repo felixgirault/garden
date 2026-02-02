@@ -1,0 +1,22 @@
+---
+import Section from './Section.astro';
+import Card from './Card.astro';
+---
+
+<Section>
+	<h2>Things I like</h2>
+
+	<ul>
+		<li>
+			<Card>
+				<h4 slot="header">
+					<a href="/games" set:text="Games" />
+				</h4>
+
+				<p slot="body">
+					Great games you should definitely check out.
+				</p>
+			</Card>
+		</li>
+	</ul>
+</Section>
