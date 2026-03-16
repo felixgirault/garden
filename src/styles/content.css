@@ -6,3 +6,9 @@
 	font-size: var(--font-size-s);
 	tab-size: 3ch;
 }
+
+.Ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

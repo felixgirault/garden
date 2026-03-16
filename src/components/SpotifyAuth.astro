@@ -1,0 +1,19 @@
+<fglt-spotify-auth>
+	<button>Auth</button>
+</fglt-spotify-auth>
+
+<script>
+	import {spotifyApi} from '../services/spotify';
+
+	export class SpotifyAuth extends HTMLElement {
+		connectedCallback() {
+			document
+				.querySelector<HTMLButtonElement>('button')!
+				.addEventListener('click', () => {
+					spotifyApi().logOut();
+				});
+		}
+	}
+
+	customElements.define('fglt-spotify-auth', SpotifyAuth);
+</script>

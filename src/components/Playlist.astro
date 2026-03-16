@@ -1,3 +1,7 @@
+---
+import playIcon from './icons/player-play.svg?raw';
+---
+
 <fglt-playlist>
 	<div role="status" aria-live="polite">
 		<p id="status"></p>
@@ -7,23 +11,24 @@
 
 	<template>
 		<li>
-			<button class="play" title="" data-id="">►</button>
 			<span class="title"></span>
 			<span class="artist"></span>
+			<button class="play Button--icon" title="" data-id="">
+				<Fragment set:html={playIcon} />
+			</button>
 		</li>
 	</template>
 </fglt-playlist>
 
 <style>
 	[role='status'] {
-		margin-block-end: 1lh;
 		color: var(--color-neutral);
 	}
 
 	ol {
 		padding: 0;
-		columns: 30ch;
-		column-gap: var(--line-padding);
+		columns: calc(var(--line-length) / 2);
+		column-gap: 5ch;
 		counter-reset: order 0;
 	}
 
@@ -31,29 +36,54 @@
 		position: relative;
 		display: grid;
 		grid-template:
-			'play title order'
-			'play artist order'
-			/ min-content 1fr;
-		align-items: start;
+			'order title play'
+			'order artist play'
+			/ min-content 1fr auto;
+		align-items: baseline;
 		gap: 0 1ch;
-		margin-block-end: 1em;
-		padding-inline-end: 3ch;
+		border-radius: var(--radius);
+		padding: 0.5em 1ch;
 		counter-increment: count;
 		break-inside: avoid;
 	}
 
 	li::before {
 		content: counter(count, decimal);
-		position: absolute;
-		top: 0;
-		right: 0;
+		grid-area: order;
+		min-inline-size: 2ch;
 		color: var(--color-neutral);
-		line-height: 1.2;
+		text-align: end;
 		font-weight: bold;
+		font-variant-numeric: tabular-nums;
+		aspect-ratio: 1 / 1;
+	}
+
+	@media screen and (orientation: landscape) and (max-width: 120ch) {
+		li {
+			grid-template:
+				'order title artist play'
+				/ min-content auto 1fr auto;
+		}
+	}
+
+	li:hover {
+		background: var(--color-surface-variant);
+	}
+
+	li:hover::before {
+		color: var(--color-on-surface);
 	}
 
 	.play {
 		grid-area: play;
+		align-self: center;
+	}
+
+	@media screen and (orientation: landscape) and (max-width: 120ch) {
+		.play {
+			height: 1lh;
+			padding: 0;
+		}
 	}
 
 	.title {
@@ -65,7 +95,6 @@
 		grid-area: artist;
 		color: var(--color-neutral);
 		line-height: 1.2;
-		font-family: var(--font-serif);
 		font-size: var(--font-size-s);
 	}
 </style>
@@ -103,6 +132,10 @@
 					);
 				}
 			});
+		}
+
+		get tracks() {
+			return this.#tracks;
 		}
 
 		setTracks(tracks: PlaylistTrack[]) {
