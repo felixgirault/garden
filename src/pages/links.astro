@@ -20,7 +20,7 @@ const webrings = await getCollection('webrings');
 		<li>
 			{
 				webrings.map(async (webring) => {
-					const {Content, headings} = await render(webring);
+					const {Content} = await render(webring);
 
 					return (
 						<Card>

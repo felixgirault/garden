@@ -1,7 +1,8 @@
-import {file, glob} from 'astro/loaders';
-import {defineCollection, z} from 'astro:content';
-import {fetchDbData} from '../services/db';
-import {fromDbTracks} from '../services/moodboard';
+import {glob} from 'astro/loaders';
+import {z} from 'astro/zod';
+import {defineCollection} from 'astro:content';
+import {fetchDbData} from './services/db';
+import {fromDbTracks} from './services/moodboard';
 
 export const collections = {
 	albums: defineCollection({
@@ -15,8 +16,8 @@ export const collections = {
 				artist: z.string(),
 				description: z.string().optional(),
 				cover: image(),
-				microCover: z.string().url(),
-				preview: z.string().url(),
+				microCover: z.url(),
+				preview: z.url(),
 				deezerId: z.number().optional(),
 				spotifyId: z.string().optional(),
 				dominantColor: z.string(),
@@ -76,10 +77,10 @@ export const collections = {
 		schema: z.object({
 			title: z.string(),
 			icon: z.string(),
-			url: z.string().url(),
-			previousUrl: z.string().url(),
-			nextUrl: z.string().url(),
-			randomUrl: z.string().url()
+			url: z.url(),
+			previousUrl: z.url(),
+			nextUrl: z.url(),
+			randomUrl: z.url()
 		})
 	})
 };
