@@ -15,21 +15,21 @@
   "dependencies": {
     "@astrojs/check": "^0.9.7",
     "astro": "^6.0.4",
-    "typescript": "^5.6.3"
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@material/material-color-utilities": "^0.3.0",
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/d3-ease": "^3.0.2",
     "@types/kd-tree-javascript": "^1.0.3",
-    "@types/node": "^22.9.0",
+    "@types/node": "^25.5.0",
     "curve-interpolator": "^3.3.1",
     "d3-ease": "^3.0.1",
-    "fontaine": "^0.5.0",
+    "fontaine": "^0.8.0",
     "kd-tree-javascript": "^1.0.3",
     "new-javascript": "^0.4.7",
-    "prettier": "^3.3.3",
+    "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",
-    "yaml": "^2.6.0"
+    "yaml": "^2.8.2"
   }
 }
