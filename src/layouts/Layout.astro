@@ -26,6 +26,7 @@ interface Props {
 	breadcrumbs?: Breadcrumb[];
 	cover?: string;
 	noIndex?: boolean;
+	isFullScreen?: boolean;
 }
 
 const {
@@ -35,7 +36,8 @@ const {
 	title,
 	breadcrumbs,
 	cover,
-	noIndex = false
+	noIndex = false,
+	isFullScreen = false
 } = Astro.props;
 
 const pageCoverMaskStops = stopsToCssStops([
@@ -116,10 +118,16 @@ const seed = hashCode(Astro.url.pathname);
 		}
 
 		<title>{title} | fglt</title>
+
+		<slot name="head" />
 	</head>
 
 	<body
-		class:list={{Page: true, 'Page--hasCover': !!cover}}
+		class:list={{
+			Page: true,
+			'Page--fullScreen': isFullScreen,
+			'Page--hasCover': !!cover
+		}}
 		{lang}
 	>
 		<div class="Page-container">
@@ -232,10 +240,30 @@ const seed = hashCode(Astro.url.pathname);
 		max-inline-size: var(--line-length);
 	}
 
+	.Page--fullScreen .Page-container {
+		padding-inline: 0;
+		max-inline-size: 100%;
+	}
+
 	.Page-header {
 		display: flex;
 		gap: 4ch;
 		margin-block: 1lh var(--block-spacing);
+	}
+
+	.Page--fullScreen .Page-header {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		justify-content: center;
+		gap: 1ch;
+		margin-block: 0;
+		font-size: var(--font-size-s);
+	}
+
+	.Page--fullScreen .Page-header :is(p, ul) {
+		margin-block: 0;
 	}
 
 	.Page-title {
@@ -252,6 +280,10 @@ const seed = hashCode(Astro.url.pathname);
 	.Page-footer::before {
 		content: '* * *';
 		color: var(--color-neutral);
+	}
+
+	.Page--fullScreen .Page-footer {
+		display: none;
 	}
 
 	.Page-footer p {

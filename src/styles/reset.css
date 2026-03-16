@@ -44,8 +44,8 @@
 	);
 	--color-surface-variant: color-mix(
 		in srgb,
-		var(--color-theme-variant),
-		white 98%
+		var(--color-surface),
+		var(--color-on-surface) 10%
 	);
 	--color-on-surface-variant: var(--color-on-surface);
 	--color-input-surface: var(--color-surface);
@@ -101,11 +101,6 @@
 		var(--color-theme-variant),
 		white 85%
 	);
-	--color-surface-variant: color-mix(
-		in srgb,
-		var(--color-theme-variant),
-		black 90%
-	);
 	--color-input-border: var(--color-neutral);
 	--color-roots: color-mix(
 		in srgb,
@@ -147,6 +142,16 @@ h1 {
 
 .Theme--dark h1 {
 	font-weight: 200;
+}
+
+h1:has(+ .Subtitle) {
+	margin-block-end: 0.5rem;
+}
+
+h1 + .Subtitle {
+	margin-block-end: 2rlh;
+	color: var(--color-neutral);
+	font-style: italic;
 }
 
 h2 {
@@ -256,11 +261,18 @@ button,
 
 :is(button, .Button) svg {
 	display: inline-block;
+	width: 1em;
 	height: 1em;
 }
 
 .Button--small {
 	padding-block: 0;
+}
+
+.Button--icon {
+	padding: 0.25em 1ch;
+	justify-content: center;
+	aspect-ratio: 1 / 1;
 }
 
 code {

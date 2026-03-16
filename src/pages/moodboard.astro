@@ -1,12 +1,11 @@
 ---
 import {getCollection} from 'astro:content';
-import Layout from '../layouts/Layout.astro';
-import Section from '../components/Section.astro';
 import DrawingBoard from '../components/DrawingBoard.astro';
-import SpotifyPlayer from '../components/SpotifyPlayer.astro';
-import Playlist from '../components/Playlist.astro';
 import DrawingForm from '../components/DrawingForm.astro';
 import MoodboardFilterForm from '../components/MoodboardFilterForm.astro';
+import Playlist from '../components/Playlist.astro';
+import SpotifyPlayer from '../components/SpotifyPlayer.astro';
+import Layout from '../layouts/Layout.astro';
 
 const trackCollection = await getCollection('moodboardTracks');
 const tracks = trackCollection.map(({id, data}) => ({
@@ -39,70 +38,200 @@ declare global {
 }
 ---
 
-<Layout theme="dark" title="Moodboard" breadcrumbs={[]}>
-	<h1>Moodboard</h1>
+<Layout
+	theme="dark"
+	title="Moodboard"
+	breadcrumbs={[]}
+	isFullScreen
+>
+	<Fragment slot="head">
+		<link rel="manifest" href="/moodboard-manifest.json" />
+	</Fragment>
 
-	<p>Draw yourself a playlist! 🖌️</p>
+	<div class="app">
+		<div class="panel search">
+			<div class="info">
+				<h1>Moodboard</h1>
 
-	<p>
-		{tracks.length} tracks are laid out in the board below.
-		<br />
-		They are arranged according to their perceived happiness and
-		energy, from saddest on the left to happiest on the right, from
-		calmer at the bottom to hotter at the top.
-	</p>
+				<p class="Subtitle">Draw yourself a playlist!</p>
 
-	<p>
-		Some presets are available below for you to get an idea of
-		how this works.
-	</p>
+				<p>
+					On the board below, {tracks.length} music tracks are
+					laid out according to their perceived happiness and
+					energy, from saddest on the left to happiest on the
+					right, from calmer at the bottom to hotter at the top.
+				</p>
 
-	<Section isWide>
-		<ul>
-			{
-				Object.entries(presets).map(([label, path]) => (
-					<li>
-						<button data-preset={JSON.stringify(path)}>
-							{label}
-						</button>
-					</li>
-				))
-			}
-		</ul>
+				<p>
+					You may try the following presets to get an idea
+					of how this works:
+				</p>
 
-		<DrawingBoard />
-		<DrawingForm />
-		<MoodboardFilterForm />
-	</Section>
+				<ul class="presets">
+					{
+						Object.entries(presets).map(
+							([label, path]) => (
+								<li>
+									<button
+										class="Button--small"
+										data-preset={JSON.stringify(path)}
+									>
+										{label}
+									</button>
+								</li>
+							)
+						)
+					}
+				</ul>
+			</div>
 
-	<Section isWide>
-		<Playlist />
-	</Section>
+			<div class="board">
+				<DrawingBoard />
+				<DrawingForm />
+			</div>
+		</div>
 
-	<SpotifyPlayer />
+		<div class="panel results">
+			<div class="filters">
+				<MoodboardFilterForm />
+			</div>
+
+			<div class="playlist">
+				<Playlist />
+			</div>
+
+			<div class="player">
+				<SpotifyPlayer />
+			</div>
+		</div>
+	</div>
 </Layout>
 
 <style>
-	ul {
+	:global(html) {
+		scroll-snap-type: y mandatory;
+		scroll-snap-align: start end;
+	}
+
+	.app {
+		display: grid;
+		grid-template:
+			'search results' 1fr
+			/ 100% 100%;
+		margin-inline: auto;
+		max-inline-size: var(--line-length--wide);
+		block-size: 100vh;
+		block-size: 100dvh;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+	}
+
+	@media screen and (orientation: portrait) and (min-width: 90ch),
+		screen and (orientation: landscape) and (min-width: 120ch) {
+		.app {
+			grid-template:
+				'search results' 1fr
+				/ 1fr 1fr;
+			align-items: baseline;
+			gap: 1lh 5vw;
+			overflow-x: initial;
+		}
+	}
+
+	.panel {
+		box-sizing: border-box;
+		display: grid;
+		gap: 1lh 0;
+		min-block-size: 0;
+		max-block-size: 100%;
+		block-size: 100%;
+		inline-size: 100%;
+		padding: 2lh var(--line-padding) 1lh var(--line-padding);
+		scroll-snap-align: start;
+		scroll-snap-stop: always;
+	}
+
+	@media screen and (min-height: 50lh) {
+		.panel {
+			padding-block: 10vh;
+		}
+	}
+
+	.search {
+		grid-area: search;
+		grid-template:
+			'info' min-content
+			'board' 1fr;
+	}
+
+	@media screen and (orientation: landscape) and (max-width: 90ch) {
+		.search {
+			grid-template:
+				'info board'
+				/ 1fr 1fr;
+		}
+	}
+
+	.info {
+		grid-area: info;
+	}
+
+	.board {
+		grid-area: board;
 		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
-		justify-content: center;
-		gap: 1ch;
+		align-items: stretch;
+	}
+
+	.results {
+		grid-template:
+			'filters' min-content
+			'playlist' 1fr
+			'player' auto;
+	}
+
+	.filters {
+		grid-area: filters;
+	}
+
+	.playlist {
+		grid-area: playlist;
+		height: 100%;
+		padding-inline-end: 1ch;
+		overflow-y: auto;
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-interactive)
+			var(--color-surface-variant);
+	}
+
+	@media screen and (min-width: 90ch) {
+		.playlist {
+			overscroll-behavior: contain;
+		}
+	}
+
+	.player {
+		grid-area: player;
+	}
+
+	p:has(+ .presets) {
+		display: inline;
+	}
+
+	.presets {
+		display: inline;
 		padding: 0;
 		list-style: none;
 	}
 
-	form {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
-		justify-content: flex-start;
-		margin-block-end: 2lh;
+	.presets li {
+		display: inline;
 	}
 
-	label {
-		margin-inline: 1ch;
+	@media screen and (display-mode: standalone) {
+		:global(.Page-header),
+		:global(.Page-footer) {
+			display: none !important;
+		}
 	}
 </style>
 
@@ -186,15 +315,10 @@ declare global {
 	}) as EventListener);
 
 	playlist.addEventListener('play', ((e: CustomEvent) => {
-		player.play(e.detail);
-	}) as EventListener);
-
-	player.addEventListener('playbackend', ((e: CustomEvent) => {
-		const next = playlist.nextTrack(e.detail);
-
-		if (next) {
-			player.play(next.id);
-		}
+		player.loadPlaylist(
+			playlist.tracks.map(({id}) => id),
+			e.detail
+		);
 	}) as EventListener);
 
 	document

@@ -1,4 +1,4 @@
-<fglt-drawing-board aria-hidden="true">
+<fglt-drawing-board aria-hidden="true" open>
 	<canvas></canvas>
 
 	<p class="top">▲ energetic</p>
@@ -11,35 +11,47 @@
 	fglt-drawing-board {
 		display: block;
 		position: relative;
-		margin-bottom: 1em;
+		border-radius: var(--radius);
+		height: 2lh;
+		overflow: hidden;
+	}
+
+	fglt-drawing-board[open] {
+		height: 100%;
 	}
 
 	canvas {
 		display: block;
 		width: 100%;
-		height: 50vh;
-		background: linear-gradient(
-				to right,
-				rgba(0, 0, 255, 0.5),
-				rgba(0, 255, 0, 0.5)
-			),
+		height: 100%;
+		background: linear-gradient(to right, blue, green),
+			linear-gradient(to top, yellow, red);
+		background-blend-mode: screen;
+		/*
+		background: linear-gradient(to top, blue, red),
 			linear-gradient(
-				to top,
-				rgba(255, 0, 0, 0.5),
-				rgba(255, 255, 0, 0.5)
-			),
-			#fff;
-		background-blend-mode: normal;
+				to right,
+				rgba(128, 128, 128, 0.5),
+				white
+			);
+			background-blend-mode: saturation;
+			*/
 		touch-action: none;
 	}
 
 	p {
 		position: absolute;
+		display: none;
 		margin: 0;
 		color: var(--color-surface);
 		font-weight: bold;
 		font-variant: all-small-caps;
 		white-space: nowrap;
+		pointer-events: none;
+	}
+
+	fglt-drawing-board[open] p {
+		display: block;
 	}
 
 	.top {
@@ -95,6 +107,10 @@
 		connectedCallback() {
 			this.#canvas = this.querySelector('canvas')!;
 			this.#ctx = this.#canvas.getContext('2d')!;
+
+			this.#canvas.addEventListener('click', (event) => {
+				//this.toggle();
+			});
 
 			this.#canvas.addEventListener(
 				'pointerdown',
@@ -165,6 +181,10 @@
 		setPoints(points: Point[]) {
 			this.#points = points;
 			this.#render();
+		}
+
+		toggle() {
+			this.toggleAttribute('open');
 		}
 
 		updateCanvasDimensions() {
@@ -298,7 +318,7 @@
 					2 * Math.PI
 				);
 
-				this.#ctx.fillStyle = '#ff7452';
+				this.#ctx.fillStyle = '#83a892';
 				this.#ctx.fill();
 			});
 		}
