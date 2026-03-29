@@ -88,6 +88,8 @@ up with the insane pace of the web ecosystem.
 -  [Today I learned](https://www.stefanjudis.com/today-i-learned/) -
    Over 150 quick-to-read “Today I learned” blog posts all around
    web development
+-  [Jsoning API](https://jsoning.com/api/) - Mock API for testing and prototyping
+-  [PHPhub](https://phphub.net/) - A collection of PHP tools
 
 ### Newsletters
 
@@ -148,7 +150,7 @@ up with the insane pace of the web ecosystem.
    how and why typography affects ease of reading
 -  [Style manual](http://stylemanual.org/) - English typographic
    and style rules
--  [The Elements of Typographic Style Applied to the Web](http://webtypography.net/toc/)
+-  [The Elements of Typographic Style Applied to the Web](https://webtypography.net/toc)
 -  [Web typography resources](https://betterwebtype.com/web-typography-resources/) -
    Apps, tools, plugins and other resources
 
@@ -170,7 +172,6 @@ up with the insane pace of the web ecosystem.
    modern OS
 -  [Syncope](http://nowodzinski.pl/syncope/) - A tool to help
    with vertical rhythm
--  [Tiff](http://tiff.herokuapp.com/) - Visual typeface diff tool
 -  [Type Scale](https://type-scale.com/) - a visual calculator
 
 ### Free quality typefaces
@@ -205,8 +206,6 @@ up with the insane pace of the web ecosystem.
    A typeface based on antique gas pump meters
 -  [League Mono](https://www.theleagueofmoveabletype.com/league-mono)
 -  [Linden Hill](https://www.theleagueofmoveabletype.com/linden-hill)
--  [Manrope](https://manropefont.com/) - Sans-serif variable font
-   with custom ligatures
 -  [Miguela Script](https://befonts.com/miguela-script-font.html)
 -  [Nyght Serif](https://www.tunera.xyz/fonts/nyght-serif) -
    Contemporary serif with a spicy character
