@@ -16,12 +16,10 @@ const {isWide = false} = Astro.props;
 	}
 
 	.isWide {
-		--padding: var(--block-spacing);
+		--padding: 5vw;
 		--offset: calc(
-			(
-					100vw - var(--line-length) - 2 *
-						var(--line-padding) - 2 * var(--padding)
-				) / 2
+			50vw - var(--line-length) / 2 - var(--line-padding) -
+				var(--padding)
 		);
 		--max-offset: calc(
 			(var(--line-length--wide) - var(--line-length)) / 2
