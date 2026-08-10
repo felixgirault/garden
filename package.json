@@ -13,8 +13,8 @@
     "format": "prettier --ignore-path .gitignore --write ."
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.9",
-    "astro": "^7.0.2",
+    "@astrojs/check": "^0.9.10",
+    "astro": "^7.2.0",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
@@ -22,13 +22,13 @@
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/d3-ease": "^3.0.2",
     "@types/kd-tree-javascript": "^1.0.3",
-    "@types/node": "^26.0.1",
+    "@types/node": "^26.2.0",
     "curve-interpolator": "^3.3.1",
     "d3-ease": "^3.0.1",
     "fontaine": "^0.8.0",
     "kd-tree-javascript": "^1.0.3",
     "new-javascript": "^0.4.7",
-    "prettier": "^3.8.4",
+    "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
     "yaml": "^2.9.0"
   }
