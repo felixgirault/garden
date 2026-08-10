@@ -1,0 +1,60 @@
+---
+import {getCollection} from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+const tracks = await getCollection('earworms');
+const dateFormat = new Intl.DateTimeFormat('en-US', {
+	year: 'numeric',
+	month: '2-digit',
+	day: '2-digit'
+});
+---
+
+<Layout title="Earworms">
+	<h1>Earworms</h1>
+
+	<p>
+		Songs that have been stuck in my head for a quite a while.
+	</p>
+
+	<ul itemscope itemtype="https://schema.org/MusicPlaylist">
+		{
+			tracks.map((track) => (
+				<li
+					itemprop="track"
+					itemscope
+					itemtype="https://schema.org/MusicRecording"
+				>
+					<a itemprop="url" href={track.data.link}>
+						<span itemprop="name">{track.data.title}</span>
+					</a>{' '}
+					-{' '}
+					<span
+						itemprop="byArtist"
+						itemscope
+						itemtype="https://schema.org/MusicGroup"
+					>
+						<span itemprop="name">
+							{track.data.artist}
+						</span>
+					</span>{' '}
+					(
+					<time
+						itemprop="dateCreated"
+						datetime={track.data.date.toISOString()}
+					>
+						{dateFormat.format(track.data.date)}
+					</time>
+					)
+				</li>
+			))
+		}
+	</ul>
+</Layout>
+
+<style>
+	[itemprop='byArtist'] {
+		font-family: var(--font-serif);
+		font-style: italic;
+	}
+</style>
