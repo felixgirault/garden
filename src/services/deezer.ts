@@ -35,7 +35,7 @@ export const fetchPlaylistTracks = async (id: string) => {
 		.map((track) => ({
 			id: track.id.toString(),
 			title: track.title,
-			link: track.link,
+			url: track.link,
 			artist: track.artist.name,
 			date: new Date(track.time_add * 1000)
 		}))

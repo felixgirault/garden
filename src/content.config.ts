@@ -51,7 +51,7 @@ export const collections = {
 		},
 		schema: z.object({
 			title: z.string(),
-			link: z.string(),
+			url: z.string(),
 			artist: z.string(),
 			date: z.date()
 		})

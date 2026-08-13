@@ -10,12 +10,10 @@ const dateFormat = new Intl.DateTimeFormat('en-US', {
 });
 ---
 
-<Layout title="Earworms">
+<Layout title="Earworms" breadcrumbs={[]}>
 	<h1>Earworms</h1>
 
-	<p>
-		Songs that have been stuck in my head for a quite a while.
-	</p>
+	<p>Songs that got stuck in my head for a while.</p>
 
 	<ul itemscope itemtype="https://schema.org/MusicPlaylist">
 		{
@@ -25,7 +23,7 @@ const dateFormat = new Intl.DateTimeFormat('en-US', {
 					itemscope
 					itemtype="https://schema.org/MusicRecording"
 				>
-					<a itemprop="url" href={track.data.link}>
+					<a itemprop="url" href={track.data.url}>
 						<span itemprop="name">{track.data.title}</span>
 					</a>{' '}
 					-{' '}

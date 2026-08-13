@@ -1,6 +1,10 @@
 ---
+import {getCollection} from 'astro:content';
 import Section from './Section.astro';
 import AlbumGridPreview from '../components/AlbumGridPreview.astro';
+
+const earworms = await getCollection('earworms');
+const currentEarworm = earworms.at(0).data;
 ---
 
 <Section>
@@ -55,15 +59,11 @@ import AlbumGridPreview from '../components/AlbumGridPreview.astro';
 
 		<ul>
 			<li>
-				<a href="/albums">
-					My all-time favorite albums
-					<AlbumGridPreview />
-				</a>
-			</li>
-			<li>
-				<a href="/moodboard">
-					Draw yourself a playlist with the moodboard!
-				</a>
+				<a href="/earworms">
+					Songs that got stuck in my head for a while
+				</a> (currently <a href={currentEarworm.url}
+					>{currentEarworm.title}</a
+				> by {currentEarworm.artist})
 			</li>
 			<li>
 				<a
@@ -72,11 +72,23 @@ import AlbumGridPreview from '../components/AlbumGridPreview.astro';
 				/>
 			</li>
 			<li>
-				<a
-					href="https://www.last.fm/user/fglt"
-					set:text="Let's scrobble together on Last.fm!"
-				/>
+				<a href="/moodboard">
+					Draw yourself a playlist with the moodboard!
+				</a>
+			</li>
+			<li>
+				<a href="/albums">
+					My all-time favorite albums
+					<AlbumGridPreview />
+				</a>
 			</li>
 		</ul>
+
+		<p>
+			Also, <a
+				href="https://www.last.fm/user/fglt"
+				set:text="let's scrobble together on Last.fm!"
+			/>
+		</p>
 	</article>
 </Section>
