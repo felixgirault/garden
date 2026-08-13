@@ -34,6 +34,16 @@ export const collections = {
 			date: z.date()
 		})
 	}),
+	chords: defineCollection({
+		loader: glob({
+			pattern: '*.yml',
+			base: './src/content/chords'
+		}),
+		schema: z.object({
+			title: z.string(),
+			tldr: z.string()
+		})
+	}),
 	devTips: defineCollection({
 		loader: glob({
 			pattern: '*.md',

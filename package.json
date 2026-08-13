@@ -28,6 +28,7 @@
     "fontaine": "^0.8.0",
     "kd-tree-javascript": "^1.0.3",
     "new-javascript": "^0.4.7",
+    "notae": "github:memoriainfinita/notae",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
     "yaml": "^2.9.0"

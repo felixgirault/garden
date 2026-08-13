@@ -1,0 +1,18 @@
+---
+import {
+	renderFretboard,
+	type FretboardChord
+} from 'notae/src/index';
+
+interface Props extends Partial<FretboardChord> {}
+
+const chord = renderFretboard({
+	name: '',
+	tuning: ['E', 'A', 'D', 'G', 'B', 'E'],
+	frets: [],
+	...Astro.props
+});
+console.log(chord);
+---
+
+<Fragment set:html={chord} />
