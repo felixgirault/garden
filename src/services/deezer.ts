@@ -31,13 +31,10 @@ export const fetchPlaylistTracks = async (id: string) => {
 
 	const playlist = (await response.json()) as DeezerPlaylist;
 
-	return playlist.tracks.data
-		.map((track) => ({
-			id: track.id.toString(),
-			title: track.title,
-			url: track.link,
-			artist: track.artist.name,
-			date: new Date(track.time_add * 1000)
-		}))
-		.toSorted((a, b) => b.date.getTime() - a.date.getTime());
+	return playlist.tracks.data.map((track) => ({
+		id: track.id.toString(),
+		title: track.title,
+		url: track.link,
+		artist: track.artist.name
+	}));
 };

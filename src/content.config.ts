@@ -52,8 +52,7 @@ export const collections = {
 		schema: z.object({
 			title: z.string(),
 			url: z.string(),
-			artist: z.string(),
-			date: z.date()
+			artist: z.string()
 		})
 	}),
 	ideas: defineCollection({

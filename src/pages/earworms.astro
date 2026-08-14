@@ -2,15 +2,12 @@
 import {getCollection} from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 
-const tracks = await getCollection('earworms');
-const dateFormat = new Intl.DateTimeFormat('en-US', {
-	year: 'numeric',
-	month: '2-digit',
-	day: '2-digit'
-});
+const tracks = (await getCollection('earworms')).toSorted(
+	(a, b) => a.data.title.localeCompare(b.data.title)
+);
 ---
 
-<Layout title="Earworms" breadcrumbs={[]}>
+<Layout title="Earworms" breadcrumbs={[]} theme="dark">
 	<h1>Earworms</h1>
 
 	<p>Songs that got stuck in my head for a while.</p>
@@ -35,15 +32,7 @@ const dateFormat = new Intl.DateTimeFormat('en-US', {
 						<span itemprop="name">
 							{track.data.artist}
 						</span>
-					</span>{' '}
-					(
-					<time
-						itemprop="dateCreated"
-						datetime={track.data.date.toISOString()}
-					>
-						{dateFormat.format(track.data.date)}
-					</time>
-					)
+					</span>
 				</li>
 			))
 		}
