@@ -4,15 +4,19 @@ import {
 	type FretboardChord
 } from 'notae/src/index';
 
-interface Props extends Partial<FretboardChord> {}
+export interface Props extends FretboardChord {
+	frets: number[];
+}
 
+const {frets, ...props} = Astro.props;
+const actualFrets = frets.filter((fret) => fret > 0);
+const baseFret = Math.min(...actualFrets);
 const chord = renderFretboard({
-	name: '',
-	tuning: ['E', 'A', 'D', 'G', 'B', 'E'],
-	frets: [],
-	...Astro.props
+	...props,
+	frets,
+	baseFret: baseFret > 2 ? baseFret : undefined,
+	tuning: ['E', 'A', 'D', 'G', 'B', 'E']
 });
-console.log(chord);
 ---
 
 <Fragment set:html={chord} />

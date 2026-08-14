@@ -1,0 +1,14 @@
+---
+import {letterIndex} from '../services/strings';
+import Chord, {type Props as ChordProps} from './Chord.astro';
+
+interface Props {
+	chords: Omit<ChordProps, 'name'>[];
+}
+---
+
+{
+	Astro.props.chords.map((chord, i) => (
+		<Chord name={letterIndex(i)} {...chord} />
+	))
+}

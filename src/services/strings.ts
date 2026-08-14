@@ -8,3 +8,8 @@ export const slugify = (string: string, separator = '-') =>
 		.trim()
 		.replace(/[^a-z0-9 ]/g, '')
 		.replace(/\s+/g, separator);
+
+const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+export const letterIndex = (i: number) =>
+	alphabet.at(i % alphabet.length)!;

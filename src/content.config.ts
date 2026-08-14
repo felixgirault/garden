@@ -34,14 +34,35 @@ export const collections = {
 			date: z.date()
 		})
 	}),
-	chords: defineCollection({
+	chordProgressions: defineCollection({
 		loader: glob({
 			pattern: '*.yml',
-			base: './src/content/chords'
+			base: './src/content/chordProgressions'
 		}),
 		schema: z.object({
-			title: z.string(),
-			tldr: z.string()
+			name: z.string(),
+			chords: z.array(
+				z.object({
+					frets: z
+						.array(z.number().min(-1).max(24))
+						.length(6),
+					barres: z
+						.array(
+							z.object({
+								fret: z.number().min(1).max(24),
+								startString: z.number().min(1).max(6),
+								endString: z.number().min(1).max(6)
+							})
+						)
+						.optional()
+				})
+			),
+			song: z
+				.object({
+					name: z.string(),
+					url: z.url()
+				})
+				.optional()
 		})
 	}),
 	devTips: defineCollection({

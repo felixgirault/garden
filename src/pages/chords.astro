@@ -1,18 +1,22 @@
 ---
+import {getCollection} from 'astro:content';
+import ChordProgression from '../components/ChordProgression.astro';
 import Layout from '../layouts/Layout.astro';
-import Chord from '../components/Chord.astro';
+
+const progressions = await getCollection('chordProgressions');
 ---
 
 <Layout title="Chords" breadcrumbs={[]}>
-	<h1>Chords</h1>
+	<h1>Chord progressions</h1>
 
 	<p>Chord progressions I like.</p>
 
-	<Chord frets={[-1, 7, 9, 0, 8, 0]} baseFret={6} />
-	<Chord frets={[-1, 5, 7, 0, 7, 0]} baseFret={4} />
-	<Chord frets={[-1, 3, 5, 0, 5, 0]} />
-	<Chord
-		frets={[0, 2, 5, 2, 3, 2]}
-		barres={[{fret: 2, startString: 2, endString: 6}]}
-	/>
+	{
+		progressions.map((progression) => (
+			<>
+				<h2>{progression.data.name}</h2>
+				<ChordProgression {...progression.data} />
+			</>
+		))
+	}
 </Layout>
