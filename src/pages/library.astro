@@ -1,0 +1,15 @@
+---
+import {getCollection} from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Book from '../components/Book.astro';
+
+const books = await getCollection('books');
+---
+
+<Layout title="Library" breadcrumbs={[]}>
+	<h1>Library</h1>
+
+	<p></p>
+
+	{books.map((book) => <Book book={book} />)}
+</Layout>

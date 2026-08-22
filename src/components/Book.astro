@@ -1,0 +1,70 @@
+---
+import type {CollectionEntry} from 'astro:content';
+import {markdownToHtml} from 'satteri';
+
+interface Props {
+	book: CollectionEntry<'books'>;
+}
+
+const {title, subtitle, author, lang, quotes} =
+	Astro.props.book.data;
+---
+
+<article itemscope itemtype="https://schema.org/Book">
+	<header>
+		<h1 itemprop="name" {lang}>
+			{title}
+		</h1>
+
+		{subtitle ? <em {lang}>{subtitle}</em> : null}
+
+		<p
+			itemprop="author"
+			itemscope
+			itemtype="https://schema.org/Person"
+		>
+			By <span itemprop="name">{author}</span>
+		</p>
+
+		{
+			lang ? (
+				<meta itemprop="inLanguage" content={lang} />
+			) : null
+		}
+	</header>
+
+	{
+		quotes.length ? (
+			<>
+				<h2>Quotes</h2>
+
+				{quotes.map(({text}) => (
+					<blockquote
+						itemscope
+						itemtype="https://schema.org/Quotation"
+					>
+						<div
+							itemprop="text"
+							{lang}
+							set:html={markdownToHtml(text).html}
+						/>
+					</blockquote>
+				))}
+			</>
+		) : null
+	}
+</article>
+
+<style>
+	h1 em {
+		display: block;
+		margin-top: 1rlh;
+		font-size: 1rem;
+	}
+
+	[itemprop='author'] {
+		padding-inline-start: 0.5ch;
+		font-family: var(--font-serif);
+		font-style: italic;
+	}
+</style>
