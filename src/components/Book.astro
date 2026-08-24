@@ -39,7 +39,7 @@ const {title, subtitle, author, lang, quotes} =
 				<h2>Quotes</h2>
 
 				{quotes.map(({text}) => (
-					<blockquote
+					<div
 						itemscope
 						itemtype="https://schema.org/Quotation"
 					>
@@ -48,7 +48,7 @@ const {title, subtitle, author, lang, quotes} =
 							{lang}
 							set:html={markdownToHtml(text).html}
 						/>
-					</blockquote>
+					</div>
 				))}
 			</>
 		) : null
