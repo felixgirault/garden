@@ -29,12 +29,6 @@ export const fetchPlaylistTracks = async (id: string) => {
 		`${DeezerApiBaseUrl}/playlist/${id}`
 	);
 
-	const playlist = (await response.json()) as DeezerPlaylist;
-
-	return playlist.tracks.data.map((track) => ({
-		id: track.id.toString(),
-		title: track.title,
-		url: track.link,
-		artist: track.artist.name
-	}));
+	const playlist: DeezerPlaylist = await response.json();
+	return playlist.tracks.data;
 };

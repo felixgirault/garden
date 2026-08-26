@@ -1,8 +1,8 @@
 import {glob} from 'astro/loaders';
 import {z} from 'astro/zod';
 import {defineCollection} from 'astro:content';
+import {deezerPlaylistLoader} from './loaders/deezerPlaylist';
 import {fetchDbData} from './services/db';
-import {fetchPlaylistTracks} from './services/deezer';
 import {fromDbTracks} from './services/moodboard';
 
 export const collections = {
@@ -46,13 +46,8 @@ export const collections = {
 		})
 	}),
 	earworms: defineCollection({
-		loader: async () => {
-			return await fetchPlaylistTracks('15627881223');
-		},
-		schema: z.object({
-			title: z.string(),
-			url: z.string(),
-			artist: z.string()
+		loader: deezerPlaylistLoader({
+			playlistId: '15627881223'
 		})
 	}),
 	ideas: defineCollection({
