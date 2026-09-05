@@ -1,6 +1,7 @@
 import {glob} from 'astro/loaders';
 import {z} from 'astro/zod';
 import {defineCollection} from 'astro:content';
+import {cachedLoader} from './loaders/cached';
 import {deezerPlaylistLoader} from './loaders/deezerPlaylist';
 import {fetchDbData} from './services/db';
 import {fromDbTracks} from './services/moodboard';
@@ -46,8 +47,11 @@ export const collections = {
 		})
 	}),
 	earworms: defineCollection({
-		loader: deezerPlaylistLoader({
-			playlistId: '15627881223'
+		loader: cachedLoader({
+			useCached: import.meta.env.USE_CACHED_COLLECTIONS,
+			loader: deezerPlaylistLoader({
+				playlistId: '15627881223'
+			})
 		})
 	}),
 	ideas: defineCollection({

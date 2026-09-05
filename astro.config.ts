@@ -1,4 +1,4 @@
-import {defineConfig} from 'astro/config';
+import {defineConfig, envField} from 'astro/config';
 import {FontaineTransform} from 'fontaine';
 import fs from 'fs';
 import path from 'path';
@@ -10,6 +10,15 @@ const theme = await fetch(
 
 // https://astro.build/config
 export default defineConfig({
+	env: {
+		schema: {
+			USE_CACHED_COLLECTIONS: envField.boolean({
+				context: 'server',
+				access: 'secret',
+				default: false
+			})
+		}
+	},
 	markdown: {
 		shikiConfig: {
 			theme: await theme.json()
