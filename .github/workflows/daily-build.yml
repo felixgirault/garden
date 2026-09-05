@@ -1,0 +1,9 @@
+name: Daily Netlify build
+on:
+  schedule:
+    - cron: '0 4 * * *'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -X POST -d {} ${{ secrets.NETLIFY_BUILD_HOOK }}
