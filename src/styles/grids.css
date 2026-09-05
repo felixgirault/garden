@@ -5,7 +5,8 @@
 		(
 				var(--line-length) - (var(--grid-column-count) - 1) *
 					var(--grid-gap)
-			) / var(--grid-column-count)
+			) /
+			var(--grid-column-count)
 	);
 	display: grid;
 	grid-template-columns: repeat(

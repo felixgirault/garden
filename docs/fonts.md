@@ -1,6 +1,10 @@
 # Fonts
 
-Fonts are subsetted via [fontTools](https://fonttools.readthedocs.io/) to include the strict necessary from english and french glyphs (see this [french character table](https://character-table.netlify.app/french/) for reference)
+Fonts are subsetted via
+[fontTools](https://fonttools.readthedocs.io/) to include the
+strict necessary from english and french glyphs (see this
+[french character table](https://character-table.netlify.app/french/)
+for reference)
 
 ```
 pyftsubset font.ttf \
@@ -9,4 +13,6 @@ pyftsubset font.ttf \
 	--output-file="font.woff2"
 ```
 
-Variable fonts are preprocessed via [Slice](https://slice-gui.netlify.app/docs/) to eliminate unnecessary axes.
+Variable fonts are preprocessed via
+[Slice](https://slice-gui.netlify.app/docs/) to eliminate
+unnecessary axes.

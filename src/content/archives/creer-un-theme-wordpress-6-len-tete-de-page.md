@@ -3,21 +3,42 @@ title: Créer un thème WordPress – 6 – L’en-tête de page
 date: 2010-08-29T21:59:36+00:00
 ---
 
-Cette fois ci, on commence le code, le vrai, le dur 😛 ! Rassurez-vous, encore une fois rien de compliqué. Je prendrai le temps qu'il faut pour vous expliquer chaque étape du code.
+Cette fois ci, on commence le code, le vrai, le dur 😛 !
+Rassurez-vous, encore une fois rien de compliqué. Je prendrai le
+temps qu'il faut pour vous expliquer chaque étape du code.
 
-Nous allons commencer dans l'ordre avec l'en-tête de page, donc le fichier _header.php_, qui une des parties les plus simples dans un thème WordPress.
+Nous allons commencer dans l'ordre avec l'en-tête de page, donc
+le fichier _header.php_, qui une des parties les plus simples
+dans un thème WordPress.
 
 ## head
 
-Si vous vous rappelez bien du découpage des fichiers, vous savez qu'on ne place pas seulement notre _div#en-tete-page_ dans ce fichier, mais bien tout le haut de la page, y compris le doctype, ou encore la section _head_, sur laquelle nous allons nous concentrer dans un premier temps.
+Si vous vous rappelez bien du découpage des fichiers, vous savez
+qu'on ne place pas seulement notre _div#en-tete-page_ dans ce
+fichier, mais bien tout le haut de la page, y compris le doctype,
+ou encore la section _head_, sur laquelle nous allons nous
+concentrer dans un premier temps.
 
 Que mettre dans le _head_ ?
 
-Dans cette section, on trouve toutes les méta-informations sur le site, c'est à dire des informations liées au contenu mais qui n'en font pas partie à proprement parler. Nous allons donc y trouver des infos sur la langue utilisée sur le site, sur l'auteur, sur l'encodage des fichiers, un titre de page, ou encore tous les liens vers les feuilles de styles, les scripts ou les flux Rss.
+Dans cette section, on trouve toutes les méta-informations sur le
+site, c'est à dire des informations liées au contenu mais qui
+n'en font pas partie à proprement parler. Nous allons donc y
+trouver des infos sur la langue utilisée sur le site, sur
+l'auteur, sur l'encodage des fichiers, un titre de page, ou
+encore tous les liens vers les feuilles de styles, les scripts ou
+les flux Rss.
 
-L'avantage ici, c'est que WordPress va faire quasiment tout le sale boulot pour nous, à travers quelques fonctions Php. Si vous avez déjà utilisé WordPress, vous savez que l'on peut définir beaucoup de paramètres comme le langage, l'encodage etc. Nous allons donc récupérer ces paramètres grâce à ces fonctions.
+L'avantage ici, c'est que WordPress va faire quasiment tout le
+sale boulot pour nous, à travers quelques fonctions Php. Si vous
+avez déjà utilisé WordPress, vous savez que l'on peut définir
+beaucoup de paramètres comme le langage, l'encodage etc. Nous
+allons donc récupérer ces paramètres grâce à ces fonctions.
 
-Pour vous les expliquer, je vais vous donner un code commenté plutôt que plein de petits morceaux entrecoupés d'explications; ça me paraît plus simple à suivre. Voici donc le code de la section _head_ :
+Pour vous les expliquer, je vais vous donner un code commenté
+plutôt que plein de petits morceaux entrecoupés d'explications;
+ça me paraît plus simple à suivre. Voici donc le code de la
+section _head_ :
 
 ```html
 <!DOCTYPE html>
@@ -84,16 +105,20 @@ Pour vous les expliquer, je vais vous donner un code commenté plutôt que plein
      </head>
 ```
 
-En cadeau, si vous voulez en savoir plus, je vous offre généreusement la documentation des fonctions utilisées 🙂 :
+En cadeau, si vous voulez en savoir plus, je vous offre
+généreusement la documentation des fonctions utilisées 🙂 :
 
-*   [language\_attributes( )](http://codex.wordpress.org/Function_Reference/language_attributes)
-*   [wp\_title( )](http://codex.wordpress.org/Function_Reference/wp_title)
-*   [bloginfo( )](http://codex.wordpress.org/Function_Reference/bloginfo)
-*   [wp\_head( )](http://codex.wordpress.org/Function_Reference/wp_head)
+- [language\_attributes( )](http://codex.wordpress.org/Function_Reference/language_attributes)
+- [wp\_title( )](http://codex.wordpress.org/Function_Reference/wp_title)
+- [bloginfo( )](http://codex.wordpress.org/Function_Reference/bloginfo)
+- [wp\_head( )](http://codex.wordpress.org/Function_Reference/wp_head)
 
 ## body
 
-Voilà ! Maintenant que l'on a correctement rempli la section _head_, on va enfin pouvoir écrire du code sympa, du code qui se voit ! Même principe ici : un jouli code tout commenté pour vous !
+Voilà ! Maintenant que l'on a correctement rempli la section
+_head_, on va enfin pouvoir écrire du code sympa, du code qui se
+voit ! Même principe ici : un jouli code tout commenté pour vous
+!
 
 ```html
 <!--
@@ -157,14 +182,17 @@ Voilà ! Maintenant que l'on a correctement rempli la section _head_, on va enfi
 
 Nouvelles fonctions utilisées :
 
-*   [body\_class( )](http://codex.wordpress.org/Function_Reference/body_class)
-*   [is\_home( )](http://codex.wordpress.org/Function_Reference/is_home)
-*   [wp\_title( )](http://codex.wordpress.org/Function_Reference/wp_title)
-*   [current\_theme\_supports( )](http://codex.wordpress.org/Function_Reference/current_theme_supports)
-*   [wp\_nav\_menu( )](http://codex.wordpress.org/Function_Reference/wp_nav_menu)
-*   [wp\_page\_menu( )](http://codex.wordpress.org/Function_Reference/wp_page_menu)
+- [body\_class( )](http://codex.wordpress.org/Function_Reference/body_class)
+- [is\_home( )](http://codex.wordpress.org/Function_Reference/is_home)
+- [wp\_title( )](http://codex.wordpress.org/Function_Reference/wp_title)
+- [current\_theme\_supports( )](http://codex.wordpress.org/Function_Reference/current_theme_supports)
+- [wp\_nav\_menu( )](http://codex.wordpress.org/Function_Reference/wp_nav_menu)
+- [wp\_page\_menu( )](http://codex.wordpress.org/Function_Reference/wp_page_menu)
 
-Si vous utilisez wp\_nav\_menu( ), vous allez devoir le signaler à WordPress. Pour ce faire, il faut effectuer un petit ajout au fichier _functions.php_, vous savez, cette sorte de fichier de configuration de votre thème.
+Si vous utilisez wp\_nav\_menu( ), vous allez devoir le signaler
+à WordPress. Pour ce faire, il faut effectuer un petit ajout au
+fichier _functions.php_, vous savez, cette sorte de fichier de
+configuration de votre thème.
 
 ```php
 <?php
@@ -174,22 +202,29 @@ Si vous utilisez wp\_nav\_menu( ), vous allez devoir le signaler à WordPress. P
 ?>
 ```
 
-Encore une fois, si vous êtes sûr de n'utiliser que WordPress 3.x, vous pouvez supprimer le test et utiliser directement register\_nav\_menu( ).
+Encore une fois, si vous êtes sûr de n'utiliser que WordPress
+3.x, vous pouvez supprimer le test et utiliser directement
+register\_nav\_menu( ).
 
-Après tout ça, affichez votre blog et vous allez voir une magnifique en-tête 😛 ! Sans aucun style... Mais admettez-le, c'est déjà bien !
+Après tout ça, affichez votre blog et vous allez voir une
+magnifique en-tête 😛 ! Sans aucun style... Mais admettez-le,
+c'est déjà bien !
 
-Allez, maintenant que vous commencez à comprendre les rouages de WordPress, [passons à l'étape supérieure](/archives/creer-un-theme-wordpress-7-les-articles) !
+Allez, maintenant que vous commencez à comprendre les rouages de
+WordPress,
+[passons à l'étape supérieure](/archives/creer-un-theme-wordpress-7-les-articles)
+!
 
 ### Sommaire du tutoriel
 
-1.  [Introduction](/archives/creer-un-theme-wordpress-1-introduction)
-2.  [Installation](/archives/creer-un-theme-wordpress-2-installation)
-3.  [L'architecture des fichiers](/archives/creer-un-theme-wordpress-3-larchitecture-des-fichiers)
-4.  [Informations sur le thème](/archives/creer-un-theme-wordpress-4-informations-sur-le-theme)
-5.  [La mise en page générale](/archives/creer-un-theme-wordpress-5-la-mise-en-page-generale)
-6.  L'en-tête de page (on y est !)
-7.  [Les articles](/archives/creer-un-theme-wordpress-7-les-articles)
-8.  [Articles et pages seuls](/archives/creer-un-theme-wordpress-8-articles-et-pages-seuls)
-9.  [Les commentaires](/archives/creer-un-theme-wordpress-9-les-commentaires)
-10.  [La barre latérale](/archives/creer-un-theme-wordpress-10-la-barre-laterale)
-11.  [Le pied de page](/archives/creer-un-theme-wordpress-11-le-pied-de-page)
+1. [Introduction](/archives/creer-un-theme-wordpress-1-introduction)
+2. [Installation](/archives/creer-un-theme-wordpress-2-installation)
+3. [L'architecture des fichiers](/archives/creer-un-theme-wordpress-3-larchitecture-des-fichiers)
+4. [Informations sur le thème](/archives/creer-un-theme-wordpress-4-informations-sur-le-theme)
+5. [La mise en page générale](/archives/creer-un-theme-wordpress-5-la-mise-en-page-generale)
+6. L'en-tête de page (on y est !)
+7. [Les articles](/archives/creer-un-theme-wordpress-7-les-articles)
+8. [Articles et pages seuls](/archives/creer-un-theme-wordpress-8-articles-et-pages-seuls)
+9. [Les commentaires](/archives/creer-un-theme-wordpress-9-les-commentaires)
+10.   [La barre latérale](/archives/creer-un-theme-wordpress-10-la-barre-laterale)
+11.   [Le pied de page](/archives/creer-un-theme-wordpress-11-le-pied-de-page)

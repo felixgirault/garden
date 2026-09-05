@@ -1,5 +1,6 @@
 title: Worldracer
-description: A racing game in 2d top view, based on OpenStreetMap data.
+description:
+  A racing game in 2d top view, based on OpenStreetMap data.
 features:
   - Pick a starting point
   - Pick a finish point

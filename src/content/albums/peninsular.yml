@@ -1,9 +1,11 @@
 title: Peninsular
 artist: Tarek Yamani
-description: An eye-opening album that blends jazz with arabic rythms and harmonies.
+description:
+  An eye-opening album that blends jazz with arabic rythms and
+  harmonies.
 cover: ./peninsular.jpg
 preview: https://cdns-preview-2.dzcdn.net/stream/c-2b39c1594dcb382877a0c04244ba6d0e-3.mp3
 deezerId: 15462088
-dominantColor: "#a5a7ad"
-accentColor: "#c595ab"
+dominantColor: '#a5a7ad'
+accentColor: '#c595ab'
 microCover: data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAQAgCdASoIAAgAAUAmJYwCdAYqNvskFVvgAP7+y12oU2qE30/yIyz9D/2IvvsD3VoJsPMa+E5eO16Kc1+T4Hz4mZV5kPA3EB1CgnHV9Cg+z/P27MAAAA==

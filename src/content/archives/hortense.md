@@ -3,7 +3,8 @@ title: Hortense
 date: 2020-02-09T21:45:08+00:00
 ---
 
-Quelques images de la dernière guitare sortie de mon petit atelier !
+Quelques images de la dernière guitare sortie de mon petit
+atelier !
 
 ![](./hortense/d12057.jpg)
 
