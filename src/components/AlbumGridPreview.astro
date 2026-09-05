@@ -2,7 +2,7 @@
 import {albumCollection} from '../services/albums';
 ---
 
-<div class="Grid Grid--40">
+<div class="AlbumGridPreview Grid Grid--40">
 	{
 		albumCollection.map(({dominantColor}) => (
 			<div
@@ -14,6 +14,10 @@ import {albumCollection} from '../services/albums';
 </div>
 
 <style>
+	.AlbumGridPreview {
+		margin-block-start: 0.25lh;
+	}
+
 	.Album {
 		display: block;
 		border-radius: 0.25ch;
