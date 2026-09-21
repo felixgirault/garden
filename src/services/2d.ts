@@ -42,3 +42,19 @@ export const makePath = (points: Point[]) => {
 
 	return path;
 };
+
+const squareDistance = (a: Point, b: Point) =>
+	(a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2;
+
+const angle = (a: Point, b: Point, c: Point) => {
+	const abs = squareDistance(a, b);
+	const bcs = squareDistance(b, c);
+	const acs = squareDistance(a, c);
+
+	return Math.acos(
+		(abs + bcs - acs) / (2 * Math.sqrt(abs) * Math.sqrt(bcs))
+	);
+};
+
+export const isAngleAcute = (a: Point, b: Point, c: Point) =>
+	angle(a, b, c) < Math.PI / 2;

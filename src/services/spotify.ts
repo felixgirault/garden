@@ -1,35 +1,101 @@
-export type SpotifyId = string;
-type SpotifyTrackUri = `spotify:track:${SpotifyId}`;
+import {SpotifyApi, type Track} from '@spotify/web-api-ts-sdk';
+import {SPOTIFY_CLIENT_ID} from 'astro:env/client';
 
-type SpotifyControllerEvent = {
-	data: {
-		isPaused: boolean;
-		position: number;
+export type SpotifyId = string;
+export type SpotifyTrackUri = `spotify:track:${SpotifyId}`;
+
+export type SpotifyPlaybackState = {
+	position: number;
+	duration: number;
+	paused: boolean;
+	track_window: {
+		current_track: Track;
 	};
 };
 
-export type SpotifyController = {
-	loadUri: (uri: SpotifyTrackUri) => string;
-	play: () => void;
-	addListener: (
-		event: 'playback_update',
-		callback: (event: SpotifyControllerEvent) => void
-	) => void;
-};
+export interface SpotifyPlaybackPlayer {
+	new (options: {
+		name: string;
+		volume?: number;
+		getOAuthToken(callback: (token?: string) => void): void;
+	}): SpotifyPlaybackPlayer;
 
-type SpotifyCreateController = (
-	element: HTMLElement,
-	options: {
-		width?: string;
-		height?: string;
-	},
-	callback: (controller: SpotifyController) => void
-) => void;
+	addListener(
+		event: 'ready' | 'not_ready',
+		listener: (params: {device_id: string}) => void
+	): void;
 
-type SpotifyIframeApi = {
-	createController: SpotifyCreateController;
-};
+	addListener(
+		event:
+			| 'initialization_error'
+			| 'authentication_error'
+			| 'account_error',
+		listener: (params: {message: string}) => void
+	): void;
 
-export type SpotifyOnIframeApiReady = (
-	api: SpotifyIframeApi
-) => void;
+	addListener(
+		event: 'player_state_changed',
+		listener: (state: SpotifyPlaybackState) => void
+	): void;
+
+	connect(): void;
+	getCurrentState(): Promise<SpotifyPlaybackState>;
+}
+
+declare global {
+	interface Window {
+		Spotify: {
+			Player: SpotifyPlaybackPlayer;
+		};
+	}
+}
+
+export const SpotifyCurrentDevice = undefined!;
+
+export const spotifyTrackUri = (
+	id: SpotifyId
+): SpotifyTrackUri => `spotify:track:${id}`;
+
+export const spotifyRedirectUri = () =>
+	new URL(
+		'/moodboard',
+		document.location.toString()
+	).toString();
+
+export const spotifyApi = () =>
+	SpotifyApi.withUserAuthorization(
+		SPOTIFY_CLIENT_ID,
+		spotifyRedirectUri(),
+		[
+			'streaming',
+			'user-read-currently-playing',
+			'user-read-playback-state',
+			'user-modify-playback-state',
+			'user-read-email',
+			'user-read-private'
+		],
+		{
+			deserializer: {
+				// The API sometimes returns a text response
+				// instead of JSON, which makes the default
+				// deserializer yield errors.
+				// This silences them.
+				async deserialize<TReturnType>(
+					response: Response
+				): Promise<TReturnType> {
+					const text = await response.text();
+
+					if (text.length > 0) {
+						try {
+							const json = JSON.parse(text);
+							return json as TReturnType;
+						} catch (e) {
+							return text as TReturnType;
+						}
+					}
+
+					return null as TReturnType;
+				}
+			}
+		}
+	);

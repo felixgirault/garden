@@ -14,6 +14,36 @@ export type MoodboardTrack = {
 	isAlbumHighlight: boolean;
 };
 
+export type MoodboardPreset = Point[];
+
+export const MoodboardDefaultPreset: MoodboardPreset = [
+	[0.25, 0.35],
+	[0.45, 0.7],
+	[0.4, 0.4],
+	[0.55, 0.6],
+	[0.6, 0.45],
+	[0.8, 0.5]
+];
+
+export const MoodboardPresets: Record<string, MoodboardPreset> =
+	{
+		Chill: [
+			[0.6, 0.1],
+			[0.9, 0.1]
+		],
+		Energetic: [
+			[0.8, 0.9],
+			[0.9, 0.9]
+		],
+		Progressive: [
+			[0, 0],
+			[0.2, 0.1],
+			[0.8, 0.9],
+			[1, 1]
+		],
+		Random: []
+	};
+
 export const fromDbTracks = (data: DbData): MoodboardTrack[] => {
 	const {tracks, artists} = data;
 

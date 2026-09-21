@@ -1,4 +1,4 @@
-import {defineConfig} from 'astro/config';
+import {defineConfig, envField} from 'astro/config';
 import {FontaineTransform} from 'fontaine';
 import fs from 'fs';
 import path from 'path';
@@ -10,6 +10,14 @@ const theme = await fetch(
 
 // https://astro.build/config
 export default defineConfig({
+	env: {
+		schema: {
+			SPOTIFY_CLIENT_ID: envField.string({
+				context: 'client',
+				access: 'public'
+			})
+		}
+	},
 	markdown: {
 		shikiConfig: {
 			theme: await theme.json()

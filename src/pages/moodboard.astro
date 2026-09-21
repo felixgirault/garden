@@ -1,36 +1,17 @@
 ---
 import {getCollection} from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import Section from '../components/Section.astro';
-import DrawingBoard from '../components/DrawingBoard.astro';
-import SpotifyPlayer from '../components/SpotifyPlayer.astro';
-import Playlist from '../components/Playlist.astro';
-import DrawingForm from '../components/DrawingForm.astro';
-import MoodboardFilterForm from '../components/MoodboardFilterForm.astro';
+import homeIcon from '../components/icons/home.svg?raw';
+import searchIcon from '../components/icons/pencil-search.svg?raw';
+import playlistIcon from '../components/icons/playlist.svg?raw';
+import MoodboardSearchPanel from '../components/MoodboardSearchPanel.astro';
+import MoodboardResultsPanel from '../components/MoodboardResultsPanel.astro';
 
 const trackCollection = await getCollection('moodboardTracks');
 const tracks = trackCollection.map(({id, data}) => ({
 	id,
 	...data
 }));
-
-const presets = {
-	Chill: [
-		[0.6, 0.1],
-		[0.9, 0.1]
-	],
-	Energetic: [
-		[0.8, 0.9],
-		[0.9, 0.9]
-	],
-	Progressive: [
-		[0, 0],
-		[0.2, 0.1],
-		[0.8, 0.9],
-		[1, 1]
-	],
-	Random: []
-};
 
 declare global {
 	interface Window {
@@ -39,70 +20,137 @@ declare global {
 }
 ---
 
-<Layout theme="dark" title="Moodboard" breadcrumbs={[]}>
-	<h1>Moodboard</h1>
+<Layout
+	theme="dark"
+	title="Moodboard"
+	breadcrumbs={[]}
+	isFullScreen
+>
+	<Fragment slot="head">
+		<link rel="manifest" href="/moodboard-manifest.json" />
+	</Fragment>
 
-	<p>Draw yourself a playlist! 🖌️</p>
+	<ul class="nav List--raw List--inline">
+		<li class="home">
+			<a class="Button" href="/">
+				<Fragment set:html={homeIcon} /> Home
+			</a>
+		</li>
+		<li>
+			<a class="Button" href="#search">
+				<Fragment set:html={searchIcon} /> Search
+			</a>
+		</li>
+		<li>
+			<a class="Button" href="#results">
+				<Fragment set:html={playlistIcon} /> Playlist
+			</a>
+		</li>
+	</ul>
 
-	<p>
-		{tracks.length} tracks are laid out in the board below.
-		<br />
-		They are arranged according to their perceived happiness and
-		energy, from saddest on the left to happiest on the right, from
-		calmer at the bottom to hotter at the top.
-	</p>
+	<div class="app">
+		<div class="panel" id="search">
+			<MoodboardSearchPanel trackCount={tracks.length} />
+		</div>
 
-	<p>
-		Some presets are available below for you to get an idea of
-		how this works.
-	</p>
-
-	<Section isWide>
-		<ul>
-			{
-				Object.entries(presets).map(([label, path]) => (
-					<li>
-						<button data-preset={JSON.stringify(path)}>
-							{label}
-						</button>
-					</li>
-				))
-			}
-		</ul>
-
-		<DrawingBoard />
-		<DrawingForm />
-		<MoodboardFilterForm />
-	</Section>
-
-	<Section isWide>
-		<Playlist />
-	</Section>
-
-	<SpotifyPlayer />
+		<div class="panel results" id="results">
+			<MoodboardResultsPanel />
+		</div>
+	</div>
 </Layout>
 
 <style>
-	ul {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
+	:global(html) {
+		scroll-snap-type: y mandatory;
+		scroll-snap-align: start end;
+	}
+
+	.nav {
+		position: fixed;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		display: grid;
+		grid-auto-columns: 1fr;
+		margin: 0;
+	}
+
+	@media screen and (orientation: portrait) and (min-width: 90ch),
+		screen and (orientation: landscape) and (min-width: 120ch) {
+		.nav {
+			display: none;
+		}
+	}
+
+	.nav li {
+		grid-row: 1;
+	}
+
+	.nav a {
+		box-sizing: border-box;
+		border-radius: 0;
+		box-shadow: none;
+		width: 100%;
+		background: var(--color-surface-variant);
 		justify-content: center;
-		gap: 1ch;
-		padding: 0;
-		list-style: none;
 	}
 
-	form {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
-		justify-content: flex-start;
-		margin-block-end: 2lh;
+	@media screen and (display-mode: standalone) {
+		.home {
+			display: none;
+		}
 	}
 
-	label {
-		margin-inline: 1ch;
+	.app {
+		display: grid;
+		grid-template-columns: 100% 100%;
+		grid-template-rows: 1fr;
+		gap: 0;
+		margin-inline: auto;
+		max-inline-size: var(--line-length--wide);
+		block-size: 100vh;
+		block-size: 100dvh;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+	}
+
+	@media screen and (orientation: portrait) and (min-width: 90ch),
+		screen and (orientation: landscape) and (min-width: 120ch) {
+		.app {
+			grid-template-columns: 1fr 1fr;
+			grid-template-rows: 1fr;
+			overflow-x: initial;
+		}
+	}
+
+	.panel {
+		--panel-block-padding: var(--block-spacing);
+		--panel-nav-padding: 1lh;
+		box-sizing: border-box;
+		min-block-size: 0;
+		max-block-size: 100%;
+		block-size: 100%;
+		inline-size: 100%;
+		padding: var(--panel-block-padding) var(--line-padding)
+			calc(
+				var(--panel-block-padding) + var(--panel-nav-padding)
+			)
+			var(--line-padding);
+		scroll-snap-align: start;
+		scroll-snap-stop: always;
+	}
+
+	@media screen and (orientation: portrait) and (min-width: 90ch),
+		screen and (orientation: landscape) and (min-width: 120ch) {
+		.panel {
+			--panel-nav-padding: 0lh;
+		}
+	}
+
+	@media screen and (min-height: 55lh) {
+		.panel {
+			--panel-block-padding: var(--block-spacing);
+		}
 	}
 </style>
 
@@ -111,112 +159,39 @@ declare global {
 </script>
 
 <script>
-	import type {DrawingBoard} from '../components/DrawingBoard.astro.0.mts';
-	import type {DrawingForm} from '../components/DrawingForm.astro.0.mts';
-	import type {
-		MoodboardFilterForm,
-		MoodboardFilters
-	} from '../components/MoodboardFilterForm.astro.0.mts';
-	import type {Playlist} from '../components/Playlist.astro.0.mts';
-	import type {SpotifyPlayer} from '../components/SpotifyPlayer.astro.0.mts';
-	import {randomPoints, type Point} from '../services/2d';
-	import {shuffled} from '../services/math';
-	import {MoodboardTrackIndex} from '../services/moodboard';
+	import type {MoodboardResultsPanel} from '../components/MoodboardResultsPanel.astro.0.mts';
+	import type {MoodboardSearchPanel} from '../components/MoodboardSearchPanel.astro.0.mts';
+	import type {Point} from '../services/2d';
+	import {
+		MoodboardDefaultPreset,
+		type MoodboardTrack
+	} from '../services/moodboard';
 
-	const fullIndex = new MoodboardTrackIndex(
-		window.moodboardTracks
-	);
-
-	const highlightsIndex = new MoodboardTrackIndex(
-		window.moodboardTracks.filter(
-			({isAlbumHighlight}) => isAlbumHighlight
-		)
-	);
-
-	const playlist =
-		document.querySelector<Playlist>('fglt-playlist')!;
-	const player = document.querySelector<SpotifyPlayer>(
-		'fglt-spotify-player'
-	)!;
-	const board = document.querySelector<DrawingBoard>(
-		'fglt-drawing-board'
-	)!;
-	const form = document.querySelector<DrawingForm>(
-		'fglt-drawing-form'
-	)!;
-	const filters = document.querySelector<MoodboardFilterForm>(
-		'fglt-moodboard-filter-form'
+	const search = document.querySelector<MoodboardSearchPanel>(
+		'fglt-moodboard-search-panel'
 	)!;
 
-	const search = (
-		path: Point[],
-		{set, sort, limit}: MoodboardFilters
+	const results = document.querySelector<MoodboardResultsPanel>(
+		'fglt-moodboard-results-panel'
+	)!;
+
+	results.index(window.moodboardTracks);
+
+	results.addEventListener('results', ((
+		e: CustomEvent<MoodboardTrack[]>
 	) => {
-		const index =
-			set === 'highlights' ? highlightsIndex : fullIndex;
-
-		const tracks = index
-			.searchAlongPath(path, limit)
-			.filter((track) => !!track);
-
-		board.setPoints(
-			tracks.map(({valence, energy}) => [valence, energy])
+		search.setPoints(
+			e.detail.map(({valence, energy}) => [valence, energy])
 		);
-
-		const sortedTracks =
-			sort === 'asc'
-				? tracks
-				: sort === 'desc'
-					? tracks.toReversed()
-					: shuffled(tracks);
-
-		playlist.setTracks(sortedTracks);
-	};
-
-	form.addEventListener('path', ((e: CustomEvent) => {
-		board.setCurve(e.detail);
 	}) as EventListener);
 
-	board.addEventListener('drawend', ((e: CustomEvent) => {
-		search(e.detail, filters.filters);
+	search.addEventListener('submit', ((
+		e: CustomEvent<Point[]>
+	) => {
+		results.searchAlongPath(e.detail);
 	}) as EventListener);
-
-	filters.addEventListener('submit', ((e: CustomEvent) => {
-		search(board.getCurve(), e.detail);
-	}) as EventListener);
-
-	playlist.addEventListener('play', ((e: CustomEvent) => {
-		player.play(e.detail);
-	}) as EventListener);
-
-	player.addEventListener('playbackend', ((e: CustomEvent) => {
-		const next = playlist.nextTrack(e.detail);
-
-		if (next) {
-			player.play(next.id);
-		}
-	}) as EventListener);
-
-	document
-		.querySelectorAll<HTMLButtonElement>('[data-preset]')
-		.forEach((button) => {
-			button.addEventListener('click', () => {
-				const path = JSON.parse(
-					button.dataset.preset!
-				) as Point[];
-
-				form.setPoints(path.length ? path : randomPoints());
-			});
-		});
 
 	document.addEventListener('DOMContentLoaded', () => {
-		form.setPoints([
-			[0.25, 0.35],
-			[0.45, 0.7],
-			[0.4, 0.4],
-			[0.55, 0.6],
-			[0.6, 0.45],
-			[0.8, 0.5]
-		]);
+		search.setPath(MoodboardDefaultPreset);
 	});
 </script>

@@ -1,3 +1,7 @@
+---
+import playIcon from './icons/player-play.svg?raw';
+---
+
 <fglt-playlist>
 	<div role="status" aria-live="polite">
 		<p id="status"></p>
@@ -7,53 +11,89 @@
 
 	<template>
 		<li>
-			<button class="play" title="" data-id="">►</button>
 			<span class="title"></span>
 			<span class="artist"></span>
+			<button class="play Button--icon" title="" data-id="">
+				<Fragment set:html={playIcon} />
+			</button>
 		</li>
 	</template>
 </fglt-playlist>
 
 <style>
+	fglt-playlist {
+		display: block;
+		container-type: inline-size;
+		inline-size: 100%;
+	}
+
 	[role='status'] {
-		margin-block-end: 1lh;
 		color: var(--color-neutral);
 	}
 
 	ol {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(25ch, 1fr));
+		gap: 1em var(--line-padding);
+		margin: 0;
 		padding: 0;
-		columns: 30ch;
-		column-gap: var(--line-padding);
 		counter-reset: order 0;
+	}
+
+	@container (min-width: 60ch) {
+		ol {
+			display: grid;
+			grid-template-columns: 1fr;
+		}
 	}
 
 	li {
 		position: relative;
 		display: grid;
 		grid-template:
-			'play title order'
-			'play artist order'
-			/ min-content 1fr;
-		align-items: start;
+			'order title play' min-content
+			'order artist play'
+			/ min-content 1fr auto;
+		align-items: flex-start;
 		gap: 0 1ch;
-		margin-block-end: 1em;
-		padding-inline-end: 3ch;
+		border-radius: var(--radius-s);
 		counter-increment: count;
 		break-inside: avoid;
 	}
 
 	li::before {
 		content: counter(count, decimal);
-		position: absolute;
-		top: 0;
-		right: 0;
+		grid-area: order;
+		grid-template:
+			'order title artist play'
+			/ min-content auto 1fr auto;
+		border-radius: 100%;
+		min-inline-size: 2ch;
 		color: var(--color-neutral);
-		line-height: 1.2;
-		font-weight: bold;
+		text-align: end;
+		font-variant-numeric: tabular-nums;
+		aspect-ratio: 1 / 1;
+		mix-blend-mode: difference;
+	}
+
+	li:hover {
+		box-shadow: 0 0 0 0.5em var(--color-surface-variant);
+		background: var(--color-surface-variant);
+	}
+
+	li:hover::before {
+		color: var(--color-on-surface);
 	}
 
 	.play {
 		grid-area: play;
+	}
+
+	@media screen and (orientation: landscape) and (max-width: 120ch) {
+		.play {
+			height: 1lh;
+			padding: 0;
+		}
 	}
 
 	.title {
@@ -65,7 +105,6 @@
 		grid-area: artist;
 		color: var(--color-neutral);
 		line-height: 1.2;
-		font-family: var(--font-serif);
 		font-size: var(--font-size-s);
 	}
 </style>
@@ -78,6 +117,8 @@
 		title: string;
 		artist: string;
 		duration: number;
+		energy: number;
+		valence: number;
 	};
 
 	export class Playlist extends HTMLElement {
@@ -95,14 +136,22 @@
 				)!;
 
 			this.addEventListener('click', (event) => {
-				if (event.target instanceof HTMLButtonElement) {
+				const button = (
+					event.target as HTMLElement
+				).closest<HTMLElement>('.play');
+
+				if (button) {
 					this.dispatchEvent(
 						new CustomEvent('play', {
-							detail: event.target.dataset.id
+							detail: button.dataset.id
 						})
 					);
 				}
 			});
+		}
+
+		get tracks() {
+			return this.#tracks;
 		}
 
 		setTracks(tracks: PlaylistTrack[]) {
@@ -133,10 +182,21 @@
 			);
 		}
 
-		#renderItem({id, title, artist}: PlaylistTrack) {
+		#renderItem({
+			id,
+			title,
+			artist,
+			energy,
+			valence
+		}: PlaylistTrack) {
 			const result = this.#itemTemplate.content.cloneNode(
 				true
 			) as DocumentFragment;
+
+			const item = result.querySelector<HTMLLIElement>('li')!;
+
+			item.style.setProperty('--energy', energy.toString());
+			item.style.setProperty('--valence', valence.toString());
 
 			const play =
 				result.querySelector<HTMLButtonElement>('.play')!;

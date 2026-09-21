@@ -1,0 +1,157 @@
+---
+import {MoodboardPresets} from '../services/moodboard';
+import DrawingBoard from './DrawingBoard.astro';
+import DrawingForm from './DrawingForm.astro';
+
+interface Props {
+	trackCount: number;
+}
+
+const {trackCount} = Astro.props;
+---
+
+<fglt-moodboard-search-panel>
+	<div class="inner">
+		<div class="info">
+			<h1>Moodboard</h1>
+
+			<p class="Subtitle">Draw yourself a playlist!</p>
+
+			<p>
+				{trackCount} music tracks are laid out on the board according
+				to their perceived happiness and energy. Draw on it to
+				pick up tracks on the path.
+				<br />
+				<em>
+					You may try the following presets to get a feel
+					for how this works:
+				</em>
+			</p>
+
+			<ul class="presets List--raw List--inline">
+				{
+					Object.entries(MoodboardPresets).map(
+						([label, path]) => (
+							<li>
+								<button
+									class="Button--small"
+									data-preset={JSON.stringify(path)}
+								>
+									{label}
+								</button>
+							</li>
+						)
+					)
+				}
+			</ul>
+		</div>
+
+		<div class="board">
+			<DrawingBoard />
+			<DrawingForm />
+		</div>
+	</div>
+</fglt-moodboard-search-panel>
+
+<style>
+	fglt-moodboard-search-panel {
+		display: block;
+		inline-size: 100%;
+		block-size: 100%;
+		container-type: inline-size;
+	}
+
+	.inner {
+		display: grid;
+		grid-template:
+			'info' auto
+			'board' 1fr;
+		gap: 1lh var(--line-padding);
+		inline-size: 100%;
+		block-size: 100%;
+	}
+
+	@container (min-width: 80ch) {
+		.inner {
+			grid-template:
+				'info board'
+				/ 4fr 3fr;
+		}
+	}
+
+	.info {
+		grid-area: info;
+	}
+
+	.presets {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5ch;
+		margin: 0;
+	}
+
+	.board {
+		grid-area: board;
+		display: flex;
+		align-items: stretch;
+	}
+</style>
+
+<script>
+	import {randomPoints, type Point} from '../services/2d';
+	import type {DrawingBoard} from './DrawingBoard.astro.0.mts';
+	import type {DrawingForm} from './DrawingForm.astro.0.mts';
+
+	export class MoodboardSearchPanel extends HTMLElement {
+		#board!: DrawingBoard;
+		#form!: DrawingForm;
+
+		connectedCallback() {
+			this.#board = this.querySelector('fglt-drawing-board')!;
+			this.#form = this.querySelector('fglt-drawing-form')!;
+
+			this.#board.addEventListener('drawend', ((
+				e: CustomEvent<Point[]>
+			) => {
+				this.dispatchEvent(
+					new CustomEvent('submit', {
+						detail: e.detail
+					})
+				);
+			}) as EventListener);
+
+			this.#form.addEventListener('path', ((
+				e: CustomEvent<Point[]>
+			) => {
+				this.#board.setPath(e.detail);
+			}) as EventListener);
+
+			this.querySelectorAll<HTMLButtonElement>(
+				'[data-preset]'
+			).forEach((button) => {
+				button.addEventListener('click', () => {
+					const path = JSON.parse(
+						button.dataset.preset!
+					) as Point[];
+
+					this.#form.setPoints(
+						path.length ? path : randomPoints()
+					);
+				});
+			});
+		}
+
+		setPath(path: Point[]) {
+			this.#board.setPath(path);
+		}
+
+		setPoints(points: Point[]) {
+			this.#board.setPoints(points);
+		}
+	}
+
+	customElements.define(
+		'fglt-moodboard-search-panel',
+		MoodboardSearchPanel
+	);
+</script>
