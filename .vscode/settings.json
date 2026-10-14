@@ -15,5 +15,13 @@
 	},
 	"[typescript]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"yaml.schemas": {
+		"./.astro/collections/albums.schema.json": [
+			"/src/content/albums/*.yml"
+		],
+		"./.astro/collections/ideas.schema.json": [
+			"/src/content/ideas/*.yml"
+		]
 	}
 }

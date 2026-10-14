@@ -1,8 +1,9 @@
 import {glob} from 'astro/loaders';
 import {z} from 'astro/zod';
 import {defineCollection} from 'astro:content';
-import {fetchDbData} from './services/db';
-import {fromDbTracks} from './services/moodboard';
+import {cachedLoader} from './loaders/cached';
+import {dbTracksLoader} from './loaders/dbTracks';
+import {deezerPlaylistLoader} from './loaders/deezerPlaylist';
 
 export const collections = {
 	albums: defineCollection({
@@ -44,6 +45,14 @@ export const collections = {
 			tldr: z.string()
 		})
 	}),
+	earworms: defineCollection({
+		loader: cachedLoader({
+			useCached: import.meta.env.USE_CACHED_COLLECTIONS,
+			loader: deezerPlaylistLoader({
+				playlistId: '15627881223'
+			})
+		})
+	}),
 	ideas: defineCollection({
 		loader: glob({
 			pattern: '*.yml',
@@ -56,17 +65,8 @@ export const collections = {
 		})
 	}),
 	moodboardTracks: defineCollection({
-		loader: async () => {
-			const tracks = await fetchDbData();
-			return fromDbTracks(tracks);
-		},
-		schema: z.object({
-			title: z.string(),
-			artist: z.string(),
-			duration: z.number(),
-			energy: z.number(),
-			valence: z.number(),
-			isAlbumHighlight: z.boolean()
+		loader: cachedLoader({
+			loader: dbTracksLoader()
 		})
 	}),
 	webrings: defineCollection({

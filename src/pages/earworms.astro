@@ -1,0 +1,52 @@
+---
+import {getCollection} from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+const tracks = (await getCollection('earworms')).toSorted(
+	(a, b) => a.data.title.localeCompare(b.data.title)
+);
+---
+
+<Layout title="Earworms" breadcrumbs={[]} theme="dark">
+	<h1>Earworms</h1>
+
+	<p>Songs that got stuck in my head for a while.</p>
+	<p>
+		There might be silly things,<br />
+		there might be great things,<br />
+		there might be both of those!
+	</p>
+
+	<ul itemscope itemtype="https://schema.org/MusicPlaylist">
+		{
+			tracks.map((track) => (
+				<li
+					itemprop="track"
+					itemscope
+					itemtype="https://schema.org/MusicRecording"
+				>
+					<a itemprop="url" href={track.data.url}>
+						<span itemprop="name">{track.data.title}</span>
+					</a>{' '}
+					-{' '}
+					<span
+						itemprop="byArtist"
+						itemscope
+						itemtype="https://schema.org/MusicGroup"
+					>
+						<span itemprop="name">
+							{track.data.artist}
+						</span>
+					</span>
+				</li>
+			))
+		}
+	</ul>
+</Layout>
+
+<style>
+	[itemprop='byArtist'] {
+		font-family: var(--font-serif);
+		font-style: italic;
+	}
+</style>
