@@ -34,6 +34,25 @@ export const collections = {
 			date: z.date()
 		})
 	}),
+	books: defineCollection({
+		loader: glob({
+			pattern: '*.yml',
+			base: './src/content/books'
+		}),
+		schema: z.object({
+			title: z.string(),
+			subtitle: z.string().optional(),
+			author: z.string(),
+			lang: z.string().length(2),
+			quotes: z
+				.array(
+					z.object({
+						text: z.string()
+					})
+				)
+				.default([])
+		})
+	}),
 	devTips: defineCollection({
 		loader: glob({
 			pattern: '*.md',
