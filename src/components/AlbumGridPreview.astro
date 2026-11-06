@@ -3,14 +3,12 @@ import {albumCollection} from '../services/albums';
 ---
 
 <div class="AlbumGridPreview Grid Grid--40">
-	{
-		albumCollection.map(({dominantColor}) => (
-			<div
-				class="Album"
-				style={`background: ${dominantColor}`}
-			/>
-		))
-	}
+	{albumCollection.map(({dominantColor}) => (
+		<div
+			class="Album"
+			style={`background: ${dominantColor}`}
+		/>
+	))}
 </div>
 
 <style>

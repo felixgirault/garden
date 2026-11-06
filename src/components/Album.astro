@@ -34,11 +34,9 @@ const {
 			By <span itemprop="name">{artist}</span>
 		</p>
 
-		{
-			description ? (
-				<p itemprop="description">{description}</p>
-			) : null
-		}
+		{description ? (
+			<p itemprop="description">{description}</p>
+		) : null}
 	</header>
 
 	<aside class="Reflection">
@@ -68,38 +66,37 @@ const {
 				</span>
 			</button>
 
-			<audio class="Album-audio" src={preview} preload="none">
-			</audio>
+			<audio
+				class="Album-audio"
+				src={preview}
+				preload="none"
+			></audio>
 		</li>
 
-		{
-			deezerId ? (
-				<li>
-					<a
-						class="Button"
-						href={`https://www.deezer.com/album/${deezerId}`}
-						title="Listen on Deezer"
-						set:text="Deezer"
-					>
-						<Fragment set:html={deezerIcon} />
-					</a>
-				</li>
-			) : null
-		}
-		{
-			spotifyId ? (
-				<li>
-					<a
-						class="Button"
-						href={`https://open.spotify.com/album/${spotifyId}`}
-						title="Listen on Spotify"
-						set:text="Spotify"
-					>
-						<Fragment set:html={spotifyIcon} />
-					</a>
-				</li>
-			) : null
-		}
+		{deezerId ? (
+			<li>
+				<a
+					class="Button"
+					href={`https://www.deezer.com/album/${deezerId}`}
+					title="Listen on Deezer"
+					set:text="Deezer"
+				>
+					<Fragment set:html={deezerIcon} />
+				</a>
+			</li>
+		) : null}
+		{spotifyId ? (
+			<li>
+				<a
+					class="Button"
+					href={`https://open.spotify.com/album/${spotifyId}`}
+					title="Listen on Spotify"
+					set:text="Spotify"
+				>
+					<Fragment set:html={spotifyIcon} />
+				</a>
+			</li>
+		) : null}
 	</ul>
 </article>
 

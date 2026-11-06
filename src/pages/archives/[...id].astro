@@ -24,13 +24,17 @@ const {Content} = await render(archive);
 		<h1 itemprop="name">{title}</h1>
 
 		<p class="warning">
-			Cet article a été publié le <time
+			Cet article a été publié le{' '}
+			<time
 				datetime={date.toISOString()}
 				itemprop="datePublished"
 			>
 				{new Intl.DateTimeFormat('fr-FR').format(date)}
-			</time> et est désormais archivé.<br />
-			Les informations présentées ne sont peut-être plus à jour.
+			</time>{' '}
+			et est désormais archivé.
+			<br />
+			Les informations présentées ne sont peut-être plus à
+			jour.
 		</p>
 
 		<div itemprop="articleBody">

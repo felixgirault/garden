@@ -10,23 +10,23 @@ const archives = await getCollection('archives');
 
 	<p>
 		Tous les articles de blog publiés sur l'ancienne version de
-		mon site.<br />
-		J'ai conservé ces articles pour en garder une trace et ne pas
-		casser de liens éventuels, mais ils sont pour la plupart obsolètes.
+		mon site.
+		<br />
+		J'ai conservé ces articles pour en garder une trace et ne
+		pas casser de liens éventuels, mais ils sont pour la
+		plupart obsolètes.
 	</p>
 
 	<ul>
-		{
-			archives
-				.toSorted(
-					(a, b) =>
-						b.data.date.getTime() - a.data.date.getTime()
-				)
-				.map(({id, data}) => (
-					<li>
-						<a href={`/archives/${id}`}>{data.title}</a>
-					</li>
-				))
-		}
+		{archives
+			.toSorted(
+				(a, b) =>
+					b.data.date.getTime() - a.data.date.getTime()
+			)
+			.map(({id, data}) => (
+				<li>
+					<a href={`/archives/${id}`}>{data.title}</a>
+				</li>
+			))}
 	</ul>
 </Layout>

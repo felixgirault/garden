@@ -17,32 +17,30 @@ const optimizedCovers = await getImage({
 			'--album-covers': `url(${optimizedCovers.src})`
 		}}
 	>
-		{
-			albumCollection.map(
-				({
-					id,
-					index,
-					title,
-					artist,
-					preview,
-					dominantColor
-				}) => {
-					const linkTitle = `${title} by ${artist}`;
+		{albumCollection.map(
+			({
+				id,
+				index,
+				title,
+				artist,
+				preview,
+				dominantColor
+			}) => {
+				const linkTitle = `${title} by ${artist}`;
 
-					return (
-						<li>
-							<a
-								class="Reflection"
-								href={`/albums/${id}`}
-								title={linkTitle}
-								data-preview={preview}
-								style={`--album-index: ${index}; --album-color: ${dominantColor};`}
-							/>
-						</li>
-					);
-				}
-			)
-		}
+				return (
+					<li>
+						<a
+							class="Reflection"
+							href={`/albums/${id}`}
+							title={linkTitle}
+							data-preview={preview}
+							style={`--album-index: ${index}; --album-color: ${dominantColor};`}
+						/>
+					</li>
+				);
+			}
+		)}
 	</ul>
 </Section>
 

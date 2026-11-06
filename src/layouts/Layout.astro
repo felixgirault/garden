@@ -115,13 +115,11 @@ const seed = hashCode(Astro.url.pathname);
 			}
 		</style>
 
-		{
-			cover ? (
-				<style
-					set:html={`:root { --page-cover-mask-stops: ${pageCoverMaskStops} }`}
-				/>
-			) : null
-		}
+		{cover ? (
+			<style
+				set:html={`:root { --page-cover-mask-stops: ${pageCoverMaskStops} }`}
+			/>
+		) : null}
 
 		<title>{title} | fglt</title>
 	</head>
@@ -132,25 +130,25 @@ const seed = hashCode(Astro.url.pathname);
 	>
 		<div class="Page-container">
 			<header class="Page-header">
-				<p class="Page-title" role="banner">fglt.</p>
+				<p class="Page-title" role="banner">
+					fglt.
+				</p>
 
-				{
-					breadcrumbs ? (
-						<nav class="Page-nav">
-							<ul class="List--raw List--inline List--dotted">
+				{breadcrumbs ? (
+					<nav class="Page-nav">
+						<ul class="List--raw List--inline List--dotted">
+							<li>
+								<a href="/">home</a>
+							</li>
+
+							{breadcrumbs.map(({title, url}) => (
 								<li>
-									<a href="/">home</a>
+									<a href={url}>{title}</a>
 								</li>
-
-								{breadcrumbs.map(({title, url}) => (
-									<li>
-										<a href={url}>{title}</a>
-									</li>
-								))}
-							</ul>
-						</nav>
-					) : null
-				}
+							))}
+						</ul>
+					</nav>
+				) : null}
 			</header>
 
 			<main role="main">
