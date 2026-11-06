@@ -42,3 +42,10 @@ export const makePath = (points: Point[]) => {
 
 	return path;
 };
+
+// The angle at b is acute when the dot product of ba and bc is
+// positive.
+export const isAngleAcute = (a: Point, b: Point, c: Point) =>
+	(a[0] - b[0]) * (c[0] - b[0]) +
+		(a[1] - b[1]) * (c[1] - b[1]) >
+	0;
