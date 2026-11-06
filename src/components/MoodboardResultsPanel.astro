@@ -1,0 +1,152 @@
+---
+import MoodboardFilterForm from './MoodboardFilterForm.astro';
+import Playlist from './Playlist.astro';
+import SpotifyPlayer from './SpotifyPlayer.astro';
+---
+
+<fglt-moodboard-results-panel>
+	<div class="inner">
+		<div class="filters">
+			<MoodboardFilterForm />
+		</div>
+
+		<div class="playlist">
+			<Playlist />
+		</div>
+
+		<div class="player">
+			<SpotifyPlayer />
+		</div>
+	</div>
+</fglt-moodboard-results-panel>
+
+<style>
+	fglt-moodboard-results-panel {
+		display: block;
+		inline-size: 100%;
+		block-size: 100%;
+		container-type: inline-size;
+	}
+
+	.inner {
+		display: grid;
+		grid-template:
+			'filters' min-content
+			'playlist' 1fr
+			'player' auto;
+		gap: 1lh var(--line-padding);
+		inline-size: 100%;
+		block-size: 100%;
+	}
+
+	.filters {
+		grid-area: filters;
+	}
+
+	.playlist {
+		position: relative;
+		left: calc(-1 * var(--line-padding));
+		grid-area: playlist;
+		inline-size: 100%;
+		block-size: 100%;
+		padding-inline: var(--line-padding);
+		overflow-y: auto;
+		scrollbar-width: thin;
+		scrollbar-color: var(--color-interactive)
+			var(--color-surface-variant);
+	}
+
+	@media screen and (min-width: 90ch) {
+		.playlist {
+			overscroll-behavior: contain;
+		}
+	}
+
+	.player {
+		grid-area: player;
+	}
+</style>
+
+<script>
+	import type {Point} from '../services/2d';
+	import {shuffled} from '../services/math';
+	import {
+		MoodboardTrackIndex,
+		type MoodboardTrack
+	} from '../services/moodboard';
+	import type {SpotifyId} from '../services/spotify';
+	import type {MoodboardFilterForm} from './MoodboardFilterForm.astro.0.mts';
+	import type {Playlist} from './Playlist.astro.0.mts';
+	import type {SpotifyPlayer} from './SpotifyPlayer.astro.0.mts';
+
+	export class MoodboardResultsPanel extends HTMLElement {
+		#fullIndex!: MoodboardTrackIndex;
+		#highlightsIndex!: MoodboardTrackIndex;
+		#filters!: MoodboardFilterForm;
+		#playlist!: Playlist;
+		#player!: SpotifyPlayer;
+		#path: Point[] = [];
+
+		connectedCallback() {
+			this.#filters = this.querySelector(
+				'fglt-moodboard-filter-form'
+			)!;
+
+			this.#playlist = this.querySelector('fglt-playlist')!;
+			this.#player = this.querySelector(
+				'fglt-spotify-player'
+			)!;
+
+			this.#filters.addEventListener('submit', () => {
+				this.searchAlongPath(this.#path);
+			});
+
+			this.#playlist.addEventListener('play', ((
+				e: CustomEvent<SpotifyId>
+			) => {
+				this.#player.loadPlaylist(
+					this.#playlist.tracks.map(({id}) => id),
+					e.detail
+				);
+			}) as EventListener);
+		}
+
+		index(tracks: MoodboardTrack[]) {
+			this.#fullIndex = new MoodboardTrackIndex(tracks);
+			this.#highlightsIndex = new MoodboardTrackIndex(
+				tracks.filter(
+					({isAlbumHighlight}) => isAlbumHighlight
+				)
+			);
+		}
+
+		searchAlongPath(path: Point[]) {
+			const {set, sort, limit} = this.#filters.filters;
+			const index =
+				set === 'highlights'
+					? this.#highlightsIndex
+					: this.#fullIndex;
+
+			const tracks = index
+				.searchAlongPath(path, limit)
+				.filter((track) => !!track);
+
+			this.#playlist.setTracks(
+				sort === 'random' ? shuffled(tracks) : tracks
+			);
+
+			this.dispatchEvent(
+				new CustomEvent('results', {
+					detail: tracks
+				})
+			);
+
+			this.#path = path;
+		}
+	}
+
+	customElements.define(
+		'fglt-moodboard-results-panel',
+		MoodboardResultsPanel
+	);
+</script>
