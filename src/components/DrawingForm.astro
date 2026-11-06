@@ -115,7 +115,10 @@
 					.split(',', 2)
 					.map(Number);
 
-				if (components.length < 2) {
+				if (
+					components.length < 2 ||
+					components.some(Number.isNaN)
+				) {
 					this.#coordinates.setCustomValidity(
 						`There should be two numbers on line ${i + 1}`
 					);
@@ -124,7 +127,7 @@
 
 				points.push(
 					components.map((c) =>
-						clamp(c / 100, 0, 100)
+						clamp(c / 100, 0, 1)
 					) as Point
 				);
 			}
