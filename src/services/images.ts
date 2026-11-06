@@ -5,7 +5,7 @@ import {
 	argbFromRgb,
 	hexFromArgb
 } from '@material/material-color-utilities';
-import sharp from 'sharp';
+import sharp, {type Sharp} from 'sharp';
 
 type ImagePalette = {
 	dominant: string;
@@ -17,7 +17,7 @@ const TargetChroma = 100;
 const TargetTone = 65;
 const MinimalAccentTone = 65;
 
-const getImagePixels = async (image: sharp.Sharp) => {
+const getImagePixels = async (image: Sharp) => {
 	const buffer = await image.removeAlpha().raw().toBuffer();
 	const pixels: number[] = [];
 
@@ -36,7 +36,7 @@ const getImagePixels = async (image: sharp.Sharp) => {
 // but using sharp instead of an HTML canvas to load the
 // image.
 // @see https://github.com/material-foundation/material-color-utilities/blob/main/typescript/utils/image_utils.ts#L29
-const findAccentColor = async (image: sharp.Sharp) => {
+const findAccentColor = async (image: Sharp) => {
 	const pixels = await getImagePixels(image);
 	const quantized = QuantizerCelebi.quantize(pixels, 5);
 	const scored = Score.score(quantized, {
@@ -64,7 +64,7 @@ const findAccentColor = async (image: sharp.Sharp) => {
 	return sorted?.[0]?.color;
 };
 
-const findDominantColor = async (image: sharp.Sharp) => {
+const findDominantColor = async (image: Sharp) => {
 	const pixels = await getImagePixels(
 		image.removeAlpha().resize(1, 1)
 	);
