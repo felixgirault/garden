@@ -100,6 +100,9 @@
 		makePath
 	} from '../services/2d';
 
+	const isOnBoard = ([x, y]: Point) =>
+		x >= 0 && x <= 1 && y >= 0 && y <= 1;
+
 	export class DrawingBoard extends HTMLElement {
 		static DrawingDefinition = 20;
 		static RenderingDefinition = 2;
@@ -124,6 +127,11 @@
 				(event) => {
 					if (!this.#isDrawing) {
 						this.#pointerId = event.pointerId;
+						// Keeps receiving events when the pointer
+						// leaves the board, until it is released.
+						this.#canvas.setPointerCapture(
+							event.pointerId
+						);
 						this.startDrawing(
 							this.pointFromPointerEvent(event)
 						);
@@ -154,16 +162,19 @@
 				}
 			});
 
-			this.#canvas.addEventListener('pointerout', (event) => {
-				if (
-					this.#isDrawing &&
-					event.pointerId === this.#pointerId
-				) {
-					this.endDrawing(
-						this.pointFromPointerEvent(event)
-					);
+			this.#canvas.addEventListener(
+				'pointercancel',
+				(event) => {
+					if (
+						this.#isDrawing &&
+						event.pointerId === this.#pointerId
+					) {
+						this.endDrawing(
+							this.pointFromPointerEvent(event)
+						);
+					}
 				}
-			});
+			);
 
 			this.#resizeObserver = new ResizeObserver(() => {
 				this.updateCanvasDimensions();
@@ -227,7 +238,7 @@
 
 		draw(point: Point) {
 			this.#withinFrame(() => {
-				if (!this.#path.length) {
+				if (!this.#path.length || !isOnBoard(point)) {
 					return;
 				}
 
@@ -271,7 +282,10 @@
 		endDrawing(point: Point) {
 			this.#isDrawing = false;
 			this.#withinFrame(() => {
-				this.#path = this.#path.concat([point]);
+				if (isOnBoard(point)) {
+					this.#path = this.#path.concat([point]);
+				}
+
 				this.#render();
 				this.#emitPath();
 			});
