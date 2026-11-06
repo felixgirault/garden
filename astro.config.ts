@@ -33,16 +33,15 @@ export default defineConfig({
 
 					const albumsPath = './src/content/albums';
 					const coversFileName = 'covers.jpg';
+					// Same order as `albumCollection` (sorted by id), so
+					// each album index points to its own cover.
 					const paths = fs
 						.readdirSync(albumsPath)
-						.filter(
-							(file) =>
-								file.endsWith('.jpg') &&
-								file !== coversFileName
-						)
+						.filter((file) => file.endsWith('.yml'))
+						.map((file) => file.slice(0, -'.yml'.length))
 						.toSorted((a, b) => a.localeCompare(b))
-						.map((fileName) =>
-							path.resolve(albumsPath, fileName)
+						.map((id) =>
+							path.resolve(albumsPath, `${id}.jpg`)
 						);
 
 					await buildSprite(
