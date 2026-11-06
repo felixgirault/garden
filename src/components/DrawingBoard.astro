@@ -9,38 +9,59 @@
 
 <style>
 	fglt-drawing-board {
+		--energetic: yellow;
+		--happy: green;
+		--chill: aqua;
+		--sad: indigo;
 		display: block;
 		position: relative;
-		margin-bottom: 1em;
+		border-radius: var(--radius);
+		inline-size: 100%;
+		block-size: 100%;
+		max-block-size: var(--line-length);
+		contain: size;
+		overflow: hidden;
+		background: linear-gradient(
+			to bottom left,
+			var(--energetic),
+			var(--sad)
+		);
+	}
+
+	fglt-drawing-board::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			to bottom left,
+			var(--happy),
+			var(--chill)
+		);
+		mask-image: linear-gradient(
+			to top left,
+			white,
+			transparent
+		);
 	}
 
 	canvas {
+		position: relative;
 		display: block;
 		width: 100%;
-		height: 50vh;
-		background:
-			linear-gradient(
-				to right,
-				rgba(0, 0, 255, 0.5),
-				rgba(0, 255, 0, 0.5)
-			),
-			linear-gradient(
-				to top,
-				rgba(255, 0, 0, 0.5),
-				rgba(255, 255, 0, 0.5)
-			),
-			#fff;
-		background-blend-mode: normal;
+		height: 100%;
+		cursor: pointer;
 		touch-action: none;
 	}
 
 	p {
 		position: absolute;
 		margin: 0;
-		color: var(--color-surface);
+		color: var(--color-on-surface);
 		font-weight: bold;
 		font-variant: all-small-caps;
 		white-space: nowrap;
+		pointer-events: none;
+		mix-blend-mode: overlay;
 	}
 
 	.top {
