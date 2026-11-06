@@ -4,25 +4,21 @@
 		<slot name="icon" />
 	</header>
 
-	{
-		Astro.slots.has('cover') ? (
-			<div class="cover">
-				<slot name="cover" />
-			</div>
-		) : null
-	}
+	{Astro.slots.has('cover') ? (
+		<div class="cover">
+			<slot name="cover" />
+		</div>
+	) : null}
 
 	<div class="body">
 		<slot name="body" />
 	</div>
 
-	{
-		Astro.slots.has('footer') ? (
-			<footer>
-				<slot name="footer" />
-			</footer>
-		) : null
-	}
+	{Astro.slots.has('footer') ? (
+		<footer>
+			<slot name="footer" />
+		</footer>
+	) : null}
 </article>
 
 <style>

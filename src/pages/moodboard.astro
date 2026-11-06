@@ -47,9 +47,9 @@ declare global {
 	<p>
 		{tracks.length} tracks are laid out in the board below.
 		<br />
-		They are arranged according to their perceived happiness and
-		energy, from saddest on the left to happiest on the right, from
-		calmer at the bottom to hotter at the top.
+		They are arranged according to their perceived happiness
+		and energy, from saddest on the left to happiest on the
+		right, from calmer at the bottom to hotter at the top.
 	</p>
 
 	<p>
@@ -59,15 +59,13 @@ declare global {
 
 	<Section isWide>
 		<ul>
-			{
-				Object.entries(presets).map(([label, path]) => (
-					<li>
-						<button data-preset={JSON.stringify(path)}>
-							{label}
-						</button>
-					</li>
-				))
-			}
+			{Object.entries(presets).map(([label, path]) => (
+				<li>
+					<button data-preset={JSON.stringify(path)}>
+						{label}
+					</button>
+				</li>
+			))}
 		</ul>
 
 		<DrawingBoard />

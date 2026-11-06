@@ -128,19 +128,19 @@ import {Code} from 'astro:components';
 	</div>
 
 	<div class="Grid Grid--10">
-		{
-			Array(20)
-				.fill(null)
-				.map(() => <div class="Cell" />)
-		}
+		{Array(20)
+			.fill(null)
+			.map(() => (
+				<div class="Cell" />
+			))}
 	</div>
 
 	<div class="Grid Grid--40">
-		{
-			Array(80)
-				.fill(null)
-				.map(() => <div class="Cell" />)
-		}
+		{Array(80)
+			.fill(null)
+			.map(() => (
+				<div class="Cell" />
+			))}
 	</div>
 
 	<h2>Effects</h2>

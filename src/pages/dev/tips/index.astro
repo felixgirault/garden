@@ -15,21 +15,19 @@ const articles = await getCollection('devTips');
 	</p>
 
 	<ul>
-		{
-			articles.map((article) => (
-				<li>
-					<Card>
-						<h2 slot="header">
-							<a href={`/dev/tips/${article.id}`}>
-								{article.data.title}
-							</a>
-						</h2>
+		{articles.map((article) => (
+			<li>
+				<Card>
+					<h2 slot="header">
+						<a href={`/dev/tips/${article.id}`}>
+							{article.data.title}
+						</a>
+					</h2>
 
-						<p slot="body">{article.data.tldr}</p>
-					</Card>
-				</li>
-			))
-		}
+					<p slot="body">{article.data.tldr}</p>
+				</Card>
+			</li>
+		))}
 	</ul>
 </Layout>
 

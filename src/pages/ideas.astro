@@ -13,25 +13,23 @@ const ideas = await getCollection('ideas');
 
 	<p>
 		Here are some ideas I have lying around, mostly about web
-		apps.<br />
-		I may or may not implement them one day, feel free to steal any
-		of them in the meantime!
+		apps.
+		<br />I may or may not implement them one day, feel free to
+		steal any of them in the meantime!
 	</p>
 
-	{
-		ideas.map((idea) => (
-			<>
-				<h2>{idea.data.title}</h2>
+	{ideas.map((idea) => (
+		<>
+			<h2>{idea.data.title}</h2>
 
-				<p>{idea.data.description}</p>
-				<h3>Features</h3>
+			<p>{idea.data.description}</p>
+			<h3>Features</h3>
 
-				<ul>
-					{idea.data.features.map((feature) => (
-						<li>{feature}</li>
-					))}
-				</ul>
-			</>
-		))
-	}
+			<ul>
+				{idea.data.features.map((feature) => (
+					<li>{feature}</li>
+				))}
+			</ul>
+		</>
+	))}
 </Layout>

@@ -18,57 +18,55 @@ const webrings = await getCollection('webrings');
 
 	<ul>
 		<li>
-			{
-				webrings.map(async (webring) => {
-					const {Content} = await render(webring);
+			{webrings.map(async (webring) => {
+				const {Content} = await render(webring);
 
-					return (
-						<Card>
-							<h4 slot="header">
+				return (
+					<Card>
+						<h4 slot="header">
+							<a
+								href={webring.data.url}
+								set:text={webring.data.title}
+							/>
+						</h4>
+
+						<span slot="icon" aria-hidden="true">
+							{webring.data.icon}
+						</span>
+
+						<div slot="body">
+							<Content />
+						</div>
+
+						<ul
+							slot="footer"
+							class="List--raw List--inline List--dotted"
+						>
+							<li>
 								<a
-									href={webring.data.url}
-									set:text={webring.data.title}
+									href={webring.data.previousUrl}
+									title="Previous website in the ring"
+									set:text="⇜ previous"
 								/>
-							</h4>
-
-							<span slot="icon" aria-hidden="true">
-								{webring.data.icon}
-							</span>
-
-							<div slot="body">
-								<Content />
-							</div>
-
-							<ul
-								slot="footer"
-								class="List--raw List--inline List--dotted"
-							>
-								<li>
-									<a
-										href={webring.data.previousUrl}
-										title="Previous website in the ring"
-										set:text="⇜ previous"
-									/>
-								</li>
-								<li>
-									<a
-										href={webring.data.randomUrl}
-										title="Random website in the ring"
-										set:text="random"
-									/>
-								</li>
-								<li>
-									<a
-										href={webring.data.nextUrl}
-										title="Next website in the ring"
-										set:text="next ⇝"
-									/>
-								</li>
-							</ul>
-						</Card>
-					);
-				})
-			}
+							</li>
+							<li>
+								<a
+									href={webring.data.randomUrl}
+									title="Random website in the ring"
+									set:text="random"
+								/>
+							</li>
+							<li>
+								<a
+									href={webring.data.nextUrl}
+									title="Next website in the ring"
+									set:text="next ⇝"
+								/>
+							</li>
+						</ul>
+					</Card>
+				);
+			})}
 		</li>
 	</ul>
 </Layout>
