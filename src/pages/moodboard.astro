@@ -26,6 +26,10 @@ declare global {
 	breadcrumbs={[]}
 	isFullScreen
 >
+	<Fragment slot="head">
+		<link rel="manifest" href="/moodboard-manifest.json" />
+	</Fragment>
+
 	<ul class="nav List--raw List--inline">
 		<li class="home">
 			<a class="Button" href="/">

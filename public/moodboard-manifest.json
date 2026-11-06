@@ -1,0 +1,21 @@
+{
+	"short_name": "Moodboard",
+	"name": "Moodboard",
+	"id": "/moodboard",
+	"start_url": "/moodboard",
+	"display": "standalone",
+	"theme_color": "#ffeae5",
+	"background_color": "#0d0604",
+	"icons": [
+		{
+			"src": "/moodboard-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/moodboard-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
+}
