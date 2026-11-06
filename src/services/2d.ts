@@ -27,17 +27,25 @@ export const randomPoints = (min = 2, max = 5): Point[] =>
 		Math.random()
 	]);
 
+// Smooths the path by curving through the midpoints of each
+// segment, using the points themselves as control points.
 export const makePath = (points: Point[]) => {
 	const path = new Path2D();
 
-	for (let i = 0; i < points.length; i++) {
-		const [x, y] = points[i];
+	if (!points.length) {
+		return path;
+	}
 
-		if (i === 0) {
-			path.moveTo(x, y);
-		} else {
-			path.lineTo(x, y);
-		}
+	path.moveTo(...points[0]);
+
+	for (let i = 1; i < points.length - 1; i++) {
+		const [x, y] = points[i];
+		const [nx, ny] = points[i + 1];
+		path.quadraticCurveTo(x, y, (x + nx) / 2, (y + ny) / 2);
+	}
+
+	if (points.length > 1) {
+		path.lineTo(...points.at(-1)!);
 	}
 
 	return path;

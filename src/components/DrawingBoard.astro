@@ -95,7 +95,6 @@
 	import {
 		type Point,
 		distance,
-		interpolateSpline,
 		isAngleAcute,
 		makePath
 	} from '../services/2d';
@@ -105,14 +104,19 @@
 
 	export class DrawingBoard extends HTMLElement {
 		static DrawingDefinition = 20;
-		static RenderingDefinition = 2;
+		// Share of each new pointer position kept, the rest
+		// being the previous one, to filter out hand tremor.
+		static InputSmoothing = 0.4;
 
 		#canvas!: HTMLCanvasElement;
 		#ctx!: CanvasRenderingContext2D;
+		#width = 0;
+		#height = 0;
 		#canvasRatio = 1;
 		#resizeObserver!: ResizeObserver;
 		#path: Point[] = [];
 		#danglingPathPoint: Point | null = null;
+		#lastInput: Point | null = null;
 		#points: Point[] = [];
 		#pointerId = 0;
 		#frameId = 0;
@@ -201,26 +205,26 @@
 		updateCanvasDimensions() {
 			this.#withinFrame(() => {
 				const {width, height} = this.getBoundingClientRect();
-				this.#canvas.width = width;
-				this.#canvas.height = height;
+				const dpr = window.devicePixelRatio || 1;
+				this.#width = width;
+				this.#height = height;
+				this.#canvas.width = Math.round(width * dpr);
+				this.#canvas.height = Math.round(height * dpr);
+				// Draws in CSS pixels on a full resolution canvas.
+				this.#ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 				this.#canvasRatio = (width + height) / 2;
 				this.#render();
 			});
 		}
 
 		fromCanvasCoords([x, y]: Point): Point {
-			return [
-				x / this.#canvas.width,
-				1 - y / this.#canvas.height
-			];
+			return [x / this.#width, 1 - y / this.#height];
 		}
 
 		toCanvasCoords([x, y]: Point): Point {
 			return [
-				Math.round(x * this.#canvas.width),
-				Math.round(
-					this.#canvas.height - y * this.#canvas.height
-				)
+				x * this.#width,
+				this.#height - y * this.#height
 			];
 		}
 
@@ -232,11 +236,22 @@
 			this.#isDrawing = true;
 			this.#path = [point];
 			this.#danglingPathPoint = null;
+			this.#lastInput = point;
 			this.#points = [];
 			this.#render();
 		}
 
-		draw(point: Point) {
+		draw(input: Point) {
+			// Filters on every event rather than every frame, so
+			// the smoothing doesn't depend on the frame rate.
+			const last = this.#lastInput ?? input;
+			const k = DrawingBoard.InputSmoothing;
+			const point: Point = [
+				last[0] + (input[0] - last[0]) * k,
+				last[1] + (input[1] - last[1]) * k
+			];
+
+			this.#lastInput = point;
 			this.#withinFrame(() => {
 				if (!this.#path.length || !isOnBoard(point)) {
 					return;
@@ -245,9 +260,15 @@
 				const previousPoint = this.#path.at(-1)!;
 
 				// Adds a point in case of a sharp turn in
-				// between valid points.
+				// between valid points, ignoring jitter right
+				// next to the previous point.
 				if (
 					this.#danglingPathPoint &&
+					distance(
+						this.toCanvasCoords(previousPoint),
+						this.toCanvasCoords(this.#danglingPathPoint)
+					) >=
+						DrawingBoard.DrawingDefinition / 2 &&
 					isAngleAcute(
 						previousPoint,
 						this.#danglingPathPoint,
@@ -297,23 +318,21 @@
 		}
 
 		#render() {
-			this.#ctx.clearRect(
-				0,
-				0,
-				this.#canvas.width,
-				this.#canvas.height
-			);
+			this.#ctx.clearRect(0, 0, this.#width, this.#height);
 
 			this.#drawPath();
 			this.#drawPoints();
 		}
 
 		#drawPath() {
-			const points = this.#interpolatePath();
-
-			if (!points.length) {
+			if (!this.#path.length) {
 				return;
 			}
+
+			// Repeats a lone point so it draws as a dot.
+			const points = this.#path.concat([
+				this.#danglingPathPoint ?? this.#path.at(-1)!
+			]);
 
 			const canvasPath = makePath(
 				points.map(this.toCanvasCoords.bind(this))
@@ -346,28 +365,6 @@
 			});
 
 			this.#ctx.globalAlpha = 1;
-		}
-
-		#interpolatePath() {
-			if (!this.#path.length) {
-				return [];
-			}
-
-			if (this.#path.length === 1) {
-				const start = this.#path.at(0)!;
-				return [start, this.#danglingPathPoint || start];
-			}
-
-			const path = this.#danglingPathPoint
-				? this.#path.concat([this.#danglingPathPoint])
-				: this.#path;
-
-			return interpolateSpline(path, (length) => {
-				const count =
-					(length / DrawingBoard.RenderingDefinition) *
-					this.#canvasRatio;
-				return Math.max(Math.round(count), 1);
-			});
 		}
 
 		#emitPath() {
