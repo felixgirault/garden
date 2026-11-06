@@ -26,12 +26,12 @@
     "@types/node": "^26.2.0",
     "curve-interpolator": "^3.3.1",
     "d3-ease": "^3.0.1",
-    "fontaine": "^0.8.0",
+    "fontaine": "^1.0.3",
     "kd-tree-javascript": "^1.0.3",
     "new-javascript": "^0.4.7",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.5",
     "vitest": "^5.1.0",
     "yaml": "^2.9.0"
   }
