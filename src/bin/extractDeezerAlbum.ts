@@ -34,24 +34,20 @@ const id = parseInt(process.argv[2]);
 const url = `https://api.deezer.com/album/${id}`;
 const response = await fetch(url);
 const album = (await response.json()) as DeezerAlbum;
-const slug = process.argv?.[4] || slugify(album.title);
+const slug = process.argv[3] || slugify(album.title);
 const albumsPath = path.resolve(
 	fileURLToPath(import.meta.url),
 	'../../content/albums'
 );
 
-const coverPath = path.resolve(albumsPath, `${slug}.jpg`);
-const coverStream = fs.createWriteStream(coverPath);
-const {body} = await fetch(album.cover_medium);
+const ymlPath = path.resolve(albumsPath, `${slug}.yml`);
 
-await finished(
-	Readable.fromWeb(body as ReadableStream<any>).pipe(
-		coverStream
-	)
-);
+if (fs.existsSync(ymlPath)) {
+	throw new Error(
+		`Album "${slug}" already exists, pass another slug as second argument`
+	);
+}
 
-const {dominant, accent} = await getImagePalette(coverPath);
-const microCover = await getThumbnailData(coverPath);
 const tracksInfo = album.tracks.data.map((track) => [
 	track.title,
 	track.preview
@@ -71,18 +67,34 @@ const previewTrackIndex = parseInt(
 
 rl.close();
 
+const preview = album.tracks.data[previewTrackIndex]?.preview;
+
+if (!preview) {
+	throw new Error(`No track at index ${previewTrackIndex}`);
+}
+
+const coverPath = path.resolve(albumsPath, `${slug}.jpg`);
+const coverStream = fs.createWriteStream(coverPath);
+const {body} = await fetch(album.cover_medium);
+
+await finished(
+	Readable.fromWeb(body as ReadableStream<any>).pipe(
+		coverStream
+	)
+);
+
+const {dominant, accent} = await getImagePalette(coverPath);
+const microCover = await getThumbnailData(coverPath);
+
 const data = {
 	title: album.title,
 	artist: album.artist.name,
 	cover: `./${slug}.jpg`,
-	preview: album.tracks.data[previewTrackIndex].preview,
+	preview,
 	deezerId: id,
 	dominantColor: dominant,
 	accentColor: accent,
 	microCover
 };
 
-fs.writeFileSync(
-	path.resolve(albumsPath, `${slug}.yml`),
-	stringify(data)
-);
+fs.writeFileSync(ymlPath, stringify(data));
