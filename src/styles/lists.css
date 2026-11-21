@@ -8,5 +8,6 @@
 }
 
 .List--dotted li:not(:last-child)::after {
-	content: ' ⋅ ';
+	padding-inline: 1ch;
+	content: '⋅';
 }
