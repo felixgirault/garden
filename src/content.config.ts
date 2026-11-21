@@ -68,19 +68,5 @@ export const collections = {
 			valence: z.number(),
 			isAlbumHighlight: z.boolean()
 		})
-	}),
-	webrings: defineCollection({
-		loader: glob({
-			pattern: '*.md',
-			base: './src/content/webrings'
-		}),
-		schema: z.object({
-			title: z.string(),
-			icon: z.string(),
-			url: z.url(),
-			previousUrl: z.url(),
-			nextUrl: z.url(),
-			randomUrl: z.url()
-		})
 	})
 };
