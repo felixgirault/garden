@@ -19,58 +19,9 @@ import Card from './Card.astro';
 	</p>
 
 	<article>
-		<h3>Things I've written</h3>
-
-		<ul>
-			<li>
-				<Card>
-					<h4 slot="header">
-						<a
-							href="/dev/resources"
-							set:text="Resources"
-						/>
-					</h4>
-
-					<p slot="body">
-						An awesome list of articles, books, courses,
-						tools, design resources & newletters for web
-						developers.
-					</p>
-				</Card>
-			</li>
-
-			<li>
-				<Card>
-					<h4 slot="header">
-						<a href="/dev/tips" set:text="Tips & tricks" />
-					</h4>
-
-					<p slot="body">
-						Quick tips about anything related to web
-						development.
-					</p>
-				</Card>
-			</li>
-
-			<li>
-				<Card>
-					<h4 slot="header">
-						<a href="/ideas" set:text="Ideas" />
-					</h4>
-
-					<p slot="body">
-						Concepts of apps I would like to see exist,
-						whoever builds them.
-					</p>
-				</Card>
-			</li>
-		</ul>
-	</article>
-
-	<article>
 		<h3>Things I've made</h3>
 
-		<ul>
+		<ul class="Grid Grid--2 Grid--gaplessY">
 			<li>
 				<Card>
 					<h4 slot="header">Schemist</h4>
@@ -160,7 +111,7 @@ import Card from './Card.astro';
 	<article>
 		<h3>Things I contributed to</h3>
 
-		<ul>
+		<ul class="Grid Grid--2 Grid--gaplessY">
 			<li>
 				<Card>
 					<h4 slot="header" lang="fr">
@@ -224,6 +175,55 @@ import Card from './Card.astro';
 							/>
 						</li>
 					</ul>
+				</Card>
+			</li>
+		</ul>
+	</article>
+
+	<article>
+		<h3>Things I've written</h3>
+
+		<ul class="Grid Grid--2 Grid--gaplessY">
+			<li>
+				<Card>
+					<h4 slot="header">
+						<a
+							href="/dev/resources"
+							set:text="Resources"
+						/>
+					</h4>
+
+					<p slot="body">
+						An awesome list of articles, books, courses,
+						tools, design resources & newletters for web
+						developers.
+					</p>
+				</Card>
+			</li>
+
+			<li>
+				<Card>
+					<h4 slot="header">
+						<a href="/dev/tips" set:text="Tips & tricks" />
+					</h4>
+
+					<p slot="body">
+						Quick tips about anything related to web
+						development.
+					</p>
+				</Card>
+			</li>
+
+			<li>
+				<Card>
+					<h4 slot="header">
+						<a href="/ideas" set:text="Ideas" />
+					</h4>
+
+					<p slot="body">
+						Concepts of apps I would like to see exist,
+						whoever builds them.
+					</p>
 				</Card>
 			</li>
 		</ul>

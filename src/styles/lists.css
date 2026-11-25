@@ -1,6 +1,9 @@
 .List--raw {
-	padding: 0;
 	list-style: none;
+}
+
+.List--raw li {
+	margin-inline: 0;
 }
 
 .List--inline li {

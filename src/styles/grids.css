@@ -1,10 +1,11 @@
 .Grid {
-	--grid-gap: 9;
+	--grid-gap--x: 1ch;
+	--grid-gap--y: var(--grid-gap--x);
 	--grid-column-count: 1;
 	--grid-column-min-inline-size: calc(
 		(
 				var(--line-length) - (var(--grid-column-count) - 1) *
-					var(--grid-gap)
+					var(--grid-gap--x)
 			) /
 			var(--grid-column-count)
 	);
@@ -13,21 +14,29 @@
 		auto-fit,
 		minmax(var(--grid-column-min-inline-size), 1fr)
 	);
-	gap: var(--grid-gap);
+	gap: var(--grid-gap--x) var(--grid-gap--y);
 	margin-bottom: 1em;
 }
 
 .Grid--2 {
-	--grid-gap: 3ch;
+	--grid-gap--x: 3ch;
 	--grid-column-count: 2;
 }
 
+.Grid--2 > li {
+	margin-block-end: 0;
+}
+
 .Grid--10 {
-	--grid-gap: 1ch;
+	--grid-gap--x: 1ch;
 	--grid-column-count: 10;
 }
 
 .Grid--40 {
-	--grid-gap: 0.25ch;
+	--grid-gap--x: 0.25ch;
 	--grid-column-count: 40;
+}
+
+.Grid--gaplessY {
+	--grid-gap--y: none;
 }

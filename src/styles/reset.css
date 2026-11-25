@@ -188,12 +188,17 @@ iframe {
 
 ul,
 ol {
-	padding-inline: var(--line-indent);
+	padding-inline: 0;
 	list-style-type: '-  ';
+	list-style-position: outside;
 }
 
 :is(ul, ol) :is(ul, ol) {
 	margin-block-end: 0;
+}
+
+li {
+	margin-inline: var(--line-indent);
 }
 
 li::marker {
